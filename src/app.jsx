@@ -1,6 +1,9 @@
 import { useState } from 'preact/hooks'
-import Timer from './components/Timer'
 import './App.css'
+import Timer from './components/Timer'
+import HiitTimer from './components/HiitTimer'
+import TabataTimer from './components/TabataTimer'
+import Breathing44Timer from './components/Breathing44Timer'
 
 function App() {
   const [timers, setTimers] = useState([
@@ -35,6 +38,9 @@ function App() {
             name={timer.name}
           />
         ))}
+        <HiitTimer name="Morning HIIT" />
+        <TabataTimer name="Evening Tabata" />
+        <Breathing44Timer name="Breathing 4-4" />
       </main>
     </div>
   )

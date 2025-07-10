@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'preact/hooks'
 import './TabataTimer.css'
+import { useDoubleClick } from '../hooks/useDoubleClick'
+import { formatTimeSeconds, calculateProgress, isClickOnButton } from '../utils/timerHelpers'
 
 export default function TabataTimer({ name = 'Tabata Protocol' }) {
   const [currentRound, setCurrentRound] = useState(1)
@@ -7,6 +9,7 @@ export default function TabataTimer({ name = 'Tabata Protocol' }) {
   const [isWorkPhase, setIsWorkPhase] = useState(true)
   const [isRunning, setIsRunning] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
+  const [isMaximized, setIsMaximized] = useState(false)
   
   const totalRounds = 8
   const workTime = 20 // seconds
@@ -49,9 +52,6 @@ export default function TabataTimer({ name = 'Tabata Protocol' }) {
     }
   }, [isRunning, isWorkPhase, currentRound, isFinished])
 
-  const formatTime = (seconds) => {
-    return seconds.toString().padStart(2, '0')
-  }
 
   const handleStart = () => {
     setIsRunning(true)
@@ -94,11 +94,23 @@ export default function TabataTimer({ name = 'Tabata Protocol' }) {
   const getProgressPercentage = () => {
     const totalPhases = totalRounds * 2 // work + rest phases
     const completedPhases = (currentRound - 1) * 2 + (isWorkPhase ? 0 : 1)
-    return (completedPhases / totalPhases) * 100
+    return calculateProgress(completedPhases, totalPhases)
   }
 
+  const handleDoubleClick = useDoubleClick(() => {
+    setIsMaximized(!isMaximized)
+  })
+
   return (
-    <div className={`tabata-timer ${isFinished ? 'finished' : ''} ${isWorkPhase ? 'work-phase' : 'rest-phase'}`}>
+    <div 
+      className={`tabata-timer ${isFinished ? 'finished' : ''} ${isWorkPhase ? 'work-phase' : 'rest-phase'} ${isMaximized ? 'maximized' : ''}`}
+      onClick={(e) => {
+        // Solo activar si el clic no es en botones
+        if (!isClickOnButton(e)) {
+          handleDoubleClick()
+        }
+      }}
+    >
       <h3 className="tabata-name">{name}</h3>
       
       <div className="tabata-progress">
@@ -120,7 +132,7 @@ export default function TabataTimer({ name = 'Tabata Protocol' }) {
       </div>
       
       <div className="tabata-display">
-        {formatTime(timeLeft)}
+        {formatTimeSeconds(timeLeft)}
       </div>
       
       <div className="tabata-message">

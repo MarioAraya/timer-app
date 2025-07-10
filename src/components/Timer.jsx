@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'preact/hooks'
 import './Timer.css'
+import { useDoubleClick } from '../hooks/useDoubleClick'
+import { formatTime, isClickOnButton } from '../utils/timerHelpers'
 
 export default function Timer({ initialTime = 0, message = '', name = 'Timer' }) {
   const [timeLeft, setTimeLeft] = useState(initialTime)
   const [isRunning, setIsRunning] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
+  const [isMaximized, setIsMaximized] = useState(false)
 
   useEffect(() => {
     let interval = null
@@ -27,11 +30,6 @@ export default function Timer({ initialTime = 0, message = '', name = 'Timer' })
     }
   }, [isRunning, timeLeft])
 
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60)
-    const remainingSeconds = seconds % 60
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
-  }
 
   const handleStart = () => {
     setIsRunning(true)
@@ -48,8 +46,20 @@ export default function Timer({ initialTime = 0, message = '', name = 'Timer' })
     setIsFinished(false)
   }
 
+  const handleDoubleClick = useDoubleClick(() => {
+    setIsMaximized(!isMaximized)
+  })
+
   return (
-    <div className={`timer ${isFinished ? 'finished' : ''}`}>
+    <div 
+      className={`timer ${isFinished ? 'finished' : ''} ${isMaximized ? 'maximized' : ''}`}
+      onClick={(e) => {
+        // Solo activar si el clic no es en botones
+        if (!isClickOnButton(e)) {
+          handleDoubleClick()
+        }
+      }}
+    >
       <h3 className="timer-name">{name}</h3>
       
       <div className="timer-display">

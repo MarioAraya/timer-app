@@ -212,6 +212,66 @@
   font-weight: bold;
 }
 
+/* Maximized mode */
+.hiit-timer.maximized {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  border-radius: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.hiit-timer.maximized .hiit-display {
+  font-size: 12rem;
+  margin: 2rem 0;
+}
+
+.hiit-timer.maximized .hiit-name {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.hiit-timer.maximized .hiit-message {
+  font-size: 2.5rem;
+  margin: 2rem 0;
+}
+
+.hiit-timer.maximized .hiit-controls {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.hiit-timer.maximized .hiit-controls:hover {
+  opacity: 1;
+}
+
+.hiit-timer.maximized .hiit-stats {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.hiit-timer.maximized .hiit-stats:hover {
+  opacity: 1;
+}
+
+.hiit-timer.maximized .hiit-progress {
+  width: 60%;
+  max-width: 800px;
+}
+
+.hiit-timer.maximized .phase-indicator {
+  font-size: 1.5rem;
+  padding: 1rem 2rem;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .hiit-timer {
@@ -236,5 +296,17 @@
   .hiit-stats {
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .hiit-timer.maximized .hiit-display {
+    font-size: 8rem;
+  }
+  
+  .hiit-timer.maximized .hiit-name {
+    font-size: 1.5rem;
+  }
+  
+  .hiit-timer.maximized .hiit-message {
+    font-size: 2rem;
   }
 }

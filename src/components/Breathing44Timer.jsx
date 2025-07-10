@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'preact/hooks'
 import './Breathing44Timer.css'
+import { useDoubleClick } from '../hooks/useDoubleClick'
+import { formatTime, isClickOnButton } from '../utils/timerHelpers'
 
 export default function Breathing44Timer({ name = '4-4-4-4 Breathing' }) {
   const [currentPhase, setCurrentPhase] = useState(0) // 0: inhale, 1: hold, 2: exhale, 3: hold
@@ -7,6 +9,7 @@ export default function Breathing44Timer({ name = '4-4-4-4 Breathing' }) {
   const [isRunning, setIsRunning] = useState(false)
   const [cycleCount, setCycleCount] = useState(0)
   const [totalTime, setTotalTime] = useState(0)
+  const [isMaximized, setIsMaximized] = useState(false)
   
   const phases = ['Inhale', 'Hold', 'Exhale', 'Hold']
   const phaseDuration = 4 // seconds for each phase
@@ -40,11 +43,6 @@ export default function Breathing44Timer({ name = '4-4-4-4 Breathing' }) {
     }
   }, [isRunning])
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-  }
 
   const handleStart = () => {
     setIsRunning(true)
@@ -100,8 +98,20 @@ export default function Breathing44Timer({ name = '4-4-4-4 Breathing' }) {
     }
   }
 
+  const handleDoubleClick = useDoubleClick(() => {
+    setIsMaximized(!isMaximized)
+  })
+
   return (
-    <div className={`breathing-timer phase-${currentPhase}`}>
+    <div 
+      className={`breathing-timer phase-${currentPhase} ${isMaximized ? 'maximized' : ''}`}
+      onClick={(e) => {
+        // Solo activar si el clic no es en botones
+        if (!isClickOnButton(e)) {
+          handleDoubleClick()
+        }
+      }}
+    >
       <h3 className="breathing-name">{name}</h3>
       
       <div className="breathing-stats">

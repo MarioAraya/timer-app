@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'preact/hooks'
 import './HiitTimer.css'
+import { useDoubleClick } from '../hooks/useDoubleClick'
+import { formatTimeSeconds, calculateProgress, isClickOnButton } from '../utils/timerHelpers'
 
 export default function HiitTimer({ name = 'HIIT Workout' }) {
   const [currentRound, setCurrentRound] = useState(1)
@@ -7,6 +9,7 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
   const [isWorkPhase, setIsWorkPhase] = useState(true)
   const [isRunning, setIsRunning] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
+  const [isMaximized, setIsMaximized] = useState(false)
   
   const totalRounds = 12
   const workTime = 40 // seconds
@@ -49,9 +52,6 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
     }
   }, [isRunning, isWorkPhase, currentRound, isFinished])
 
-  const formatTime = (seconds) => {
-    return seconds.toString().padStart(2, '0')
-  }
 
   const handleStart = () => {
     setIsRunning(true)
@@ -94,11 +94,23 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
   const getProgressPercentage = () => {
     const totalPhases = totalRounds * 2 // work + rest phases
     const completedPhases = (currentRound - 1) * 2 + (isWorkPhase ? 0 : 1)
-    return (completedPhases / totalPhases) * 100
+    return calculateProgress(completedPhases, totalPhases)
   }
 
+  const handleDoubleClick = useDoubleClick(() => {
+    setIsMaximized(!isMaximized)
+  })
+
   return (
-    <div className={`hiit-timer ${isFinished ? 'finished' : ''} ${isWorkPhase ? 'work-phase' : 'rest-phase'}`}>
+    <div 
+      className={`hiit-timer ${isFinished ? 'finished' : ''} ${isWorkPhase ? 'work-phase' : 'rest-phase'} ${isMaximized ? 'maximized' : ''}`}
+      onClick={(e) => {
+        // Solo activar si el clic no es en botones
+        if (!isClickOnButton(e)) {
+          handleDoubleClick()
+        }
+      }}
+    >
       <h3 className="hiit-name">{name}</h3>
       
       <div className="hiit-progress">
@@ -120,7 +132,7 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
       </div>
       
       <div className="hiit-display">
-        {formatTime(timeLeft)}
+        {formatTimeSeconds(timeLeft)}
       </div>
       
       <div className="hiit-message">

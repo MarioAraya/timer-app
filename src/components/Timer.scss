@@ -1,0 +1,64 @@
+@import '../styles/variables';
+@import '../styles/mixins';
+
+.timer {
+  @include timer-container;
+
+  &.finished {
+    background: $color-success-bg;
+    border-color: $color-success;
+    @include pulse-animation($color-success);
+  }
+
+  &.maximized {
+    @include timer-maximized;
+  }
+}
+
+.timer-name {
+  margin: 0 0 $spacing-md 0;
+  color: #495057;
+  font-size: $font-size-xl;
+}
+
+.timer-display {
+  font-size: $font-size-4xl;
+  font-weight: bold;
+  color: #212529;
+  margin: $spacing-md 0;
+  font-family: $font-mono;
+}
+
+.timer-controls {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: center;
+  margin: $spacing-lg 0;
+
+  .btn-start {
+    @include button-variant($color-primary, white, $color-primary-dark);
+  }
+
+  .btn-pause {
+    @include button-variant($color-warning, #212529, $color-warning-dark);
+  }
+
+  .btn-reset {
+    @include button-variant($color-secondary, white, $color-secondary-dark);
+  }
+}
+
+.timer-message {
+  margin-top: $spacing-md;
+  padding: 0.75rem;
+  background: #e9ecef;
+  border-radius: $border-radius-sm;
+  color: #495057;
+  font-style: italic;
+
+  .timer.finished & {
+    background: $color-success;
+    color: white;
+    font-weight: bold;
+  }
+}

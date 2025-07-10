@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'preact/hooks'
-import './TabataTimer.css'
+import './TabataTimer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTimeSeconds, calculateProgress, isClickOnButton } from '../utils/timerHelpers'
 

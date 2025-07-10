@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'preact/hooks'
-import './HiitTimer.css'
+import './HiitTimer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTimeSeconds, calculateProgress, isClickOnButton } from '../utils/timerHelpers'
 

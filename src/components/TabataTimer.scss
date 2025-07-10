@@ -1,0 +1,267 @@
+@import '../styles/variables';
+@import '../styles/mixins';
+
+.tabata-timer {
+  @include timer-container;
+  background: $color-tabata-bg;
+  border-color: $color-tabata-border;
+  color: $color-tabata-primary;
+  min-width: 350px;
+
+  &.work-phase {
+    background: linear-gradient(135deg, #000000, $color-tabata-bg);
+    border-color: $color-tabata-primary;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+    
+    @keyframes tabataWorkPulse {
+      0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 30px rgba(0, 255, 136, 0.3), inset 0 0 20px rgba(0, 255, 136, 0.1); 
+      }
+      50% { 
+        transform: scale(1.03); 
+        box-shadow: 0 0 50px rgba(0, 255, 136, 0.6), inset 0 0 30px rgba(0, 255, 136, 0.2); 
+      }
+    }
+    animation: tabataWorkPulse 1s ease-in-out infinite;
+  }
+
+  &.rest-phase {
+    background: linear-gradient(135deg, #0a0a0a, #1f1f1f);
+    border-color: #666;
+    color: $color-tabata-secondary;
+    
+    @keyframes tabataRestPulse {
+      0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 10px rgba(102, 102, 102, 0.2); 
+      }
+      50% { 
+        transform: scale(1.01); 
+        box-shadow: 0 0 15px rgba(102, 102, 102, 0.3); 
+      }
+    }
+    animation: tabataRestPulse 2s ease-in-out infinite;
+  }
+
+  &.finished {
+    background: linear-gradient(135deg, #000000, #003322);
+    border-color: $color-tabata-primary;
+    color: $color-tabata-primary;
+    box-shadow: 0 0 50px rgba(0, 255, 136, 0.5);
+    
+    @keyframes tabataComplete {
+      0% { 
+        transform: scale(1) rotate(-0.5deg); 
+        box-shadow: 0 0 50px rgba(0, 255, 136, 0.5); 
+      }
+      100% { 
+        transform: scale(1.08) rotate(0.5deg); 
+        box-shadow: 0 0 80px rgba(0, 255, 136, 0.8); 
+      }
+    }
+    animation: tabataComplete 0.8s ease-in-out infinite alternate;
+  }
+
+  &.maximized {
+    @include timer-maximized;
+
+    .tabata-display {
+      font-size: $font-size-9xl;
+      margin: $spacing-xl 0;
+    }
+
+    .tabata-progress {
+      width: 60%;
+      max-width: 800px;
+    }
+
+    .phase-indicator {
+      font-size: $font-size-xl;
+      padding: $spacing-md $spacing-xl;
+    }
+
+    .tabata-message {
+      font-size: $font-size-2xl;
+      margin: $spacing-xl 0;
+    }
+  }
+}
+
+.tabata-name {
+  margin: 0 0 $spacing-lg 0;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: inherit;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.tabata-progress {
+  margin-bottom: $spacing-lg;
+
+  .progress-bar {
+    width: 100%;
+    height: 10px;
+    background: $color-tabata-border;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: $spacing-sm;
+    border: 1px solid #555;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, $color-tabata-primary, #00cc6a);
+      border-radius: 5px;
+      transition: width $transition-normal;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+  }
+
+  .round-info {
+    font-size: $font-size-sm;
+    font-weight: bold;
+    color: inherit;
+    text-shadow: 0 0 5px currentColor;
+  }
+}
+
+.tabata-phase {
+  margin-bottom: $spacing-md;
+
+  .phase-indicator {
+    @include phase-indicator;
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px currentColor;
+
+    &.work {
+      background: rgba(0, 255, 136, 0.1);
+      border: $border-width solid $color-tabata-primary;
+      color: $color-tabata-primary;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    }
+
+    &.rest {
+      background: rgba(102, 102, 102, 0.1);
+      border: $border-width solid #666;
+      color: $color-tabata-secondary;
+      box-shadow: 0 0 10px rgba(102, 102, 102, 0.2);
+    }
+  }
+}
+
+.tabata-display {
+  font-size: $font-size-6xl;
+  font-weight: bold;
+  margin: $spacing-md 0;
+  font-family: $font-mono;
+  text-shadow: 0 0 20px currentColor;
+  color: inherit;
+}
+
+.tabata-message {
+  font-size: $font-size-xl;
+  font-weight: bold;
+  margin: $spacing-md 0 $spacing-xl 0;
+  text-shadow: 0 0 15px currentColor;
+  color: inherit;
+}
+
+.tabata-controls {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: center;
+  margin: $spacing-xl 0;
+  flex-wrap: wrap;
+
+  .btn {
+    @include button-base;
+    border: $border-width solid;
+    background: transparent;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    &.btn-start {
+      border-color: $color-tabata-primary;
+      color: $color-tabata-primary;
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+
+      &:hover:not(:disabled) {
+        background: $color-tabata-primary;
+        color: #000;
+        box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+      }
+    }
+
+    &.btn-pause {
+      border-color: #ffaa00;
+      color: #ffaa00;
+      box-shadow: 0 0 15px rgba(255, 170, 0, 0.3);
+
+      &:hover {
+        background: #ffaa00;
+        color: #000;
+        box-shadow: 0 0 25px rgba(255, 170, 0, 0.5);
+      }
+    }
+
+    &.btn-skip {
+      border-color: #ff6b9d;
+      color: #ff6b9d;
+      box-shadow: 0 0 15px rgba(255, 107, 157, 0.3);
+
+      &:hover:not(:disabled) {
+        background: #ff6b9d;
+        color: #000;
+        box-shadow: 0 0 25px rgba(255, 107, 157, 0.5);
+      }
+    }
+
+    &.btn-reset {
+      border-color: #666;
+      color: #666;
+      box-shadow: 0 0 10px rgba(102, 102, 102, 0.2);
+
+      &:hover {
+        background: #666;
+        color: #000;
+        box-shadow: 0 0 20px rgba(102, 102, 102, 0.4);
+      }
+    }
+  }
+}
+
+.tabata-stats {
+  @include stats-container;
+  border-top: $border-width solid $color-tabata-border;
+
+  .stat-value {
+    color: $color-tabata-primary;
+    text-shadow: 0 0 5px currentColor;
+  }
+}
+
+@include responsive($breakpoint-sm) {
+  .tabata-timer {
+    min-width: 280px;
+    padding: $spacing-lg;
+    
+    .tabata-display {
+      font-size: $font-size-5xl;
+    }
+    
+    .tabata-controls {
+      flex-direction: column;
+      align-items: center;
+      
+      .btn {
+        width: 100%;
+        max-width: 200px;
+      }
+    }
+    
+    .tabata-stats {
+      flex-direction: column;
+      gap: $spacing-md;
+    }
+  }
+}

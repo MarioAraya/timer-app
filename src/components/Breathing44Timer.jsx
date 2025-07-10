@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'preact/hooks'
-import './Breathing44Timer.css'
+import './Breathing44Timer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTime, isClickOnButton } from '../utils/timerHelpers'
 

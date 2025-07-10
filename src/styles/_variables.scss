@@ -1,0 +1,104 @@
+// Colors
+$color-primary: #28a745;
+$color-primary-dark: #218838;
+$color-secondary: #6c757d;
+$color-secondary-dark: #5a6268;
+$color-warning: #ffc107;
+$color-warning-dark: #e0a800;
+$color-danger: #dc3545;
+$color-danger-hover: #e17055;
+$color-info: #17a2b8;
+$color-success: #28a745;
+$color-success-bg: #d4edda;
+
+// Timer specific colors
+$color-hiit-work: #ff6b6b;
+$color-hiit-work-dark: #ee5a24;
+$color-hiit-rest: #74b9ff;
+$color-hiit-rest-dark: #0984e3;
+$color-hiit-finished: #00b894;
+
+$color-tabata-primary: #00ff88;
+$color-tabata-bg: #1a1a1a;
+$color-tabata-border: #333;
+$color-tabata-secondary: #aaa;
+
+$color-breathing-base: #e3f2fd;
+$color-breathing-border: #64b5f6;
+$color-breathing-text: #1565c0;
+
+// Phase colors for breathing
+$color-breathing-inhale: #e8f5e8;
+$color-breathing-inhale-border: #4caf50;
+$color-breathing-inhale-text: #2e7d32;
+
+$color-breathing-hold1: #fff3e0;
+$color-breathing-hold1-border: #ff9800;
+$color-breathing-hold1-text: #e65100;
+
+$color-breathing-exhale: #fce4ec;
+$color-breathing-exhale-border: #e91e63;
+$color-breathing-exhale-text: #ad1457;
+
+$color-breathing-hold2: #f3e5f5;
+$color-breathing-hold2-border: #9c27b0;
+$color-breathing-hold2-text: #6a1b9a;
+
+// Typography
+$font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$font-mono: 'Courier New', monospace;
+
+$font-size-xs: 0.8rem;
+$font-size-sm: 0.9rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.1rem;
+$font-size-xl: 1.2rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 2rem;
+$font-size-4xl: 4rem;
+$font-size-5xl: 6rem;
+$font-size-6xl: 7rem;
+$font-size-7xl: 10rem;
+$font-size-8xl: 12rem;
+$font-size-9xl: 14rem;
+
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 3rem;
+
+// Borders
+$border-radius-sm: 6px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-xl: 16px;
+$border-radius-2xl: 20px;
+$border-radius-full: 50%;
+
+$border-width: 2px;
+$border-width-thick: 3px;
+
+// Shadows
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
+
+// Z-index
+$z-modal: 1000;
+$z-dropdown: 100;
+$z-header: 50;
+
+// Breakpoints
+$breakpoint-sm: 480px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1200px;

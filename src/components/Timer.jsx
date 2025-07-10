@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'preact/hooks'
-import './Timer.css'
+import './Timer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTime, isClickOnButton } from '../utils/timerHelpers'
 

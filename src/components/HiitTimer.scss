@@ -1,0 +1,166 @@
+@import '../styles/variables';
+@import '../styles/mixins';
+
+.hiit-timer {
+  @include timer-container;
+  min-width: 350px;
+
+  &.work-phase {
+    background: linear-gradient(135deg, $color-hiit-work, $color-hiit-work-dark);
+    border-color: #c0392b;
+    color: white;
+    @include pulse-animation(#c0392b);
+  }
+
+  &.rest-phase {
+    background: linear-gradient(135deg, $color-hiit-rest, $color-hiit-rest-dark);
+    border-color: #2d3436;
+    color: white;
+    
+    @keyframes restPulse {
+      0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 0 0 rgba(45, 52, 54, 0.3); 
+      }
+      50% { 
+        transform: scale(1.01); 
+        box-shadow: 0 0 0 15px rgba(45, 52, 54, 0); 
+      }
+    }
+    animation: restPulse 2s ease-in-out infinite;
+  }
+
+  &.finished {
+    background: linear-gradient(135deg, $color-hiit-finished, #00a085);
+    border-color: #00a085;
+    color: white;
+    
+    @keyframes celebration {
+      0% { transform: scale(1) rotate(-1deg); }
+      100% { transform: scale(1.05) rotate(1deg); }
+    }
+    animation: celebration 0.6s ease-in-out infinite alternate;
+  }
+
+  &.maximized {
+    @include timer-maximized;
+
+    .hiit-progress {
+      width: 60%;
+      max-width: 800px;
+    }
+
+    .phase-indicator {
+      font-size: $font-size-xl;
+      padding: $spacing-md $spacing-xl;
+    }
+
+    .hiit-message {
+      font-size: $font-size-2xl;
+      margin: $spacing-xl 0;
+    }
+  }
+}
+
+.hiit-name {
+  margin: 0 0 $spacing-lg 0;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.hiit-progress {
+  margin-bottom: $spacing-lg;
+
+  .progress-bar {
+    @include progress-bar;
+  }
+
+  .round-info {
+    font-size: $font-size-sm;
+    font-weight: bold;
+    opacity: 0.9;
+  }
+}
+
+.hiit-phase {
+  margin-bottom: $spacing-md;
+
+  .phase-indicator {
+    @include phase-indicator;
+    background: rgba(255, 255, 255, 0.2);
+    border: $border-width solid rgba(255, 255, 255, 0.5);
+  }
+}
+
+.hiit-display {
+  font-size: $font-size-5xl;
+  font-weight: bold;
+  margin: $spacing-md 0;
+  font-family: $font-mono;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hiit-message {
+  font-size: $font-size-xl;
+  font-weight: bold;
+  margin: $spacing-md 0 $spacing-xl 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.hiit-controls {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: center;
+  margin: $spacing-xl 0;
+  flex-wrap: wrap;
+
+  .btn-start {
+    @include button-variant(#00b894, white, #00a085);
+  }
+
+  .btn-pause {
+    @include button-variant(#fdcb6e, #2d3436, $color-danger-hover);
+    
+    &:hover {
+      color: white;
+    }
+  }
+
+  .btn-skip {
+    @include button-variant(#a29bfe, white, #6c5ce7);
+  }
+
+  .btn-reset {
+    @include button-variant($color-secondary, white, #2d3436);
+  }
+}
+
+.hiit-stats {
+  @include stats-container;
+}
+
+@include responsive($breakpoint-sm) {
+  .hiit-timer {
+    min-width: 280px;
+    padding: $spacing-lg;
+    
+    .hiit-display {
+      font-size: $font-size-4xl;
+    }
+    
+    .hiit-controls {
+      flex-direction: column;
+      align-items: center;
+      
+      .btn {
+        width: 100%;
+        max-width: 200px;
+      }
+    }
+    
+    .hiit-stats {
+      flex-direction: column;
+      gap: $spacing-md;
+    }
+  }
+}

@@ -1,0 +1,199 @@
+// Import variables
+@import 'variables';
+
+// Button mixin
+@mixin button-base {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  font-weight: bold;
+  cursor: pointer;
+  transition: $transition-fast;
+  min-width: 80px;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+}
+
+@mixin button-variant($bg-color, $text-color, $hover-color) {
+  @include button-base;
+  background: $bg-color;
+  color: $text-color;
+
+  &:hover:not(:disabled) {
+    background: $hover-color;
+  }
+}
+
+// Timer container mixin
+@mixin timer-container {
+  background: #f8f9fa;
+  border: $border-width solid #e9ecef;
+  border-radius: $border-radius-xl;
+  padding: $spacing-xl;
+  margin: $spacing-md;
+  text-align: center;
+  min-width: 300px;
+  transition: $transition-normal;
+  position: relative;
+  overflow: hidden;
+}
+
+// Maximized timer mixin
+@mixin timer-maximized {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  border-radius: 0;
+  z-index: $z-modal;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  .timer-display,
+  .hiit-display,
+  .tabata-display,
+  .breathing-display {
+    font-size: $font-size-8xl;
+    margin: $spacing-xl 0;
+  }
+
+  .timer-name,
+  .hiit-name,
+  .tabata-name,
+  .breathing-name {
+    font-size: $font-size-3xl;
+    margin-bottom: $spacing-xl;
+  }
+
+  .timer-controls,
+  .hiit-controls,
+  .tabata-controls,
+  .breathing-controls {
+    opacity: 0.3;
+    transition: opacity $transition-normal;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .timer-message,
+  .hiit-stats,
+  .tabata-stats,
+  .breathing-stats {
+    opacity: 0.3;
+    transition: opacity $transition-normal;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  // Responsive adjustments
+  @media (max-width: $breakpoint-sm) {
+    .timer-display,
+    .hiit-display,
+    .tabata-display,
+    .breathing-display {
+      font-size: $font-size-7xl;
+    }
+
+    .timer-name,
+    .hiit-name,
+    .tabata-name,
+    .breathing-name {
+      font-size: $font-size-xl;
+    }
+  }
+}
+
+// Progress bar mixin
+@mixin progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: $spacing-sm;
+
+  .progress-fill {
+    height: 100%;
+    background: #fff;
+    border-radius: 4px;
+    transition: width $transition-normal;
+  }
+}
+
+// Phase indicator mixin
+@mixin phase-indicator {
+  display: inline-block;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: $font-size-lg;
+  letter-spacing: 2px;
+  transition: $transition-normal;
+}
+
+// Stats container mixin
+@mixin stats-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: $border-width solid rgba(255, 255, 255, 0.3);
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: $font-size-xs;
+    opacity: 0.8;
+    font-weight: bold;
+  }
+
+  .stat-value {
+    font-size: $font-size-lg;
+    font-weight: bold;
+  }
+}
+
+// Animation keyframes
+@mixin pulse-animation($color) {
+  @keyframes pulse {
+    0%, 100% { 
+      transform: scale(1); 
+      box-shadow: 0 0 0 0 rgba($color, 0.4); 
+    }
+    50% { 
+      transform: scale(1.02); 
+      box-shadow: 0 0 0 20px rgba($color, 0); 
+    }
+  }
+  animation: pulse 2s ease-in-out infinite;
+}
+
+// Responsive mixin
+@mixin responsive($breakpoint) {
+  @media (max-width: $breakpoint) {
+    @content;
+  }
+}

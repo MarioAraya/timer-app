@@ -1,0 +1,339 @@
+@import '../styles/variables';
+@import '../styles/mixins';
+
+.breathing-timer {
+  @include timer-container;
+  background: linear-gradient(135deg, $color-breathing-base, #bbdefb);
+  border-color: $color-breathing-border;
+  color: $color-breathing-text;
+  min-width: 350px;
+  border-radius: $border-radius-2xl;
+
+  &.phase-0 {
+    background: linear-gradient(135deg, $color-breathing-inhale, #c8e6c8);
+    border-color: $color-breathing-inhale-border;
+    color: $color-breathing-inhale-text;
+  }
+
+  &.phase-1 {
+    background: linear-gradient(135deg, $color-breathing-hold1, #ffe0b2);
+    border-color: $color-breathing-hold1-border;
+    color: $color-breathing-hold1-text;
+  }
+
+  &.phase-2 {
+    background: linear-gradient(135deg, $color-breathing-exhale, #f8bbd9);
+    border-color: $color-breathing-exhale-border;
+    color: $color-breathing-exhale-text;
+  }
+
+  &.phase-3 {
+    background: linear-gradient(135deg, $color-breathing-hold2, #e1bee7);
+    border-color: $color-breathing-hold2-border;
+    color: $color-breathing-hold2-text;
+  }
+
+  &.maximized {
+    @include timer-maximized;
+
+    .breathing-display {
+      font-size: $font-size-7xl;
+      margin: $spacing-xl 0;
+    }
+
+    .breathing-instruction {
+      font-size: 1.8rem;
+      margin: $spacing-xl 0;
+    }
+
+    .breathing-circle-container {
+      height: 300px;
+      margin: $spacing-2xl 0;
+    }
+
+    .breathing-circle {
+      width: 250px;
+      height: 250px;
+    }
+
+    .phase-emoji {
+      font-size: $font-size-4xl;
+    }
+
+    .phase-name {
+      font-size: $font-size-xl;
+    }
+
+    .breathing-stats {
+      position: absolute;
+      top: $spacing-xl;
+      left: $spacing-xl;
+    }
+
+    .phase-indicator {
+      position: absolute;
+      bottom: $spacing-xl;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    @include responsive($breakpoint-sm) {
+      .breathing-display {
+        font-size: $font-size-5xl;
+      }
+
+      .breathing-instruction {
+        font-size: 1.3rem;
+      }
+
+      .breathing-circle {
+        width: 180px;
+        height: 180px;
+      }
+
+      .phase-emoji {
+        font-size: $font-size-2xl;
+      }
+    }
+  }
+}
+
+.breathing-name {
+  margin: 0 0 $spacing-lg 0;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: inherit;
+}
+
+.breathing-stats {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-xl;
+  margin-bottom: $spacing-xl;
+
+  .stat {
+    @extend .stat;
+  }
+
+  .stat-label {
+    font-size: $font-size-xs;
+    opacity: 0.8;
+    font-weight: bold;
+    color: inherit;
+  }
+
+  .stat-value {
+    font-size: $font-size-xl;
+    font-weight: bold;
+    color: inherit;
+  }
+}
+
+.breathing-circle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  margin: $spacing-xl 0;
+}
+
+.breathing-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: $border-radius-full;
+  background: radial-gradient(circle, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+  border: $border-width-thick solid rgba(255,255,255,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 
+    0 0 30px rgba(255,255,255,0.3),
+    inset 0 0 30px rgba(255,255,255,0.2);
+
+  .circle-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .phase-emoji {
+    font-size: 2.5rem;
+  }
+
+  .phase-name {
+    font-size: $font-size-lg;
+    font-weight: bold;
+    color: inherit;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+}
+
+.breathing-display {
+  font-size: $font-size-4xl;
+  font-weight: bold;
+  margin: $spacing-md 0;
+  font-family: $font-mono;
+  color: inherit;
+}
+
+.breathing-instruction {
+  font-size: $font-size-lg;
+  margin: $spacing-md 0 $spacing-xl 0;
+  color: inherit;
+  opacity: 0.9;
+  font-style: italic;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.breathing-controls {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: center;
+  margin: $spacing-xl 0;
+  flex-wrap: wrap;
+
+  .btn {
+    @include button-base;
+    border: $border-width solid;
+    border-radius: 25px;
+    min-width: 100px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    &.btn-start {
+      border-color: $color-breathing-inhale-border;
+      color: $color-breathing-inhale-text;
+
+      &:hover:not(:disabled) {
+        background: $color-breathing-inhale-border;
+        color: white;
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+      }
+    }
+
+    &.btn-pause {
+      border-color: $color-breathing-hold1-border;
+      color: $color-breathing-hold1-text;
+
+      &:hover {
+        background: $color-breathing-hold1-border;
+        color: white;
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
+      }
+    }
+
+    &.btn-skip {
+      border-color: #2196f3;
+      color: #1565c0;
+
+      &:hover:not(:disabled) {
+        background: #2196f3;
+        color: white;
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+      }
+    }
+
+    &.btn-reset {
+      border-color: #757575;
+      color: #424242;
+
+      &:hover {
+        background: #757575;
+        color: white;
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 5px 15px rgba(117, 117, 117, 0.3);
+      }
+    }
+  }
+}
+
+.phase-indicator {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+
+  .phase-dot {
+    width: 50px;
+    height: 50px;
+    border-radius: $border-radius-full;
+    background: rgba(255,255,255,0.3);
+    border: $border-width solid rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-xl;
+    transition: $transition-normal;
+    opacity: 0.5;
+
+    &.active {
+      opacity: 1;
+      transform: scale(1.2);
+      background: rgba(255,255,255,0.6);
+      border-color: rgba(255,255,255,0.8);
+      box-shadow: 0 0 20px rgba(255,255,255,0.4);
+    }
+
+    &.completed {
+      opacity: 0.8;
+      background: rgba(76, 175, 80, 0.3);
+      border-color: $color-breathing-inhale-border;
+    }
+  }
+}
+
+@include responsive($breakpoint-sm) {
+  .breathing-timer {
+    min-width: 280px;
+    padding: $spacing-lg;
+    
+    .breathing-circle {
+      width: 120px;
+      height: 120px;
+    }
+    
+    .phase-emoji {
+      font-size: $font-size-3xl;
+    }
+    
+    .breathing-display {
+      font-size: $font-size-2xl;
+    }
+    
+    .breathing-controls {
+      flex-direction: column;
+      align-items: center;
+      
+      .btn {
+        width: 100%;
+        max-width: 200px;
+      }
+    }
+    
+    .breathing-stats {
+      flex-direction: column;
+      gap: $spacing-md;
+    }
+    
+    .phase-indicator {
+      gap: $spacing-sm;
+      
+      .phase-dot {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+    }
+  }
+}

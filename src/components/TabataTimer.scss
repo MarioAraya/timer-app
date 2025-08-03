@@ -1,5 +1,5 @@
-@import '../styles/variables';
-@import '../styles/mixins';
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
 
 .tabata-timer {
   @include timer-container;
@@ -12,6 +12,7 @@
     background: linear-gradient(135deg, #000000, $color-tabata-bg);
     border-color: $color-tabata-primary;
     box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+    animation: tabataWorkPulse 1s ease-in-out infinite;
     
     @keyframes tabataWorkPulse {
       0%, 100% { 
@@ -23,44 +24,40 @@
         box-shadow: 0 0 50px rgba(0, 255, 136, 0.6), inset 0 0 30px rgba(0, 255, 136, 0.2); 
       }
     }
-    animation: tabataWorkPulse 1s ease-in-out infinite;
   }
 
   &.rest-phase {
-    background: linear-gradient(135deg, #0a0a0a, #1f1f1f);
-    border-color: #666;
-    color: $color-tabata-secondary;
+    background: linear-gradient(135deg, #ffb3d9, #ff99cc);
+    border-color: #ff6bb3;
+    color: #8b2252;
+    animation: tabataRestPulse 2s ease-in-out infinite;
     
     @keyframes tabataRestPulse {
       0%, 100% { 
         transform: scale(1); 
-        box-shadow: 0 0 10px rgba(102, 102, 102, 0.2); 
+        box-shadow: 0 0 10px rgba(255, 107, 179, 0.3); 
       }
       50% { 
         transform: scale(1.01); 
-        box-shadow: 0 0 15px rgba(102, 102, 102, 0.3); 
+        box-shadow: 0 0 15px rgba(255, 107, 179, 0.5); 
       }
     }
-    animation: tabataRestPulse 2s ease-in-out infinite;
   }
 
   &.finished {
-    background: linear-gradient(135deg, #000000, #003322);
-    border-color: $color-tabata-primary;
-    color: $color-tabata-primary;
-    box-shadow: 0 0 50px rgba(0, 255, 136, 0.5);
+    background: linear-gradient(135deg, #b8860b, #daa520);
+    border-color: #ffd700;
+    color: #fff;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
     
-    @keyframes tabataComplete {
-      0% { 
-        transform: scale(1) rotate(-0.5deg); 
-        box-shadow: 0 0 50px rgba(0, 255, 136, 0.5); 
-      }
-      100% { 
-        transform: scale(1.08) rotate(0.5deg); 
-        box-shadow: 0 0 80px rgba(0, 255, 136, 0.8); 
-      }
+    // Stop all movement animations when accomplished
+    animation: none;
+    transform: scale(1);
+    
+    .tabata-message {
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
     }
-    animation: tabataComplete 0.8s ease-in-out infinite alternate;
   }
 
   &.maximized {
@@ -141,10 +138,10 @@
     }
 
     &.rest {
-      background: rgba(102, 102, 102, 0.1);
-      border: $border-width solid #666;
-      color: $color-tabata-secondary;
-      box-shadow: 0 0 10px rgba(102, 102, 102, 0.2);
+      background: rgba(255, 107, 179, 0.2);
+      border: $border-width solid #ff6bb3;
+      color: #8b2252;
+      box-shadow: 0 0 10px rgba(255, 107, 179, 0.3);
     }
   }
 }

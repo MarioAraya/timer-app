@@ -1,5 +1,5 @@
-// Import variables
-@import 'variables';
+// Use variables
+@use 'variables' as *;
 
 // Button mixin
 @mixin button-base {
@@ -178,6 +178,8 @@
 
 // Animation keyframes
 @mixin pulse-animation($color) {
+  animation: pulse 2s ease-in-out infinite;
+  
   @keyframes pulse {
     0%, 100% { 
       transform: scale(1); 
@@ -188,7 +190,6 @@
       box-shadow: 0 0 0 20px rgba($color, 0); 
     }
   }
-  animation: pulse 2s ease-in-out infinite;
 }
 
 // Responsive mixin

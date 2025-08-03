@@ -1,5 +1,5 @@
-@import '../styles/variables';
-@import '../styles/mixins';
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
 
 .hiit-timer {
   @include timer-container;
@@ -16,6 +16,7 @@
     background: linear-gradient(135deg, $color-hiit-rest, $color-hiit-rest-dark);
     border-color: #2d3436;
     color: white;
+    animation: restPulse 2s ease-in-out infinite;
     
     @keyframes restPulse {
       0%, 100% { 
@@ -27,19 +28,22 @@
         box-shadow: 0 0 0 15px rgba(45, 52, 54, 0); 
       }
     }
-    animation: restPulse 2s ease-in-out infinite;
   }
 
   &.finished {
-    background: linear-gradient(135deg, $color-hiit-finished, #00a085);
-    border-color: #00a085;
-    color: white;
+    background: linear-gradient(135deg, #b8860b, #daa520);
+    border-color: #ffd700;
+    color: #fff;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
     
-    @keyframes celebration {
-      0% { transform: scale(1) rotate(-1deg); }
-      100% { transform: scale(1.05) rotate(1deg); }
+    // Stop all movement animations when accomplished
+    animation: none;
+    transform: scale(1);
+    
+    .hiit-message {
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
     }
-    animation: celebration 0.6s ease-in-out infinite alternate;
   }
 
   &.maximized {
@@ -89,6 +93,7 @@
     @include phase-indicator;
     background: rgba(255, 255, 255, 0.2);
     border: $border-width solid rgba(255, 255, 255, 0.5);
+
   }
 }
 

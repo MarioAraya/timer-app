@@ -1,5 +1,5 @@
-@import '../styles/variables';
-@import '../styles/mixins';
+npm@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
 
 .timer {
   @include timer-container;

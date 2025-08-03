@@ -2,11 +2,13 @@ import { useState, useEffect } from 'preact/hooks'
 import './HiitTimer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTimeSeconds, calculateProgress, isClickOnButton } from '../utils/timerHelpers'
+import { playWorkSound, playCountdownSound } from '../utils/audioUtils'
 
-export default function HiitTimer({ name = 'HIIT Workout' }) {
+function HiitTimer({ name = 'HIIT Workout' }) {
   const [currentRound, setCurrentRound] = useState(1)
-  const [timeLeft, setTimeLeft] = useState(40) // Start with work phase
+  const [timeLeft, setTimeLeft] = useState(7) // Start with preparation phase
   const [isWorkPhase, setIsWorkPhase] = useState(true)
+  const [isPreparationPhase, setIsPreparationPhase] = useState(true)
   const [isRunning, setIsRunning] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
   const [isMaximized, setIsMaximized] = useState(false)
@@ -14,6 +16,7 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
   const totalRounds = 12
   const workTime = 40 // seconds
   const restTime = 20 // seconds
+  const preparationTime = 7 // seconds
 
   useEffect(() => {
     let interval = null
@@ -23,25 +26,38 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
         setTimeLeft(time => {
           if (time <= 1) {
             // Phase transition logic
-            if (isWorkPhase) {
-              // Work phase ending, go to rest
-              setIsWorkPhase(false)
-              return restTime
-            } else {
-              // Rest phase ending
+            if (isPreparationPhase) {
+              // Preparation phase ending - start first work phase
+              setIsPreparationPhase(false)
+              setIsWorkPhase(true)
+              playWorkSound()
+              return workTime
+            } else if (isWorkPhase) {
+              // Work phase ending
               if (currentRound >= totalRounds) {
-                // Workout finished
+                // Final work phase - workout finished
                 setIsRunning(false)
                 setIsFinished(true)
                 return 0
               } else {
-                // Next round
-                setCurrentRound(round => round + 1)
-                setIsWorkPhase(true)
-                return workTime
+                // Go to rest
+                setIsWorkPhase(false)
+                return restTime
               }
+            } else {
+              // Rest phase ending - next round
+              setCurrentRound(round => round + 1)
+              setIsWorkPhase(true)
+              playWorkSound()
+              return workTime
             }
           }
+          
+          // Play countdown sounds during rest phase
+          if (!isPreparationPhase && !isWorkPhase && time <= 4 && time > 1) {
+            playCountdownSound(time - 1)
+          }
+          
           return time - 1
         })
       }, 1000)
@@ -50,7 +66,7 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [isRunning, isWorkPhase, currentRound, isFinished])
+  }, [isRunning, isWorkPhase, isPreparationPhase, currentRound, isFinished])
 
 
   const handleStart = () => {
@@ -66,33 +82,44 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
     setIsFinished(false)
     setCurrentRound(1)
     setIsWorkPhase(true)
-    setTimeLeft(workTime)
+    setIsPreparationPhase(true)
+    setTimeLeft(preparationTime)
   }
 
   const handleSkip = () => {
-    if (isWorkPhase) {
-      setIsWorkPhase(false)
-      setTimeLeft(restTime)
-    } else {
+    if (isPreparationPhase) {
+      // Skip preparation - start first work phase
+      setIsPreparationPhase(false)
+      setIsWorkPhase(true)
+      setTimeLeft(workTime)
+    } else if (isWorkPhase) {
       if (currentRound >= totalRounds) {
+        // Final work phase - complete workout
         setIsFinished(true)
         setIsRunning(false)
         setTimeLeft(0)
       } else {
-        setCurrentRound(round => round + 1)
-        setIsWorkPhase(true)
-        setTimeLeft(workTime)
+        // Go to rest
+        setIsWorkPhase(false)
+        setTimeLeft(restTime)
       }
+    } else {
+      // Skip rest - next round
+      setCurrentRound(round => round + 1)
+      setIsWorkPhase(true)
+      setTimeLeft(workTime)
     }
   }
 
   const getPhaseMessage = () => {
     if (isFinished) return "🎉 Workout Complete!"
+    if (isPreparationPhase) return "🏃‍♂️ GET READY!"
     return isWorkPhase ? "💪 WORK HARD!" : "😮‍💨 REST"
   }
 
   const getProgressPercentage = () => {
-    const totalPhases = totalRounds * 2 // work + rest phases
+    if (isPreparationPhase) return 0
+    const totalPhases = totalRounds * 2 - 1 // work + rest phases, minus final rest
     const completedPhases = (currentRound - 1) * 2 + (isWorkPhase ? 0 : 1)
     return calculateProgress(completedPhases, totalPhases)
   }
@@ -101,9 +128,10 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
     setIsMaximized(!isMaximized)
   })
 
+
   return (
     <div 
-      className={`hiit-timer ${isFinished ? 'finished' : ''} ${isWorkPhase ? 'work-phase' : 'rest-phase'} ${isMaximized ? 'maximized' : ''}`}
+      className={`hiit-timer ${isFinished ? 'finished' : ''} ${isWorkPhase || isPreparationPhase ? 'work-phase' : 'rest-phase'} ${isMaximized ? 'maximized' : ''}`}
       onClick={(e) => {
         // Solo activar si el clic no es en botones
         if (!isClickOnButton(e)) {
@@ -126,8 +154,8 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
       </div>
 
       <div className="hiit-phase">
-        <div className={`phase-indicator ${isWorkPhase ? 'work' : 'rest'}`}>
-          {isWorkPhase ? 'WORK' : 'REST'}
+        <div className={`phase-indicator ${isPreparationPhase ? 'work' : isWorkPhase ? 'work' : 'rest'}`}>
+          {isPreparationPhase ? 'PREP' : isWorkPhase ? 'WORK' : 'REST'}
         </div>
       </div>
       
@@ -142,7 +170,7 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
       <div className="hiit-controls">
         {!isRunning ? (
           <button onClick={handleStart} className="btn btn-start" disabled={isFinished}>
-            {isFinished ? 'Finished' : (currentRound === 1 && isWorkPhase && timeLeft === workTime ? 'Start' : 'Resume')}
+            {isFinished ? 'Finished' : (isPreparationPhase && timeLeft === preparationTime ? 'Start' : 'Resume')}
           </button>
         ) : (
           <button onClick={handlePause} className="btn btn-pause">
@@ -176,3 +204,5 @@ export default function HiitTimer({ name = 'HIIT Workout' }) {
     </div>
   )
 }
+
+export default HiitTimer

@@ -3,7 +3,7 @@ import './Breathing44Timer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTime, isClickOnButton } from '../utils/timerHelpers'
 
-export default function Breathing44Timer({ name = '4-4-4-4 Breathing' }) {
+function Breathing44Timer({ name = '4-4-4-4 Breathing' }) {
   const [currentPhase, setCurrentPhase] = useState(0) // 0: inhale, 1: hold, 2: exhale, 3: hold
   const [timeLeft, setTimeLeft] = useState(4)
   const [isRunning, setIsRunning] = useState(false)
@@ -102,6 +102,7 @@ export default function Breathing44Timer({ name = '4-4-4-4 Breathing' }) {
     setIsMaximized(!isMaximized)
   })
 
+
   return (
     <div 
       className={`breathing-timer phase-${currentPhase} ${isMaximized ? 'maximized' : ''}`}
@@ -181,3 +182,5 @@ export default function Breathing44Timer({ name = '4-4-4-4 Breathing' }) {
     </div>
   )
 }
+
+export default Breathing44Timer

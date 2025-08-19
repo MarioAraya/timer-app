@@ -3,6 +3,7 @@ import './TabataTimer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTimeSeconds, calculateProgress, isClickOnButton } from '../utils/timerHelpers'
 import { playWorkSound, playCountdownSound } from '../utils/audioUtils'
+import Confetti from './Confetti'
 
 function TabataTimer({ name = 'Tabata Protocol' }) {
   const [currentRound, setCurrentRound] = useState(1)
@@ -12,6 +13,7 @@ function TabataTimer({ name = 'Tabata Protocol' }) {
   const [isRunning, setIsRunning] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
   const [isMaximized, setIsMaximized] = useState(false)
+  const [showConfetti, setShowConfetti] = useState(false)
   
   const totalRounds = 8
   const workTime = 20 // seconds
@@ -38,6 +40,7 @@ function TabataTimer({ name = 'Tabata Protocol' }) {
                 // Final work phase - workout finished
                 setIsRunning(false)
                 setIsFinished(true)
+                setShowConfetti(true)
                 return 0
               } else {
                 // Go to rest
@@ -84,6 +87,7 @@ function TabataTimer({ name = 'Tabata Protocol' }) {
     setIsWorkPhase(true)
     setIsPreparationPhase(true)
     setTimeLeft(preparationTime)
+    setShowConfetti(false)
   }
 
   const handleSkip = () => {
@@ -98,6 +102,7 @@ function TabataTimer({ name = 'Tabata Protocol' }) {
         setIsFinished(true)
         setIsRunning(false)
         setTimeLeft(0)
+        setShowConfetti(true)
       } else {
         // Go to rest
         setIsWorkPhase(false)
@@ -201,6 +206,11 @@ function TabataTimer({ name = 'Tabata Protocol' }) {
           <span className="stat-value">{(workTime + restTime) * totalRounds / 60}min</span>
         </div>
       </div>
+
+      <Confetti 
+        isActive={showConfetti} 
+        onComplete={() => setShowConfetti(false)} 
+      />
     </div>
   )
 }

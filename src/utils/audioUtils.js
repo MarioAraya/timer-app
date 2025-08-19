@@ -1,5 +1,6 @@
 // Audio utilities for timer sounds
 let audioContext;
+let hiitAudio = null;
 
 // Initialize audio context if available
 const initAudioContext = () => {
@@ -7,6 +8,149 @@ const initAudioContext = () => {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
   }
   return audioContext;
+};
+
+// YouTube video configuration for HIIT workout
+export const HIIT_YOUTUBE_CONFIG = {
+  videoId: 'XZl8PfoP9ag',
+  startTime: 1,
+  url: 'https://www.youtube.com/watch?v=XZl8PfoP9ag&t=1s'
+};
+
+// YouTube player instance (will be initialized when needed)
+let youtubePlayer = null;
+let playerReady = false;
+let playerLoading = false;
+
+// Create hidden YouTube iframe for audio-only playback
+const createYouTubePlayer = () => {
+  return new Promise((resolve) => {
+    // Create container for the player (hidden)
+    let playerContainer = document.getElementById('youtube-player-container');
+    if (!playerContainer) {
+      playerContainer = document.createElement('div');
+      playerContainer.id = 'youtube-player-container';
+      playerContainer.style.cssText = `
+        position: fixed;
+        top: -1000px;
+        left: -1000px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+        z-index: -1;
+      `;
+      document.body.appendChild(playerContainer);
+    }
+
+    // Load YouTube Player API if not already loaded
+    if (!window.YT) {
+      const script = document.createElement('script');
+      script.src = 'https://www.youtube.com/iframe_api';
+      script.onload = () => {
+        window.onYouTubeIframeAPIReady = () => {
+          initializePlayer(resolve);
+        };
+      };
+      document.head.appendChild(script);
+    } else if (window.YT.Player) {
+      initializePlayer(resolve);
+    }
+  });
+};
+
+const initializePlayer = (resolve) => {
+  youtubePlayer = new window.YT.Player('youtube-player-container', {
+    height: '1',
+    width: '1',
+    videoId: HIIT_YOUTUBE_CONFIG.videoId,
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      iv_load_policy: 3,
+      modestbranding: 1,
+      rel: 0,
+      showinfo: 0,
+      start: HIIT_YOUTUBE_CONFIG.startTime
+    },
+    events: {
+      onReady: () => {
+        playerReady = true;
+        resolve();
+      },
+      onError: (error) => {
+        console.error('YouTube player error:', error);
+        resolve(); // Continue even if there's an error
+      }
+    }
+  });
+};
+
+// Check if YouTube player is ready
+export const isPlayerReady = () => playerReady;
+export const isPlayerLoading = () => playerLoading;
+
+// Initialize YouTube player (call this early)
+export const initializeYouTubePlayer = async () => {
+  if (!youtubePlayer && !playerLoading) {
+    playerLoading = true;
+    await createYouTubePlayer();
+    playerLoading = false;
+  }
+  return playerReady;
+};
+
+export const playHiitSong = async () => {
+  if (!youtubePlayer) {
+    playerLoading = true;
+    await createYouTubePlayer();
+    playerLoading = false;
+  }
+  
+  if (playerReady && youtubePlayer) {
+    try {
+      youtubePlayer.seekTo(HIIT_YOUTUBE_CONFIG.startTime, true);
+      youtubePlayer.playVideo();
+      console.log('🎵 Playing HIIT song');
+    } catch (error) {
+      console.error('Error playing YouTube video:', error);
+    }
+  }
+};
+
+export const stopHiitSong = () => {
+  if (playerReady && youtubePlayer) {
+    try {
+      youtubePlayer.stopVideo();
+      console.log('⏹️ Stopping HIIT song');
+    } catch (error) {
+      console.error('Error stopping YouTube video:', error);
+    }
+  }
+};
+
+export const pauseHiitSong = () => {
+  if (playerReady && youtubePlayer) {
+    try {
+      youtubePlayer.pauseVideo();
+      console.log('⏸️ Pausing HIIT song');
+    } catch (error) {
+      console.error('Error pausing YouTube video:', error);
+    }
+  }
+};
+
+export const resumeHiitSong = () => {
+  if (playerReady && youtubePlayer) {
+    try {
+      youtubePlayer.playVideo();
+      console.log('▶️ Resuming HIIT song');
+    } catch (error) {
+      console.error('Error resuming YouTube video:', error);
+    }
+  }
 };
 
 // Play a beep sound

@@ -63,6 +63,12 @@
       font-size: $font-size-2xl;
       margin: $spacing-xl 0;
     }
+
+    .hiit-subtitle {
+      font-size: $font-size-lg;
+      max-width: 70%;
+      padding: $spacing-md $spacing-lg;
+    }
   }
 }
 
@@ -108,8 +114,25 @@
 .hiit-message {
   font-size: $font-size-xl;
   font-weight: bold;
-  margin: $spacing-md 0 $spacing-xl 0;
+  margin: $spacing-md 0 $spacing-lg 0;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.hiit-subtitle {
+  font-size: $font-size-base;
+  font-weight: 500;
+  margin: 0 0 $spacing-xl 0;
+  padding: $spacing-sm $spacing-lg;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: $border-radius-md;
+  text-align: center;
+  font-style: italic;
+  opacity: 0.9;
+  line-height: 1.4;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .hiit-controls {
@@ -140,8 +163,82 @@
   }
 }
 
+.hiit-music-toggle {
+  margin: $spacing-lg 0;
+  
+  .toggle-container {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    cursor: pointer;
+    user-select: none;
+    
+    input[type="checkbox"] {
+      display: none;
+    }
+    
+    .toggle-slider {
+      position: relative;
+      width: 50px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+    }
+    
+    input[type="checkbox"]:checked + .toggle-slider {
+      background: rgba(255, 255, 255, 0.4);
+      
+      &::before {
+        transform: translateX(24px);
+      }
+    }
+    
+    input[type="checkbox"]:disabled + .toggle-slider {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .toggle-label {
+      font-size: $font-size-sm;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+  }
+}
+
 .hiit-stats {
   @include stats-container;
+
+  .song-link {
+    color: inherit;
+    text-decoration: none;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+      text-decoration: none;
+    }
+  }
 }
 
 @include responsive($breakpoint-sm) {
@@ -166,6 +263,12 @@
     .hiit-stats {
       flex-direction: column;
       gap: $spacing-md;
+    }
+
+    .hiit-subtitle {
+      font-size: $font-size-sm;
+      max-width: 90%;
+      padding: $spacing-xs $spacing-sm;
     }
   }
 }

@@ -165,7 +165,7 @@ function TabataTimer({ name = 'Tabata Protocol' }) {
       </div>
       
       <div className="tabata-display">
-        {formatTimeSeconds(timeLeft)}
+        {isRunning || isFinished ? formatTimeSeconds(timeLeft) : '--:--'}
       </div>
       
       <div className="tabata-message">

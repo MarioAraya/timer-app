@@ -3,42 +3,24 @@ import './HiitTimer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTimeSeconds, calculateProgress, isClickOnButton } from '../utils/timerHelpers'
 import { playWorkSound, playCountdownSound, playHiitSong, stopHiitSong, pauseHiitSong, resumeHiitSong, HIIT_YOUTUBE_CONFIG, initializeYouTubePlayer, isPlayerReady, isPlayerLoading } from '../utils/audioUtils'
+import { HIIT_CONFIG, calculateTotalTime } from '../config/hiitConfig'
 import Confetti from './Confetti'
-
-// Song-synchronized timing configuration based on exact YouTube video timestamps
-const SONG_HIIT_CONFIG = {
-  preparation: { duration: 9, subtitle: "" },
-  rounds: [
-    { work: 42, rest: 18, workSubtitle: "Go! Go! Go! Round one!", restSubtitle: "Break, break, break, break!" },
-    { work: 41, rest: 21, workSubtitle: "Go! Go! Go! Round two!", restSubtitle: "Break, break, break!" },
-    { work: 42, rest: 19, workSubtitle: "Go! Go! Go! Round three!", restSubtitle: "Break, break, break, break!" },
-    { work: 40, rest: 21, workSubtitle: "Go! Go! Go! Round four!", restSubtitle: "Break, break, break!" },
-    { work: 41, rest: 20, workSubtitle: "Go! Go! Go! Round five!", restSubtitle: "Break, break, break!" },
-    { work: 40, rest: 22, workSubtitle: "Go! Go! Go! Round six!", restSubtitle: "Break, break, break, break!" },
-    { work: 28, rest: 33, workSubtitle: "Go! Go! Go! Round seven!", restSubtitle: "Break! Break! Break!" },
-    { work: 28, rest: 33, workSubtitle: "Go! Go! Go! Round eight!", restSubtitle: "Break! Break!" },
-    { work: 27, rest: 34, workSubtitle: "Go! Go! Go! Round nine!", restSubtitle: "Break! Break! Break! Break!" },
-    { work: 41, rest: 18, workSubtitle: "Go! Go! Go! Round ten!", restSubtitle: "Break! Break!" },
-    { work: 43, rest: 20, workSubtitle: "Round eleven!", restSubtitle: "Break! Break! Break!" },
-    { work: 40, rest: 32, workSubtitle: "Final round, champ!", restSubtitle: "You just killed this worked out!" }
-  ]
-}
 
 function HiitTimer({ name = 'HIIT Workout' }) {
   const [currentRound, setCurrentRound] = useState(1)
-  const [timeLeft, setTimeLeft] = useState(SONG_HIIT_CONFIG.preparation.duration)
+  const [timeLeft, setTimeLeft] = useState(HIIT_CONFIG.preparation.duration)
   const [isWorkPhase, setIsWorkPhase] = useState(true)
   const [isPreparationPhase, setIsPreparationPhase] = useState(true)
   const [isRunning, setIsRunning] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
   const [isMaximized, setIsMaximized] = useState(false)
-  const [currentSubtitle, setCurrentSubtitle] = useState(SONG_HIIT_CONFIG.preparation.subtitle)
+  const [currentSubtitle, setCurrentSubtitle] = useState(HIIT_CONFIG.preparation.subtitle)
   const [musicMode, setMusicMode] = useState(true) // true = YouTube music, false = beeps only
   const [playerStatus, setPlayerStatus] = useState('idle') // 'idle', 'loading', 'ready'
   const [showConfetti, setShowConfetti] = useState(false)
   
-  const totalRounds = SONG_HIIT_CONFIG.rounds.length
-  const preparationTime = SONG_HIIT_CONFIG.preparation.duration
+  const totalRounds = HIIT_CONFIG.rounds.length
+  const preparationTime = HIIT_CONFIG.preparation.duration
 
   // Initialize YouTube player when music mode is enabled
   useEffect(() => {
@@ -62,12 +44,12 @@ function HiitTimer({ name = 'HIIT Workout' }) {
               // Preparation phase ending - start first work phase
               setIsPreparationPhase(false)
               setIsWorkPhase(true)
-              setCurrentSubtitle(SONG_HIIT_CONFIG.rounds[0].workSubtitle)
+              setCurrentSubtitle(HIIT_CONFIG.rounds[0].workSubtitle)
               if (!musicMode) playWorkSound()
-              return SONG_HIIT_CONFIG.rounds[0].work
+              return HIIT_CONFIG.rounds[0].work
             } else if (isWorkPhase) {
               // Work phase ending
-              const currentRoundConfig = SONG_HIIT_CONFIG.rounds[currentRound - 1]
+              const currentRoundConfig = HIIT_CONFIG.rounds[currentRound - 1]
               if (currentRound >= totalRounds) {
                 // Final work phase - go to final celebration rest
                 setIsWorkPhase(false)
@@ -95,9 +77,9 @@ function HiitTimer({ name = 'HIIT Workout' }) {
                 const nextRound = currentRound + 1
                 setCurrentRound(nextRound)
                 setIsWorkPhase(true)
-                setCurrentSubtitle(SONG_HIIT_CONFIG.rounds[nextRound - 1].workSubtitle)
+                setCurrentSubtitle(HIIT_CONFIG.rounds[nextRound - 1].workSubtitle)
                 if (!musicMode) playWorkSound()
-                return SONG_HIIT_CONFIG.rounds[nextRound - 1].work
+                return HIIT_CONFIG.rounds[nextRound - 1].work
               }
             }
           }
@@ -152,7 +134,7 @@ function HiitTimer({ name = 'HIIT Workout' }) {
     setIsWorkPhase(true)
     setIsPreparationPhase(true)
     setTimeLeft(preparationTime)
-    setCurrentSubtitle(SONG_HIIT_CONFIG.preparation.subtitle)
+    setCurrentSubtitle(HIIT_CONFIG.preparation.subtitle)
     setShowConfetti(false)
     if (musicMode) {
       stopHiitSong()
@@ -164,10 +146,10 @@ function HiitTimer({ name = 'HIIT Workout' }) {
       // Skip preparation - start first work phase
       setIsPreparationPhase(false)
       setIsWorkPhase(true)
-      setCurrentSubtitle(SONG_HIIT_CONFIG.rounds[0].workSubtitle)
-      setTimeLeft(SONG_HIIT_CONFIG.rounds[0].work)
+      setCurrentSubtitle(HIIT_CONFIG.rounds[0].workSubtitle)
+      setTimeLeft(HIIT_CONFIG.rounds[0].work)
     } else if (isWorkPhase) {
-      const currentRoundConfig = SONG_HIIT_CONFIG.rounds[currentRound - 1]
+      const currentRoundConfig = HIIT_CONFIG.rounds[currentRound - 1]
       if (currentRound >= totalRounds) {
         // Final work phase - go to final celebration rest
         setIsWorkPhase(false)
@@ -195,8 +177,8 @@ function HiitTimer({ name = 'HIIT Workout' }) {
         const nextRound = currentRound + 1
         setCurrentRound(nextRound)
         setIsWorkPhase(true)
-        setCurrentSubtitle(SONG_HIIT_CONFIG.rounds[nextRound - 1].workSubtitle)
-        setTimeLeft(SONG_HIIT_CONFIG.rounds[nextRound - 1].work)
+        setCurrentSubtitle(HIIT_CONFIG.rounds[nextRound - 1].workSubtitle)
+        setTimeLeft(HIIT_CONFIG.rounds[nextRound - 1].work)
       }
     }
   }
@@ -209,7 +191,7 @@ function HiitTimer({ name = 'HIIT Workout' }) {
 
   const getProgressPercentage = () => {
     if (isPreparationPhase) return 0
-    const totalPhases = totalRounds * 2 - 1 // work + rest phases, minus final rest
+    const totalPhases = totalRounds * 2 // work + rest phases for all 12 rounds (including final rest)
     const completedPhases = (currentRound - 1) * 2 + (isWorkPhase ? 0 : 1)
     return calculateProgress(completedPhases, totalPhases)
   }
@@ -250,7 +232,7 @@ function HiitTimer({ name = 'HIIT Workout' }) {
       </div>
       
       <div className="hiit-display">
-        {formatTimeSeconds(timeLeft)}
+        {isRunning || isFinished ? formatTimeSeconds(timeLeft) : '--:--'}
       </div>
       
       <div className="hiit-message">
@@ -320,7 +302,7 @@ function HiitTimer({ name = 'HIIT Workout' }) {
         </div>
         <div className="stat">
           <span className="stat-label">Total:</span>
-          <span className="stat-value">12:34</span>
+          <span className="stat-value">{calculateTotalTime()}</span>
         </div>
       </div>
 

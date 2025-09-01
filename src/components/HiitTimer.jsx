@@ -2,7 +2,7 @@ import { useState, useEffect } from 'preact/hooks'
 import './HiitTimer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTimeSeconds, calculateProgress, isClickOnButton } from '../utils/timerHelpers'
-import { playWorkSound, playCountdownSound, playHiitSong, stopHiitSong, pauseHiitSong, resumeHiitSong, HIIT_YOUTUBE_CONFIG, initializeYouTubePlayer, isPlayerReady, isPlayerLoading } from '../utils/audioUtils'
+import { playWorkSound, playCountdownSound, playHiitSong, stopHiitSong, pauseHiitSong, resumeHiitSong, HIIT_AUDIO_CONFIG, initializeAudioPlayer, isPlayerReady, isPlayerLoading } from '../utils/audioUtils'
 import { HIIT_CONFIG, calculateTotalTime } from '../config/hiitConfig'
 import Confetti from './Confetti'
 
@@ -22,11 +22,11 @@ function HiitTimer({ name = 'HIIT Workout' }) {
   const totalRounds = HIIT_CONFIG.rounds.length
   const preparationTime = HIIT_CONFIG.preparation.duration
 
-  // Initialize YouTube player when music mode is enabled
+  // Initialize audio player when music mode is enabled
   useEffect(() => {
     if (musicMode && playerStatus === 'idle') {
       setPlayerStatus('loading')
-      initializeYouTubePlayer().then((ready) => {
+      initializeAudioPlayer().then((ready) => {
         setPlayerStatus(ready ? 'ready' : 'error')
       })
     }
@@ -103,7 +103,7 @@ function HiitTimer({ name = 'HIIT Workout' }) {
 
 
   const handleStart = () => {
-    // Check if we should wait for YouTube player
+    // Check if we should wait for audio player
     if (musicMode && playerStatus === 'loading') {
       return // Don't start until player is ready
     }
@@ -281,7 +281,7 @@ function HiitTimer({ name = 'HIIT Workout' }) {
           />
           <span className="toggle-slider"></span>
           <span className="toggle-label">
-            {musicMode ? '🎵 YouTube Music' : '🔊 Beeps Only'}
+            {musicMode ? '🎵 Local Music' : '🔊 Beeps Only'}
             {musicMode && playerStatus === 'loading' && ' (Loading...)'}
           </span>
         </label>
@@ -291,8 +291,8 @@ function HiitTimer({ name = 'HIIT Workout' }) {
         <div className="stat">
           <span className="stat-label">Song:</span>
           <span className="stat-value">
-            <a href={HIIT_YOUTUBE_CONFIG.url} target="_blank" rel="noopener noreferrer" className="song-link">
-              🎵 Play
+            <a href={HIIT_AUDIO_CONFIG.url} target="_blank" rel="noopener noreferrer" className="song-link">
+              🎵 Local MP3
             </a>
           </span>
         </div>

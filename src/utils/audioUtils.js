@@ -10,145 +10,105 @@ const initAudioContext = () => {
   return audioContext;
 };
 
-// YouTube video configuration for HIIT workout
-export const HIIT_YOUTUBE_CONFIG = {
-  videoId: 'XZl8PfoP9ag',
-  startTime: 1,
-  url: 'https://www.youtube.com/watch?v=XZl8PfoP9ag&t=1s'
+// Local MP3 configuration for HIIT workout
+export const HIIT_AUDIO_CONFIG = {
+  audioPath: '/hiit_next-level_40-20.mp3',
+  startTime: 1.37, // seconds - matches preparation time in config
+  url: '/hiit_next-level_40-20.mp3'
 };
 
-// YouTube player instance (will be initialized when needed)
-let youtubePlayer = null;
-let playerReady = false;
-let playerLoading = false;
+// Audio player state
+let audioPlayerReady = false;
+let audioPlayerLoading = false;
 
-// Create hidden YouTube iframe for audio-only playback
-const createYouTubePlayer = () => {
+// Create and initialize local audio player
+const createAudioPlayer = () => {
   return new Promise((resolve) => {
-    // Create container for the player (hidden)
-    let playerContainer = document.getElementById('youtube-player-container');
-    if (!playerContainer) {
-      playerContainer = document.createElement('div');
-      playerContainer.id = 'youtube-player-container';
-      playerContainer.style.cssText = `
-        position: fixed;
-        top: -1000px;
-        left: -1000px;
-        width: 1px;
-        height: 1px;
-        opacity: 0;
-        pointer-events: none;
-        z-index: -1;
-      `;
-      document.body.appendChild(playerContainer);
-    }
-
-    // Load YouTube Player API if not already loaded
-    if (!window.YT) {
-      const script = document.createElement('script');
-      script.src = 'https://www.youtube.com/iframe_api';
-      script.onload = () => {
-        window.onYouTubeIframeAPIReady = () => {
-          initializePlayer(resolve);
-        };
-      };
-      document.head.appendChild(script);
-    } else if (window.YT.Player) {
-      initializePlayer(resolve);
+    if (!hiitAudio) {
+      hiitAudio = new Audio(HIIT_AUDIO_CONFIG.audioPath);
+      hiitAudio.preload = 'auto';
+      
+      hiitAudio.addEventListener('canplaythrough', () => {
+        audioPlayerReady = true;
+        resolve(true);
+      });
+      
+      hiitAudio.addEventListener('error', (error) => {
+        console.error('Audio loading error:', error);
+        audioPlayerReady = false;
+        resolve(false);
+      });
+      
+      hiitAudio.load();
+    } else {
+      resolve(audioPlayerReady);
     }
   });
 };
 
-const initializePlayer = (resolve) => {
-  youtubePlayer = new window.YT.Player('youtube-player-container', {
-    height: '1',
-    width: '1',
-    videoId: HIIT_YOUTUBE_CONFIG.videoId,
-    playerVars: {
-      autoplay: 0,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      iv_load_policy: 3,
-      modestbranding: 1,
-      rel: 0,
-      showinfo: 0,
-      start: HIIT_YOUTUBE_CONFIG.startTime
-    },
-    events: {
-      onReady: () => {
-        playerReady = true;
-        resolve();
-      },
-      onError: (error) => {
-        console.error('YouTube player error:', error);
-        resolve(); // Continue even if there's an error
-      }
-    }
-  });
-};
+// Check if audio player is ready
+export const isPlayerReady = () => audioPlayerReady;
+export const isPlayerLoading = () => audioPlayerLoading;
 
-// Check if YouTube player is ready
-export const isPlayerReady = () => playerReady;
-export const isPlayerLoading = () => playerLoading;
-
-// Initialize YouTube player (call this early)
-export const initializeYouTubePlayer = async () => {
-  if (!youtubePlayer && !playerLoading) {
-    playerLoading = true;
-    await createYouTubePlayer();
-    playerLoading = false;
+// Initialize audio player (call this early)
+export const initializeAudioPlayer = async () => {
+  if (!hiitAudio && !audioPlayerLoading) {
+    audioPlayerLoading = true;
+    const ready = await createAudioPlayer();
+    audioPlayerLoading = false;
+    return ready;
   }
-  return playerReady;
+  return audioPlayerReady;
 };
 
 export const playHiitSong = async () => {
-  if (!youtubePlayer) {
-    playerLoading = true;
-    await createYouTubePlayer();
-    playerLoading = false;
+  if (!hiitAudio) {
+    audioPlayerLoading = true;
+    await createAudioPlayer();
+    audioPlayerLoading = false;
   }
   
-  if (playerReady && youtubePlayer) {
+  if (audioPlayerReady && hiitAudio) {
     try {
-      youtubePlayer.seekTo(HIIT_YOUTUBE_CONFIG.startTime, true);
-      youtubePlayer.playVideo();
+      hiitAudio.currentTime = HIIT_AUDIO_CONFIG.startTime;
+      hiitAudio.play();
       console.log('🎵 Playing HIIT song');
     } catch (error) {
-      console.error('Error playing YouTube video:', error);
+      console.error('Error playing audio:', error);
     }
   }
 };
 
 export const stopHiitSong = () => {
-  if (playerReady && youtubePlayer) {
+  if (audioPlayerReady && hiitAudio) {
     try {
-      youtubePlayer.stopVideo();
+      hiitAudio.pause();
+      hiitAudio.currentTime = HIIT_AUDIO_CONFIG.startTime;
       console.log('⏹️ Stopping HIIT song');
     } catch (error) {
-      console.error('Error stopping YouTube video:', error);
+      console.error('Error stopping audio:', error);
     }
   }
 };
 
 export const pauseHiitSong = () => {
-  if (playerReady && youtubePlayer) {
+  if (audioPlayerReady && hiitAudio) {
     try {
-      youtubePlayer.pauseVideo();
+      hiitAudio.pause();
       console.log('⏸️ Pausing HIIT song');
     } catch (error) {
-      console.error('Error pausing YouTube video:', error);
+      console.error('Error pausing audio:', error);
     }
   }
 };
 
 export const resumeHiitSong = () => {
-  if (playerReady && youtubePlayer) {
+  if (audioPlayerReady && hiitAudio) {
     try {
-      youtubePlayer.playVideo();
+      hiitAudio.play();
       console.log('▶️ Resuming HIIT song');
     } catch (error) {
-      console.error('Error resuming YouTube video:', error);
+      console.error('Error resuming audio:', error);
     }
   }
 };

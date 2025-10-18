@@ -11,8 +11,8 @@ export const HIIT_CONFIG = {
   
   // Preparation phase (time before first round starts)
   preparation: {
-    duration: 1.37, // seconds - Vuelta 1 starts at 00:01,37
-    subtitle: "" // optional message during preparation
+    duration: 10, // seconds - intro countdown before workout
+    subtitle: "Get ready to start!" // optional message during preparation
   },
   
   // Workout rounds configuration based on exact song timing

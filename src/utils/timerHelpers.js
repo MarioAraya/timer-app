@@ -1,13 +1,14 @@
 // Formatear tiempo en MM:SS
 export const formatTime = (seconds) => {
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
+  const intSeconds = Math.floor(seconds)
+  const minutes = Math.floor(intSeconds / 60)
+  const remainingSeconds = intSeconds % 60
   return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
 }
 
 // Formatear tiempo solo en segundos (para timers cortos)
 export const formatTimeSeconds = (seconds) => {
-  return seconds.toString().padStart(2, '0')
+  return Math.floor(seconds).toString().padStart(2, '0')
 }
 
 // Calcular porcentaje de progreso

@@ -1,0 +1,386 @@
+.timer-carousel {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__container {
+    position: relative;
+    height: 550px;
+    width: 100%;
+    perspective: 1000px;
+    cursor: grab;
+    padding-bottom: 200px; // Space for stacked cards
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  &__indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(148, 163, 184, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(148, 163, 184, 0.8);
+    }
+
+    &--active {
+      width: 24px;
+      background: #3b82f6;
+    }
+  }
+}
+
+.timer-card {
+  position: absolute;
+  width: 100%;
+  min-height: 300px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &--active {
+    z-index: 20;
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+    .timer-card__title {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .timer-card__icon {
+      font-size: 2rem;
+    }
+
+    &:hover {
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      transform: translateY(-4px) scale(1.02);
+    }
+  }
+
+  &--running {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 200, 100, 0.1));
+    border: 2px solid rgba(0, 255, 136, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2), 0 0 20px rgba(0, 255, 136, 0.3);
+    animation: nowPlayingPulse 2s ease-in-out infinite;
+
+    @keyframes nowPlayingPulse {
+      0%, 100% {
+        box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2), 0 0 20px rgba(0, 255, 136, 0.3);
+      }
+      50% {
+        box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3), 0 0 30px rgba(0, 255, 136, 0.5);
+      }
+    }
+  }
+
+  &__now-playing {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 255, 136, 0.95);
+    color: #000;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 255, 136, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__playing-icon {
+    font-size: 0.875rem;
+    animation: playingPulse 1.5s ease-in-out infinite;
+
+    @keyframes playingPulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+  }
+
+  &--stacked {
+    opacity: 0.85;
+    
+    &.timer-card--index-1 {
+      transform: translateY(60px) scale(0.96);
+      z-index: 19;
+      opacity: 0.9;
+    }
+
+    &.timer-card--index-2 {
+      transform: translateY(100px) scale(0.92);
+      z-index: 18;
+      opacity: 0.8;
+    }
+
+    &.timer-card--index-3 {
+      transform: translateY(130px) scale(0.88);
+      z-index: 17;
+      opacity: 0.7;
+    }
+
+    &.timer-card--index-4 {
+      transform: translateY(155px) scale(0.84);
+      z-index: 16;
+      opacity: 0.6;
+    }
+
+    .timer-card__title {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(5px);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      margin: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-size: 1.125rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .timer-card__icon {
+      font-size: 1.25rem;
+    }
+
+    // Hide detailed content for stacked cards
+    .timer-card__description,
+    .timer-card__footer {
+      display: none;
+    }
+
+    .timer-card__header {
+      opacity: 0.7;
+    }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  }
+
+  &__category {
+    background: rgba(255, 255, 255, 0.9);
+    color: #64748b;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__duration {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  &__clock {
+    font-size: 0.875rem;
+  }
+
+  &__content {
+    padding: 0 1.5rem 1rem;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #3b82f6;
+    }
+  }
+
+  &__icon {
+    transition: all 0.3s ease;
+  }
+
+  &__description {
+    color: #64748b;
+    line-height: 1.6;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem 1.5rem;
+  }
+
+  &__stats {
+    color: #64748b;
+    font-size: 0.875rem;
+  }
+
+  &__sessions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    &::before {
+      content: "📊";
+      margin-right: 0.25rem;
+    }
+  }
+
+  &__start-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &__play-icon {
+    font-size: 1rem;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .timer-carousel {
+    max-width: 350px;
+
+    &__container {
+      height: 500px;
+      padding-bottom: 150px;
+    }
+  }
+
+  .timer-card {
+    &--active {
+      .timer-card__title {
+        font-size: 1.25rem;
+      }
+
+      .timer-card__icon {
+        font-size: 1.75rem;
+      }
+    }
+
+    &--stacked {
+      .timer-card__title {
+        font-size: 1rem;
+        padding: 0.5rem 0.75rem;
+      }
+
+      .timer-card__icon {
+        font-size: 1.125rem;
+      }
+    }
+
+    &__header {
+      padding: 0.75rem;
+    }
+
+    &__content {
+      padding: 0 1rem 0.75rem;
+    }
+
+    &__footer {
+      padding: 0 1rem 1rem;
+    }
+
+    &__description {
+      font-size: 0.8125rem;
+    }
+
+    &__start-btn {
+      padding: 0.625rem 1.25rem;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .timer-carousel {
+    max-width: 300px;
+
+    &__container {
+      height: 450px;
+      padding-bottom: 120px;
+    }
+  }
+
+  .timer-card {
+    &__header {
+      padding: 0.625rem;
+    }
+
+    &__content {
+      padding: 0 0.875rem 0.625rem;
+    }
+
+    &__footer {
+      padding: 0 0.875rem 0.875rem;
+    }
+
+    &__start-btn {
+      padding: 0.5rem 1rem;
+    }
+  }
+}

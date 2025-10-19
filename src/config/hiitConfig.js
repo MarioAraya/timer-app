@@ -11,8 +11,8 @@ export const HIIT_CONFIG = {
   
   // Preparation phase (time before first round starts)
   preparation: {
-    duration: 1.37, // seconds - Vuelta 1 starts at 00:01,37
-    subtitle: "" // optional message during preparation
+    duration: 10, // seconds - intro countdown before workout
+    subtitle: "Get ready to start!" // optional message during preparation
   },
   
   // Workout rounds configuration based on exact song timing
@@ -37,18 +37,18 @@ export const HIIT_CONFIG = {
     },
     {
       work: 40.93, // Vuelta 8: 00:40,93
-      rest: 21.50, // Vuelta 9: 00:21,50
+      rest: 20.50, // Vuelta 9: 00:20,50
       workSubtitle: "Go! Go! Go! Round four!",
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 41.31, // Vuelta 10: 00:41,31
-      rest: 18.95, // Vuelta 11: 00:18,95
+      work: 40.31, // Vuelta 10: 00:40,31
+      rest: 20.95, // Vuelta 11: 00:20,95
       workSubtitle: "Go! Go! Go! Round five!",
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 41.03, // Vuelta 12: 00:41,03
+      work: 40.03, // Vuelta 12: 00:40,03
       rest: 20.19, // Vuelta 13: 00:20,19
       workSubtitle: "Go! Go! Go! Round six!",
       restSubtitle: "Break, break, break!"
@@ -78,7 +78,7 @@ export const HIIT_CONFIG = {
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 41.05, // Vuelta 22: 00:41,05
+      work: 40.05, // Vuelta 22: 00:40,05
       rest: 20.18, // Vuelta 23: 00:20,18
       workSubtitle: "Round eleven!",
       restSubtitle: "Break, break, break!"

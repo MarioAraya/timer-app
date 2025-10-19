@@ -4,30 +4,27 @@
 .hiit-timer {
   @include timer-container;
   min-width: 350px;
+  background: $color-tabata-bg;
+  border-color: $color-tabata-border;
+  color: $color-tabata-primary;
+  position: relative;
 
   &.work-phase {
-    background: linear-gradient(135deg, $color-hiit-work, $color-hiit-work-dark);
-    border-color: #c0392b;
-    color: white;
-    @include pulse-animation(#c0392b);
+    background: linear-gradient(135deg, #000000, $color-tabata-bg);
+    border-color: $color-tabata-primary;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+    // Remove animation from container
+    animation: none;
+    transform: none;
   }
 
   &.rest-phase {
-    background: linear-gradient(135deg, $color-hiit-rest, $color-hiit-rest-dark);
-    border-color: #2d3436;
-    color: white;
-    animation: restPulse 2s ease-in-out infinite;
-    
-    @keyframes restPulse {
-      0%, 100% { 
-        transform: scale(1); 
-        box-shadow: 0 0 0 0 rgba(45, 52, 54, 0.3); 
-      }
-      50% { 
-        transform: scale(1.01); 
-        box-shadow: 0 0 0 15px rgba(45, 52, 54, 0); 
-      }
-    }
+    background: linear-gradient(135deg, #ffb3d9, #ff99cc);
+    border-color: #ff6bb3;
+    color: #8b2252;
+    // Remove animation from container
+    animation: none;
+    transform: none;
   }
 
   &.finished {
@@ -35,11 +32,11 @@
     border-color: #ffd700;
     color: #fff;
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-    
+
     // Stop all movement animations when accomplished
     animation: none;
     transform: scale(1);
-    
+
     .hiit-message {
       color: #fff;
       text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
@@ -72,23 +69,82 @@
   }
 }
 
+// Central content container that will have animations
+.hiit-central-content {
+  // Only animate display and message, not phase indicator
+  .hiit-display,
+  .hiit-message,
+  .hiit-subtitle {
+    // Animation for work phase
+    .work-phase & {
+      animation: workPulse 1.5s ease-in-out infinite;
+    }
+
+    // Animation for rest phase
+    .rest-phase & {
+      animation: restPulse 2s ease-in-out infinite;
+    }
+
+    // No animation when finished
+    .finished & {
+      animation: none;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes workPulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+  }
+
+  @keyframes restPulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.01);
+    }
+  }
+}
+
 .hiit-name {
   margin: 0 0 $spacing-lg 0;
   font-size: 1.3rem;
   font-weight: bold;
+  color: inherit;
+  text-shadow: 0 0 10px currentColor;
 }
 
 .hiit-progress {
   margin-bottom: $spacing-lg;
 
   .progress-bar {
-    @include progress-bar;
+    width: 100%;
+    height: 10px;
+    background: $color-tabata-border;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: $spacing-sm;
+    border: 1px solid #555;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, $color-tabata-primary, #00cc6a);
+      border-radius: 5px;
+      transition: width $transition-normal;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
   }
 
   .round-info {
     font-size: $font-size-sm;
     font-weight: bold;
-    opacity: 0.9;
+    color: inherit;
+    text-shadow: 0 0 5px currentColor;
   }
 }
 
@@ -97,25 +153,47 @@
 
   .phase-indicator {
     @include phase-indicator;
-    background: rgba(255, 255, 255, 0.2);
-    border: $border-width solid rgba(255, 255, 255, 0.5);
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px currentColor;
+    font-size: $font-size-sm;
+    padding: $spacing-sm $spacing-lg;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
 
+    &.work {
+      background: rgba(0, 255, 136, 0.1);
+      border: $border-width solid $color-tabata-primary;
+      color: $color-tabata-primary;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    }
+
+    &.rest {
+      background: rgba(255, 107, 179, 0.2);
+      border: $border-width solid #ff6bb3;
+      color: #8b2252;
+      box-shadow: 0 0 10px rgba(255, 107, 179, 0.3);
+    }
   }
 }
 
 .hiit-display {
-  font-size: $font-size-5xl;
+  font-size: $font-size-4xl;
   font-weight: bold;
   margin: $spacing-md 0;
   font-family: $font-mono;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 20px currentColor;
+  color: inherit;
+  line-height: 1.2;
 }
 
 .hiit-message {
   font-size: $font-size-xl;
   font-weight: bold;
   margin: $spacing-md 0 $spacing-lg 0;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 15px currentColor;
+  color: inherit;
 }
 
 .hiit-subtitle {
@@ -135,6 +213,41 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.hiit-back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  z-index: 100;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateX(-2px);
+  }
+
+  // In maximized mode, animate visibility
+  .maximized & {
+    &.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    &.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+}
+
 .hiit-controls {
   display: flex;
   gap: $spacing-md;
@@ -142,41 +255,141 @@
   margin: $spacing-xl 0;
   flex-wrap: wrap;
 
-  .btn-start {
-    @include button-variant(#00b894, white, #00a085);
-  }
+  .btn {
+    @include button-base;
+    border: $border-width solid;
+    background: transparent;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 
-  .btn-pause {
-    @include button-variant(#fdcb6e, #2d3436, $color-danger-hover);
-    
-    &:hover {
-      color: white;
+    &.btn-start {
+      border-color: $color-tabata-primary;
+      color: $color-tabata-primary;
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+
+      &:hover:not(:disabled) {
+        background: $color-tabata-primary;
+        color: #000;
+        box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+      }
     }
-  }
 
-  .btn-skip {
-    @include button-variant(#a29bfe, white, #6c5ce7);
-  }
+    &.btn-pause {
+      border-color: #ffaa00;
+      color: #ffaa00;
+      box-shadow: 0 0 15px rgba(255, 170, 0, 0.3);
 
-  .btn-reset {
-    @include button-variant($color-secondary, white, #2d3436);
+      &:hover {
+        background: #ffaa00;
+        color: #000;
+        box-shadow: 0 0 25px rgba(255, 170, 0, 0.5);
+      }
+    }
+
+    &.btn-icon {
+      position: relative;
+      padding: 0.75rem;
+      width: 3rem;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .btn-icon-symbol {
+        font-size: 1.5rem;
+      }
+
+      .btn-tooltip {
+        position: absolute;
+        bottom: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          border: 6px solid transparent;
+          border-top-color: rgba(0, 0, 0, 0.9);
+        }
+      }
+
+      &:hover .btn-tooltip {
+        opacity: 1;
+      }
+    }
+
+    &.btn-skip {
+      border-color: #ff6b9d;
+      color: #ff6b9d;
+      box-shadow: 0 0 15px rgba(255, 107, 157, 0.3);
+
+      &:hover:not(:disabled) {
+        background: #ff6b9d;
+        color: #000;
+        box-shadow: 0 0 25px rgba(255, 107, 157, 0.5);
+
+        .btn-tooltip {
+          background: #ff6b9d;
+          color: #000;
+
+          &::after {
+            border-top-color: #ff6b9d;
+          }
+        }
+      }
+    }
+
+    &.btn-reset {
+      border-color: #666;
+      color: #666;
+      box-shadow: 0 0 10px rgba(102, 102, 102, 0.2);
+
+      &:hover {
+        background: #666;
+        color: #000;
+        box-shadow: 0 0 20px rgba(102, 102, 102, 0.4);
+
+        .btn-tooltip {
+          background: #666;
+          color: #000;
+
+          &::after {
+            border-top-color: #666;
+          }
+        }
+      }
+    }
   }
 }
 
 .hiit-music-toggle {
   margin: $spacing-lg 0;
-  
+
   .toggle-container {
     display: flex;
     align-items: center;
     gap: $spacing-sm;
     cursor: pointer;
     user-select: none;
-    
+
     input[type="checkbox"] {
       display: none;
     }
-    
+
     .toggle-slider {
       position: relative;
       width: 50px;
@@ -185,7 +398,7 @@
       border-radius: 26px;
       border: 1px solid rgba(255, 255, 255, 0.3);
       transition: all 0.3s ease;
-      
+
       &::before {
         content: '';
         position: absolute;
@@ -199,20 +412,20 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
     }
-    
+
     input[type="checkbox"]:checked + .toggle-slider {
       background: rgba(255, 255, 255, 0.4);
-      
+
       &::before {
         transform: translateX(24px);
       }
     }
-    
+
     input[type="checkbox"]:disabled + .toggle-slider {
       opacity: 0.5;
       cursor: not-allowed;
     }
-    
+
     .toggle-label {
       font-size: $font-size-sm;
       font-weight: 500;
@@ -221,8 +434,109 @@
   }
 }
 
+.hiit-volume-control {
+  margin: $spacing-md 0;
+
+  .volume-label {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    justify-content: center;
+
+    .volume-icon {
+      font-size: 1.25rem;
+      opacity: 0.9;
+    }
+
+    .volume-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 200px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      outline: none;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: background 0.3s ease;
+
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        background: $color-tabata-primary;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: scale(1.2);
+          box-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
+        }
+      }
+
+      &::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        background: $color-tabata-primary;
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: scale(1.2);
+          box-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
+        }
+      }
+
+      &::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(
+          to right,
+          $color-tabata-primary 0%,
+          $color-tabata-primary var(--volume-percent, 70%),
+          rgba(255, 255, 255, 0.2) var(--volume-percent, 70%),
+          rgba(255, 255, 255, 0.2) 100%
+        );
+        border-radius: 3px;
+      }
+
+      &::-moz-range-track {
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+      }
+
+      &::-moz-range-progress {
+        background: $color-tabata-primary;
+        height: 6px;
+        border-radius: 3px;
+      }
+    }
+
+    .volume-value {
+      font-size: $font-size-sm;
+      font-weight: 600;
+      min-width: 45px;
+      text-align: right;
+      opacity: 0.9;
+    }
+  }
+}
+
 .hiit-stats {
   @include stats-container;
+  border-top: $border-width solid $color-tabata-border;
+
+  .stat-value {
+    color: $color-tabata-primary;
+    text-shadow: 0 0 5px currentColor;
+  }
 
   .song-link {
     color: inherit;
@@ -245,30 +559,262 @@
   .hiit-timer {
     min-width: 280px;
     padding: $spacing-lg;
-    
-    .hiit-display {
-      font-size: $font-size-4xl;
+
+    .hiit-back-btn {
+      top: 10px;
+      left: 10px;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
     }
-    
-    .hiit-controls {
-      flex-direction: column;
-      align-items: center;
-      
-      .btn {
-        width: 100%;
-        max-width: 200px;
+
+    .hiit-name {
+      font-size: 1.1rem;
+      margin-bottom: $spacing-md;
+    }
+
+    .hiit-progress {
+      margin-bottom: $spacing-md;
+
+      .progress-bar {
+        height: 8px;
+      }
+
+      .round-info {
+        font-size: 0.75rem;
       }
     }
-    
-    .hiit-stats {
-      flex-direction: column;
-      gap: $spacing-md;
+
+    .hiit-phase {
+      margin-bottom: $spacing-sm;
+
+      .phase-indicator {
+        font-size: 0.75rem;
+        padding: $spacing-xs $spacing-md;
+        letter-spacing: 1px;
+        line-height: 1.3;
+      }
+    }
+
+    .hiit-display {
+      font-size: $font-size-3xl;
+      margin: $spacing-sm 0;
+    }
+
+    .hiit-message {
+      font-size: $font-size-lg;
+      margin: $spacing-sm 0;
     }
 
     .hiit-subtitle {
       font-size: $font-size-sm;
       max-width: 90%;
       padding: $spacing-xs $spacing-sm;
+      margin: 0 0 $spacing-md 0;
+    }
+
+    .hiit-controls {
+      gap: $spacing-sm;
+      margin: $spacing-lg 0;
+
+      .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+
+        &.btn-icon {
+          width: 2.5rem;
+          height: 2.5rem;
+          padding: 0.5rem;
+
+          .btn-icon-symbol {
+            font-size: 1.25rem;
+          }
+
+          .btn-tooltip {
+            font-size: 0.625rem;
+            padding: 0.375rem 0.75rem;
+          }
+        }
+      }
+    }
+
+    .hiit-music-toggle {
+      margin: $spacing-md 0;
+
+      .toggle-label {
+        font-size: 0.75rem;
+      }
+
+      .toggle-slider {
+        width: 45px;
+        height: 24px;
+
+        &::before {
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      input[type="checkbox"]:checked + .toggle-slider::before {
+        transform: translateX(21px);
+      }
+    }
+
+    .hiit-volume-control {
+      margin: $spacing-sm 0;
+
+      .volume-label {
+        gap: $spacing-sm;
+
+        .volume-icon {
+          font-size: 1rem;
+        }
+
+        .volume-slider {
+          width: 150px;
+          height: 5px;
+
+          &::-webkit-slider-thumb {
+            width: 16px;
+            height: 16px;
+          }
+
+          &::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+          }
+        }
+
+        .volume-value {
+          font-size: 0.75rem;
+          min-width: 40px;
+        }
+      }
+    }
+
+    .hiit-stats {
+      flex-direction: column;
+      gap: $spacing-sm;
+      font-size: $font-size-sm;
+      padding: $spacing-md 0;
+
+      .stat {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    // Maximized mode adjustments for mobile
+    &.maximized {
+      .hiit-back-btn {
+        top: 5px;
+        left: 5px;
+        font-size: 0.625rem;
+        padding: 0.25rem 0.5rem;
+      }
+
+      .hiit-phase .phase-indicator {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
+      }
+
+      .hiit-display {
+        font-size: $font-size-5xl;
+      }
+
+      .hiit-message {
+        font-size: $font-size-lg;
+      }
+
+      .hiit-controls {
+        gap: $spacing-xs;
+
+        .btn {
+          padding: 0.5rem 1rem;
+          font-size: 0.75rem;
+
+          &.btn-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+
+            .btn-icon-symbol {
+              font-size: 1.125rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Extra small devices (phones in portrait)
+@media (max-width: 375px) {
+  .hiit-timer {
+    min-width: 260px;
+    padding: $spacing-md;
+
+    .hiit-name {
+      font-size: 1rem;
+    }
+
+    .hiit-phase .phase-indicator {
+      font-size: 0.65rem;
+      padding: 0.25rem 0.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    .hiit-display {
+      font-size: $font-size-2xl;
+    }
+
+    .hiit-message {
+      font-size: $font-size-base;
+    }
+
+    .hiit-controls {
+      .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+
+        &.btn-icon {
+          width: 2.25rem;
+          height: 2.25rem;
+        }
+      }
+    }
+
+    .hiit-volume-control {
+      .volume-label {
+        .volume-slider {
+          width: 120px;
+        }
+
+        .volume-icon {
+          font-size: 0.875rem;
+        }
+
+        .volume-value {
+          font-size: 0.625rem;
+          min-width: 35px;
+        }
+      }
+    }
+
+    &.maximized {
+      .hiit-phase .phase-indicator {
+        font-size: 0.6rem;
+        padding: 0.2rem 0.4rem;
+        letter-spacing: 0.3px;
+      }
+
+      .hiit-display {
+        font-size: $font-size-4xl;
+      }
+
+      .hiit-message {
+        font-size: $font-size-base;
+      }
     }
   }
 }

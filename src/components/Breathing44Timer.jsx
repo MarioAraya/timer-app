@@ -3,17 +3,24 @@ import './Breathing44Timer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTime, isClickOnButton } from '../utils/timerHelpers'
 
-function Breathing44Timer({ name = '4-4-4-4 Breathing' }) {
+function Breathing44Timer({ name = '4-4-4-4 Breathing', autoMaximize = false, autoStart = false }) {
   const [currentPhase, setCurrentPhase] = useState(0) // 0: inhale, 1: hold, 2: exhale, 3: hold
   const [timeLeft, setTimeLeft] = useState(4)
   const [isRunning, setIsRunning] = useState(false)
   const [cycleCount, setCycleCount] = useState(0)
   const [totalTime, setTotalTime] = useState(0)
-  const [isMaximized, setIsMaximized] = useState(false)
+  const [isMaximized, setIsMaximized] = useState(autoMaximize)
   
   const phases = ['Inhale', 'Hold', 'Exhale', 'Hold']
   const phaseDuration = 4 // seconds for each phase
   const phaseEmojis = ['🌬️', '🫁', '💨', '⏸️']
+
+  // Auto-start if requested
+  useEffect(() => {
+    if (autoStart && !isRunning) {
+      setIsRunning(true)
+    }
+  }, [autoStart])
 
   useEffect(() => {
     let interval = null
@@ -142,7 +149,7 @@ function Breathing44Timer({ name = '4-4-4-4 Breathing' }) {
       </div>
       
       <div className="breathing-display">
-        {timeLeft}
+        {Math.floor(timeLeft)}
       </div>
       
       <div className="breathing-instruction">

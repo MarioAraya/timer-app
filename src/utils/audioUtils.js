@@ -1,6 +1,7 @@
 // Audio utilities for timer sounds
 let audioContext;
 let hiitAudio = null;
+let tabataAudio = null;
 
 // Initialize audio context if available
 const initAudioContext = () => {
@@ -10,148 +11,281 @@ const initAudioContext = () => {
   return audioContext;
 };
 
-// YouTube video configuration for HIIT workout
-export const HIIT_YOUTUBE_CONFIG = {
-  videoId: 'XZl8PfoP9ag',
-  startTime: 1,
-  url: 'https://www.youtube.com/watch?v=XZl8PfoP9ag&t=1s'
+// Local MP3 configuration for HIIT workout
+export const HIIT_AUDIO_CONFIG = {
+  audioPath: '/hiit_next-level_40-20.mp3',
+  startTime: 1.37, // seconds - matches preparation time in config
+  url: '/hiit_next-level_40-20.mp3'
 };
 
-// YouTube player instance (will be initialized when needed)
-let youtubePlayer = null;
-let playerReady = false;
-let playerLoading = false;
+// Local MP3 configuration for Tabata workout
+export const TABATA_AUDIO_CONFIG = {
+  audioPath: '/tabata_rocky_20-10_x4.mp3',
+  startTime: 0, // seconds - start from beginning after preparation
+  url: '/tabata_rocky_20-10_x4.mp3'
+};
 
-// Create hidden YouTube iframe for audio-only playback
-const createYouTubePlayer = () => {
+// Audio player state
+let audioPlayerReady = false;
+let audioPlayerLoading = false;
+let tabataPlayerReady = false;
+let tabataPlayerLoading = false;
+
+// Create and initialize local audio player
+const createAudioPlayer = () => {
   return new Promise((resolve) => {
-    // Create container for the player (hidden)
-    let playerContainer = document.getElementById('youtube-player-container');
-    if (!playerContainer) {
-      playerContainer = document.createElement('div');
-      playerContainer.id = 'youtube-player-container';
-      playerContainer.style.cssText = `
-        position: fixed;
-        top: -1000px;
-        left: -1000px;
-        width: 1px;
-        height: 1px;
-        opacity: 0;
-        pointer-events: none;
-        z-index: -1;
-      `;
-      document.body.appendChild(playerContainer);
-    }
-
-    // Load YouTube Player API if not already loaded
-    if (!window.YT) {
-      const script = document.createElement('script');
-      script.src = 'https://www.youtube.com/iframe_api';
-      script.onload = () => {
-        window.onYouTubeIframeAPIReady = () => {
-          initializePlayer(resolve);
-        };
-      };
-      document.head.appendChild(script);
-    } else if (window.YT.Player) {
-      initializePlayer(resolve);
+    if (!hiitAudio) {
+      hiitAudio = new Audio(HIIT_AUDIO_CONFIG.audioPath);
+      hiitAudio.preload = 'auto';
+      
+      hiitAudio.addEventListener('canplaythrough', () => {
+        audioPlayerReady = true;
+        resolve(true);
+      });
+      
+      hiitAudio.addEventListener('error', (error) => {
+        console.error('Audio loading error:', error);
+        audioPlayerReady = false;
+        resolve(false);
+      });
+      
+      hiitAudio.load();
+    } else {
+      resolve(audioPlayerReady);
     }
   });
 };
 
-const initializePlayer = (resolve) => {
-  youtubePlayer = new window.YT.Player('youtube-player-container', {
-    height: '1',
-    width: '1',
-    videoId: HIIT_YOUTUBE_CONFIG.videoId,
-    playerVars: {
-      autoplay: 0,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      iv_load_policy: 3,
-      modestbranding: 1,
-      rel: 0,
-      showinfo: 0,
-      start: HIIT_YOUTUBE_CONFIG.startTime
-    },
-    events: {
-      onReady: () => {
-        playerReady = true;
-        resolve();
-      },
-      onError: (error) => {
-        console.error('YouTube player error:', error);
-        resolve(); // Continue even if there's an error
-      }
-    }
-  });
-};
+// Check if audio player is ready
+export const isPlayerReady = () => audioPlayerReady;
+export const isPlayerLoading = () => audioPlayerLoading;
 
-// Check if YouTube player is ready
-export const isPlayerReady = () => playerReady;
-export const isPlayerLoading = () => playerLoading;
-
-// Initialize YouTube player (call this early)
-export const initializeYouTubePlayer = async () => {
-  if (!youtubePlayer && !playerLoading) {
-    playerLoading = true;
-    await createYouTubePlayer();
-    playerLoading = false;
+// Initialize audio player (call this early)
+export const initializeAudioPlayer = async () => {
+  if (!hiitAudio && !audioPlayerLoading) {
+    audioPlayerLoading = true;
+    const ready = await createAudioPlayer();
+    audioPlayerLoading = false;
+    return ready;
   }
-  return playerReady;
+  return audioPlayerReady;
 };
 
 export const playHiitSong = async () => {
-  if (!youtubePlayer) {
-    playerLoading = true;
-    await createYouTubePlayer();
-    playerLoading = false;
+  if (!hiitAudio) {
+    audioPlayerLoading = true;
+    await createAudioPlayer();
+    audioPlayerLoading = false;
   }
   
-  if (playerReady && youtubePlayer) {
+  if (audioPlayerReady && hiitAudio) {
     try {
-      youtubePlayer.seekTo(HIIT_YOUTUBE_CONFIG.startTime, true);
-      youtubePlayer.playVideo();
+      hiitAudio.currentTime = HIIT_AUDIO_CONFIG.startTime;
+      hiitAudio.play();
       console.log('🎵 Playing HIIT song');
     } catch (error) {
-      console.error('Error playing YouTube video:', error);
+      console.error('Error playing audio:', error);
     }
   }
 };
 
 export const stopHiitSong = () => {
-  if (playerReady && youtubePlayer) {
+  if (audioPlayerReady && hiitAudio) {
     try {
-      youtubePlayer.stopVideo();
+      hiitAudio.pause();
+      hiitAudio.currentTime = HIIT_AUDIO_CONFIG.startTime;
       console.log('⏹️ Stopping HIIT song');
     } catch (error) {
-      console.error('Error stopping YouTube video:', error);
+      console.error('Error stopping audio:', error);
     }
   }
 };
 
 export const pauseHiitSong = () => {
-  if (playerReady && youtubePlayer) {
+  if (audioPlayerReady && hiitAudio) {
     try {
-      youtubePlayer.pauseVideo();
+      hiitAudio.pause();
       console.log('⏸️ Pausing HIIT song');
     } catch (error) {
-      console.error('Error pausing YouTube video:', error);
+      console.error('Error pausing audio:', error);
     }
   }
 };
 
 export const resumeHiitSong = () => {
-  if (playerReady && youtubePlayer) {
+  if (audioPlayerReady && hiitAudio) {
     try {
-      youtubePlayer.playVideo();
+      hiitAudio.play();
       console.log('▶️ Resuming HIIT song');
     } catch (error) {
-      console.error('Error resuming YouTube video:', error);
+      console.error('Error resuming audio:', error);
     }
   }
 };
+
+// Get current audio position
+export const getAudioPosition = () => {
+  if (audioPlayerReady && hiitAudio) {
+    return hiitAudio.currentTime;
+  }
+  return null;
+};
+
+// Set audio position
+export const setAudioPosition = (position) => {
+  if (audioPlayerReady && hiitAudio && position !== null && position >= 0) {
+    try {
+      hiitAudio.currentTime = position;
+      console.log(`⏩ Setting audio position to ${position.toFixed(2)}s`);
+      return true;
+    } catch (error) {
+      console.error('Error setting audio position:', error);
+      return false;
+    }
+  }
+  return false;
+};
+
+// Get audio player instance (for checking state)
+export const getAudioPlayer = () => hiitAudio;
+
+// Check if audio is currently playing
+export const isAudioPlaying = () => {
+  if (audioPlayerReady && hiitAudio) {
+    return !hiitAudio.paused;
+  }
+  return false;
+};
+
+// ============ TABATA AUDIO FUNCTIONS ============
+
+// Create and initialize Tabata audio player
+const createTabataAudioPlayer = () => {
+  return new Promise((resolve) => {
+    if (!tabataAudio) {
+      tabataAudio = new Audio(TABATA_AUDIO_CONFIG.audioPath);
+      tabataAudio.preload = 'auto';
+
+      tabataAudio.addEventListener('canplaythrough', () => {
+        tabataPlayerReady = true;
+        resolve(true);
+      });
+
+      tabataAudio.addEventListener('error', (error) => {
+        console.error('Tabata audio loading error:', error);
+        tabataPlayerReady = false;
+        resolve(false);
+      });
+
+      tabataAudio.load();
+    } else {
+      resolve(tabataPlayerReady);
+    }
+  });
+};
+
+// Check if Tabata player is ready
+export const isTabataPlayerReady = () => tabataPlayerReady;
+export const isTabataPlayerLoading = () => tabataPlayerLoading;
+
+// Initialize Tabata audio player
+export const initializeTabataAudioPlayer = async () => {
+  if (!tabataAudio && !tabataPlayerLoading) {
+    tabataPlayerLoading = true;
+    const ready = await createTabataAudioPlayer();
+    tabataPlayerLoading = false;
+    return ready;
+  }
+  return tabataPlayerReady;
+};
+
+export const playTabataSong = async () => {
+  if (!tabataAudio) {
+    tabataPlayerLoading = true;
+    await createTabataAudioPlayer();
+    tabataPlayerLoading = false;
+  }
+
+  if (tabataPlayerReady && tabataAudio) {
+    try {
+      tabataAudio.currentTime = TABATA_AUDIO_CONFIG.startTime;
+      tabataAudio.play();
+      console.log('🎵 Playing Tabata song');
+    } catch (error) {
+      console.error('Error playing Tabata audio:', error);
+    }
+  }
+};
+
+export const stopTabataSong = () => {
+  if (tabataPlayerReady && tabataAudio) {
+    try {
+      tabataAudio.pause();
+      tabataAudio.currentTime = TABATA_AUDIO_CONFIG.startTime;
+      console.log('⏹️ Stopping Tabata song');
+    } catch (error) {
+      console.error('Error stopping Tabata audio:', error);
+    }
+  }
+};
+
+export const pauseTabataSong = () => {
+  if (tabataPlayerReady && tabataAudio) {
+    try {
+      tabataAudio.pause();
+      console.log('⏸️ Pausing Tabata song');
+    } catch (error) {
+      console.error('Error pausing Tabata audio:', error);
+    }
+  }
+};
+
+export const resumeTabataSong = () => {
+  if (tabataPlayerReady && tabataAudio) {
+    try {
+      tabataAudio.play();
+      console.log('▶️ Resuming Tabata song');
+    } catch (error) {
+      console.error('Error resuming Tabata audio:', error);
+    }
+  }
+};
+
+// Get current Tabata audio position
+export const getTabataAudioPosition = () => {
+  if (tabataPlayerReady && tabataAudio) {
+    return tabataAudio.currentTime;
+  }
+  return null;
+};
+
+// Set Tabata audio position
+export const setTabataAudioPosition = (position) => {
+  if (tabataPlayerReady && tabataAudio && position !== null && position >= 0) {
+    try {
+      tabataAudio.currentTime = position;
+      console.log(`⏩ Setting Tabata audio position to ${position.toFixed(2)}s`);
+      return true;
+    } catch (error) {
+      console.error('Error setting Tabata audio position:', error);
+      return false;
+    }
+  }
+  return false;
+};
+
+// Get Tabata audio player instance
+export const getTabataAudioPlayer = () => tabataAudio;
+
+// Check if Tabata audio is currently playing
+export const isTabataAudioPlaying = () => {
+  if (tabataPlayerReady && tabataAudio) {
+    return !tabataAudio.paused;
+  }
+  return false;
+};
+
+// ============ BEEP SOUNDS ============
 
 // Play a beep sound
 export const playBeep = (frequency = 800, duration = 150, volume = 0.3) => {

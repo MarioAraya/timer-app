@@ -1,4 +1,4 @@
-.breathing-426-timer {
+.box-breath-timer {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 16px;
   padding: 2rem;
@@ -15,17 +15,21 @@
     box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
   }
 
-  // Phase color variations - calmer colors for 4-2-6
+  // Phase color variations (4 phases for box breathing)
   &.inhale {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   }
 
-  &.hold {
-    background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+  &.hold1 {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
   }
 
   &.exhale {
-    background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  }
+
+  &.hold2 {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
   }
 
   &.maximized {
@@ -62,6 +66,35 @@
   }
 }
 
+// Auto-hide back button
+.breathing-back-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  font-weight: 500;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  &.maximized {
+    opacity: 0.3;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
 .breathing-name {
   font-size: 1.5rem;
   margin-bottom: 1rem;
@@ -89,8 +122,8 @@
 }
 
 .breathing-circle {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   margin: 0 auto;
   position: relative;
   border-radius: 50%;
@@ -101,15 +134,15 @@
 
   &--animated {
     &.inhale {
-      animation: breatheIn426 4s ease-in-out infinite;
+      animation: breatheIn 4s ease-in-out infinite;
     }
 
-    &.hold {
-      animation: breatheHold426 2s ease-in-out infinite;
+    &.hold1, &.hold2 {
+      animation: breatheHold 4s ease-in-out infinite;
     }
 
     &.exhale {
-      animation: breatheOut426 6s ease-in-out infinite;
+      animation: breatheOut 4s ease-in-out infinite;
     }
   }
 
@@ -130,7 +163,7 @@
       height: 100%;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
-      animation: gentlePulse 3s ease-in-out infinite;
+      animation: pulse 2s ease-in-out infinite;
     }
   }
 }
@@ -159,15 +192,15 @@
     font-size: 0.9rem;
 
     &.inhale {
-      background: rgba(168, 237, 234, 0.3);
+      background: rgba(79, 172, 254, 0.3);
     }
 
-    &.hold {
-      background: rgba(210, 153, 194, 0.3);
+    &.hold1, &.hold2 {
+      background: rgba(67, 233, 123, 0.3);
     }
 
     &.exhale {
-      background: rgba(137, 247, 254, 0.3);
+      background: rgba(250, 112, 154, 0.3);
     }
   }
 }
@@ -206,11 +239,11 @@
     }
 
     &.btn-start {
-      background: rgba(168, 237, 234, 0.3);
-      border-color: rgba(168, 237, 234, 0.5);
+      background: rgba(67, 233, 123, 0.3);
+      border-color: rgba(67, 233, 123, 0.5);
 
       &:hover {
-        background: rgba(168, 237, 234, 0.4);
+        background: rgba(67, 233, 123, 0.4);
       }
     }
 
@@ -229,6 +262,15 @@
 
       &:hover {
         background: rgba(220, 53, 69, 0.4);
+      }
+    }
+
+    &.btn-skip {
+      background: rgba(79, 172, 254, 0.3);
+      border-color: rgba(79, 172, 254, 0.5);
+
+      &:hover {
+        background: rgba(79, 172, 254, 0.4);
       }
     }
   }
@@ -255,54 +297,54 @@
   }
 }
 
-// Gentle breathing animations for 4-2-6 pattern
-@keyframes breatheIn426 {
+// Breathing animations
+@keyframes breatheIn {
   0%, 100% {
     transform: scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 0.9;
-  }
-}
-
-@keyframes breatheHold426 {
-  0%, 100% {
-    transform: scale(1.1);
     opacity: 0.8;
   }
   50% {
-    transform: scale(1.12);
-    opacity: 0.85;
+    transform: scale(1.2);
+    opacity: 1;
   }
 }
 
-@keyframes breatheOut426 {
+@keyframes breatheHold {
   0%, 100% {
-    transform: scale(1.15);
+    transform: scale(1.1);
     opacity: 0.9;
   }
   50% {
-    transform: scale(0.85);
-    opacity: 0.5;
+    transform: scale(1.15);
+    opacity: 1;
   }
 }
 
-@keyframes gentlePulse {
+@keyframes breatheOut {
   0%, 100% {
-    opacity: 0.4;
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
     transform: scale(1);
   }
   50% {
-    opacity: 0.7;
-    transform: scale(1.03);
+    opacity: 1;
+    transform: scale(1.05);
   }
 }
 
 // Responsive design
 @media (max-width: 768px) {
-  .breathing-426-timer {
+  .box-breath-timer {
     padding: 1.5rem;
 
     &.maximized {
@@ -319,8 +361,8 @@
   }
 
   .breathing-circle {
-    width: 160px;
-    height: 160px;
+    width: 130px;
+    height: 130px;
   }
 
   .breathing-timer-display {
@@ -342,13 +384,13 @@
 }
 
 @media (max-width: 480px) {
-  .breathing-426-timer {
+  .box-breath-timer {
     padding: 1rem;
   }
 
   .breathing-circle {
-    width: 140px;
-    height: 140px;
+    width: 110px;
+    height: 110px;
   }
 
   .breathing-timer-display {

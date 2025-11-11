@@ -1,4 +1,4 @@
-.timer-carousel {
+.timers-home {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
@@ -185,7 +185,7 @@
 
 // Responsive design
 @media (max-width: 1200px) {
-  .timer-carousel {
+  .timers-home {
     &__grid {
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.25rem;
@@ -194,7 +194,7 @@
 }
 
 @media (max-width: 768px) {
-  .timer-carousel {
+  .timers-home {
     padding: 0.75rem;
 
     &__grid {
@@ -233,7 +233,7 @@
 }
 
 @media (max-width: 480px) {
-  .timer-carousel {
+  .timers-home {
     padding: 0.5rem;
 
     &__grid {

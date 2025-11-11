@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'preact/hooks'
-import './Breathing478Timer.scss'
+import './CalmingBreathTimer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { isClickOnButton } from '../utils/timerHelpers'
 
 const BREATHING_CONFIG = {
   phases: [
     { name: 'Inhale', duration: 4, instruction: 'Breathe In', color: 'inhale' },
-    { name: 'Hold', duration: 7, instruction: 'Hold', color: 'hold' },
-    { name: 'Exhale', duration: 8, instruction: 'Breathe Out', color: 'exhale' }
+    { name: 'Hold', duration: 2, instruction: 'Hold', color: 'hold' },
+    { name: 'Exhale', duration: 6, instruction: 'Breathe Out', color: 'exhale' }
   ]
 }
 
-function Breathing478Timer({ name = '4-7-8 Breathing', autoMaximize = false, autoStart = false }) {
+function CalmingBreathTimer({ name = '4-2-6 Breathing', autoMaximize = false, autoStart = false, showBackButton = true, onBackClick }) {
   const [currentPhase, setCurrentPhase] = useState(0)
   const [timeLeft, setTimeLeft] = useState(BREATHING_CONFIG.phases[0].duration)
   const [isRunning, setIsRunning] = useState(false)
@@ -67,6 +67,22 @@ function Breathing478Timer({ name = '4-7-8 Breathing', autoMaximize = false, aut
     setTimeLeft(BREATHING_CONFIG.phases[nextPhase].duration)
   }
 
+  const handleContainerClick = (e) => {
+    if (!isClickOnButton(e)) {
+      if (isMaximized) {
+        // In maximized mode, click toggles play/pause
+        if (isRunning) {
+          handlePause()
+        } else {
+          handleStart()
+        }
+      } else {
+        // In normal mode, double-click for maximize
+        handleDoubleClick()
+      }
+    }
+  }
+
   const handleDoubleClick = useDoubleClick(() => {
     setIsMaximized(!isMaximized)
   })
@@ -74,14 +90,23 @@ function Breathing478Timer({ name = '4-7-8 Breathing', autoMaximize = false, aut
   const currentPhaseConfig = BREATHING_CONFIG.phases[currentPhase]
 
   return (
-    <div 
-      className={`breathing-478-timer ${currentPhaseConfig.color} ${isMaximized ? 'maximized' : ''}`}
-      onClick={(e) => {
-        if (!isClickOnButton(e)) {
-          handleDoubleClick()
-        }
-      }}
+    <div
+      className={`calming-breath-timer ${currentPhaseConfig.color} ${isMaximized ? 'maximized' : ''}`}
+      onClick={handleContainerClick}
     >
+      {/* Back button - visible on mouse move in maximized mode */}
+      {onBackClick && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onBackClick()
+          }}
+          className={`breathing-back-btn ${isMaximized ? 'maximized' : ''}`}
+        >
+          ← Back
+        </button>
+      )}
+
       <h3 className="breathing-name">{name}</h3>
       
       <div className="breathing-cycle">
@@ -111,20 +136,20 @@ function Breathing478Timer({ name = '4-7-8 Breathing', autoMaximize = false, aut
       
       <div className="breathing-controls">
         {!isRunning ? (
-          <button onClick={handleStart} className="btn btn-start">
+          <button onClick={(e) => { e.stopPropagation(); handleStart(); }} className="btn btn-start">
             {cycleCount === 0 && currentPhase === 0 ? 'Start' : 'Resume'}
           </button>
         ) : (
-          <button onClick={handlePause} className="btn btn-pause">
+          <button onClick={(e) => { e.stopPropagation(); handlePause(); }} className="btn btn-pause">
             Pause
           </button>
         )}
-        
-        <button onClick={handleSkip} className="btn btn-skip">
+
+        <button onClick={(e) => { e.stopPropagation(); handleSkip(); }} className="btn btn-skip">
           Skip Phase
         </button>
-        
-        <button onClick={handleReset} className="btn btn-reset">
+
+        <button onClick={(e) => { e.stopPropagation(); handleReset(); }} className="btn btn-reset">
           Reset
         </button>
       </div>
@@ -132,11 +157,11 @@ function Breathing478Timer({ name = '4-7-8 Breathing', autoMaximize = false, aut
       <div className="breathing-pattern">
         <div className="pattern-info">
           <span className="pattern-label">Pattern:</span>
-          <span className="pattern-value">4-7-8 (Inhale-Hold-Exhale)</span>
+          <span className="pattern-value">4-2-6 (Inhale-Hold-Exhale)</span>
         </div>
       </div>
     </div>
   )
 }
 
-export default Breathing478Timer
+export default CalmingBreathTimer

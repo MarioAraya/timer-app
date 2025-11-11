@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'preact/hooks'
 import './App.css'
-import TimerCarousel from './components/TimerCarousel'
-import Timer from './components/Timer'
+import TimersHome from './components/TimersHome'
+import PomodoroTimer from './components/PomodoroTimer'
 import HiitTimer from './components/HiitTimer'
 import TabataTimer from './components/TabataTimer'
-import Breathing44Timer from './components/Breathing44Timer'
-import Breathing478Timer from './components/Breathing478Timer'
-import Breathing426Timer from './components/Breathing426Timer'
+import BoxBreathingTimer from './components/BoxBreathingTimer'
+import RelaxingBreathTimer from './components/RelaxingBreathTimer'
+import CalmingBreathTimer from './components/CalmingBreathTimer'
 import { saveActiveTimer, loadActiveTimer, clearActiveTimer, saveFavoriteTimer, loadFavoriteTimer } from './utils/localStorage'
 
 function App() {
@@ -27,10 +27,10 @@ function App() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then(registration => {
-          console.log('SW registered: ', registration);
+          // console.log('SW registered: ', registration);
         })
         .catch(registrationError => {
-          console.log('SW registration failed: ', registrationError);
+          console.error('SW registration failed: ', registrationError);
         });
     }
 
@@ -88,7 +88,7 @@ function App() {
     setCurrentView('timer')
     // Save active timer to localStorage
     saveActiveTimer(timerData)
-    console.log('💾 Saved active timer:', timerData.title)
+    // console.log('💾 Saved active timer:', timerData.title)
     // Add to browser history for back button support
     window.history.pushState({ view: 'timer' }, '')
   }
@@ -97,13 +97,13 @@ function App() {
     // DON'T clear active timer - keep it to show "Now Playing" indicator
     // The timer's own cleanup will save its state
     setCurrentView('carousel')
-    console.log('🔙 Going back to carousel, keeping active timer reference')
+    // console.log('🔙 Going back to carousel, keeping active timer reference')
   }
 
   const handleSetFavorite = (timerData) => {
     setFavoriteTimer(timerData)
     saveFavoriteTimer(timerData)
-    console.log('⭐ Saved favorite timer:', timerData.title)
+    // console.log('⭐ Saved favorite timer:', timerData.title)
   }
 
   // Touch gesture handlers for swipe back
@@ -145,18 +145,18 @@ function App() {
     }
 
     switch (activeTimer.component) {
-      case 'Timer':
-        return <Timer {...commonProps} initialTime={1500} message="Time to focus!" />
+      case 'PomodoroTimer':
+        return <PomodoroTimer {...commonProps} />
       case 'HiitTimer':
         return <HiitTimer {...commonProps} />
       case 'TabataTimer':
         return <TabataTimer {...commonProps} />
-      case 'Breathing44Timer':
-        return <Breathing44Timer {...commonProps} />
-      case 'Breathing478Timer':
-        return <Breathing478Timer {...commonProps} />
-      case 'Breathing426Timer':
-        return <Breathing426Timer {...commonProps} />
+      case 'BoxBreathingTimer':
+        return <BoxBreathingTimer {...commonProps} />
+      case 'RelaxingBreathTimer':
+        return <RelaxingBreathTimer {...commonProps} />
+      case 'CalmingBreathTimer':
+        return <CalmingBreathTimer {...commonProps} />
       default:
         return null
     }
@@ -170,21 +170,15 @@ function App() {
       onTouchEnd={handleTouchEnd}
     >
       <header className="app-header">
-        {/* Only show "Timer App" title when in carousel view */}
-        {currentView === 'carousel' && (
-          <h1>
-            Timer App
-            {!isOnline && <span className="offline-indicator" title="Sin conexión">📵</span>}
-          </h1>
-        )}
-        {currentView === 'timer' && !isOnline && (
+        {/* Show offline indicator when needed */}
+        {!isOnline && (
           <span className="offline-indicator" title="Sin conexión">📵</span>
         )}
       </header>
 
       <main className="app-content">
         {currentView === 'carousel' ? (
-          <TimerCarousel
+          <TimersHome
             onTimerSelect={handleTimerSelect}
             onSetFavorite={handleSetFavorite}
             favoriteTimer={favoriteTimer}

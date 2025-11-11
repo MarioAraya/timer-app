@@ -13,7 +13,7 @@ const initAudioContext = () => {
 
 // Local MP3 configuration for HIIT workout
 export const HIIT_AUDIO_CONFIG = {
-  audioPath: '/hiit_next-level_40-20.mp3',
+  audioPath: '/hiit_next-level_40-20_x12.mp3',
   startTime: 1.37, // seconds - matches preparation time in config
   url: '/hiit_next-level_40-20.mp3'
 };
@@ -25,11 +25,35 @@ export const TABATA_AUDIO_CONFIG = {
   url: '/tabata_rocky_20-10_x4.mp3'
 };
 
+// Local MP3 configuration for Pomodoro work sessions
+export const POMODORO_AUDIO_CONFIG = {
+  audioPath: '/lofi_morning_routine-chosic.com.mp3',
+  startTime: 0, // seconds - start from beginning
+  url: '/lofi_morning_routine-chosic.com.mp3'
+};
+
 // Audio player state
 let audioPlayerReady = false;
 let audioPlayerLoading = false;
 let tabataPlayerReady = false;
 let tabataPlayerLoading = false;
+let pomodoroPlayerReady = false;
+let pomodoroPlayerLoading = false;
+
+// Track when playback started to ignore spurious pause events
+let hiitPlaybackStartTime = 0;
+let tabataPlaybackStartTime = 0;
+let pomodoroPlaybackStartTime = 0;
+
+// Watchdog timers to auto-resume if paused unexpectedly
+let hiitWatchdog = null;
+let tabataWatchdog = null;
+let pomodoroWatchdog = null;
+
+// Watchdog flags to know if playback should be active
+let hiitShouldBePlaying = false;
+let tabataShouldBePlaying = false;
+let pomodoroShouldBePlaying = false;
 
 // Create and initialize local audio player
 const createAudioPlayer = () => {
@@ -37,18 +61,34 @@ const createAudioPlayer = () => {
     if (!hiitAudio) {
       hiitAudio = new Audio(HIIT_AUDIO_CONFIG.audioPath);
       hiitAudio.preload = 'auto';
-      
+
+      // Add attributes to prevent unwanted pausing on mobile browsers
+      hiitAudio.playsInline = true;
+
+      // Prevent browser from auto-pausing due to inactivity
+      hiitAudio.addEventListener('suspend', (e) => {
+        console.log('🔇 Audio suspend event', e);
+      });
+
+      hiitAudio.addEventListener('stalled', (e) => {
+        console.log('⚠️ Audio stalled event', e);
+      });
+
+      hiitAudio.addEventListener('waiting', (e) => {
+        console.log('⏳ Audio waiting event', e);
+      });
+
       hiitAudio.addEventListener('canplaythrough', () => {
         audioPlayerReady = true;
         resolve(true);
       });
-      
+
       hiitAudio.addEventListener('error', (error) => {
         console.error('Audio loading error:', error);
         audioPlayerReady = false;
         resolve(false);
       });
-      
+
       hiitAudio.load();
     } else {
       resolve(audioPlayerReady);
@@ -71,18 +111,47 @@ export const initializeAudioPlayer = async () => {
   return audioPlayerReady;
 };
 
+// Watchdog to detect and fix auto-pauses for HIIT
+const startHiitWatchdog = () => {
+  if (hiitWatchdog) clearInterval(hiitWatchdog);
+
+  hiitWatchdog = setInterval(() => {
+    if (hiitAudio && audioPlayerReady && hiitShouldBePlaying) {
+      if (hiitAudio.paused) {
+        const timeSinceStart = Date.now() - hiitPlaybackStartTime;
+        if (timeSinceStart > 3000) { // After 3 seconds, aggressively resume
+          console.log('⚠️ HIIT auto-pause detected! Resuming...');
+          hiitAudio.play().catch(err => console.error('Auto-resume failed:', err));
+          hiitPlaybackStartTime = Date.now();
+        }
+      }
+    }
+  }, 300); // Check every 300ms
+};
+
+const stopHiitWatchdog = () => {
+  if (hiitWatchdog) {
+    clearInterval(hiitWatchdog);
+    hiitWatchdog = null;
+  }
+  hiitShouldBePlaying = false;
+};
+
 export const playHiitSong = async () => {
   if (!hiitAudio) {
     audioPlayerLoading = true;
     await createAudioPlayer();
     audioPlayerLoading = false;
   }
-  
+
   if (audioPlayerReady && hiitAudio) {
     try {
       hiitAudio.currentTime = HIIT_AUDIO_CONFIG.startTime;
-      hiitAudio.play();
-      console.log('🎵 Playing HIIT song');
+      await hiitAudio.play();
+      hiitPlaybackStartTime = Date.now();
+      hiitShouldBePlaying = true;
+      startHiitWatchdog();
+      console.log('🎵 Playing HIIT song (watchdog enabled)');
     } catch (error) {
       console.error('Error playing audio:', error);
     }
@@ -92,6 +161,7 @@ export const playHiitSong = async () => {
 export const stopHiitSong = () => {
   if (audioPlayerReady && hiitAudio) {
     try {
+      stopHiitWatchdog();
       hiitAudio.pause();
       hiitAudio.currentTime = HIIT_AUDIO_CONFIG.startTime;
       console.log('⏹️ Stopping HIIT song');
@@ -104,6 +174,7 @@ export const stopHiitSong = () => {
 export const pauseHiitSong = () => {
   if (audioPlayerReady && hiitAudio) {
     try {
+      stopHiitWatchdog();
       hiitAudio.pause();
       console.log('⏸️ Pausing HIIT song');
     } catch (error) {
@@ -116,7 +187,10 @@ export const resumeHiitSong = () => {
   if (audioPlayerReady && hiitAudio) {
     try {
       hiitAudio.play();
-      console.log('▶️ Resuming HIIT song');
+      hiitPlaybackStartTime = Date.now();
+      hiitShouldBePlaying = true;
+      startHiitWatchdog();
+      console.log('▶️ Resuming HIIT song (watchdog enabled)');
     } catch (error) {
       console.error('Error resuming audio:', error);
     }
@@ -157,6 +231,12 @@ export const isAudioPlaying = () => {
   return false;
 };
 
+// Check if we should ignore pause events (within 2 seconds of playback start)
+export const shouldIgnoreHiitPause = () => {
+  const timeSinceStart = Date.now() - hiitPlaybackStartTime;
+  return timeSinceStart < 2000; // Ignore pauses within first 2 seconds
+};
+
 // ============ TABATA AUDIO FUNCTIONS ============
 
 // Create and initialize Tabata audio player
@@ -165,6 +245,22 @@ const createTabataAudioPlayer = () => {
     if (!tabataAudio) {
       tabataAudio = new Audio(TABATA_AUDIO_CONFIG.audioPath);
       tabataAudio.preload = 'auto';
+
+      // Add attributes to prevent unwanted pausing on mobile browsers
+      tabataAudio.playsInline = true;
+
+      // Prevent browser from auto-pausing due to inactivity
+      tabataAudio.addEventListener('suspend', (e) => {
+        console.log('🔇 Tabata audio suspend event', e);
+      });
+
+      tabataAudio.addEventListener('stalled', (e) => {
+        console.log('⚠️ Tabata audio stalled event', e);
+      });
+
+      tabataAudio.addEventListener('waiting', (e) => {
+        console.log('⏳ Tabata audio waiting event', e);
+      });
 
       tabataAudio.addEventListener('canplaythrough', () => {
         tabataPlayerReady = true;
@@ -199,6 +295,32 @@ export const initializeTabataAudioPlayer = async () => {
   return tabataPlayerReady;
 };
 
+// Watchdog to detect and fix auto-pauses for Tabata
+const startTabataWatchdog = () => {
+  if (tabataWatchdog) clearInterval(tabataWatchdog);
+
+  tabataWatchdog = setInterval(() => {
+    if (tabataAudio && tabataPlayerReady && tabataShouldBePlaying) {
+      if (tabataAudio.paused) {
+        const timeSinceStart = Date.now() - tabataPlaybackStartTime;
+        if (timeSinceStart > 3000) {
+          console.log('⚠️ Tabata auto-pause detected! Resuming...');
+          tabataAudio.play().catch(err => console.error('Auto-resume failed:', err));
+          tabataPlaybackStartTime = Date.now();
+        }
+      }
+    }
+  }, 300);
+};
+
+const stopTabataWatchdog = () => {
+  if (tabataWatchdog) {
+    clearInterval(tabataWatchdog);
+    tabataWatchdog = null;
+  }
+  tabataShouldBePlaying = false;
+};
+
 export const playTabataSong = async () => {
   if (!tabataAudio) {
     tabataPlayerLoading = true;
@@ -209,8 +331,11 @@ export const playTabataSong = async () => {
   if (tabataPlayerReady && tabataAudio) {
     try {
       tabataAudio.currentTime = TABATA_AUDIO_CONFIG.startTime;
-      tabataAudio.play();
-      console.log('🎵 Playing Tabata song');
+      await tabataAudio.play();
+      tabataPlaybackStartTime = Date.now();
+      tabataShouldBePlaying = true;
+      startTabataWatchdog();
+      console.log('🎵 Playing Tabata song (watchdog enabled)');
     } catch (error) {
       console.error('Error playing Tabata audio:', error);
     }
@@ -220,6 +345,7 @@ export const playTabataSong = async () => {
 export const stopTabataSong = () => {
   if (tabataPlayerReady && tabataAudio) {
     try {
+      stopTabataWatchdog();
       tabataAudio.pause();
       tabataAudio.currentTime = TABATA_AUDIO_CONFIG.startTime;
       console.log('⏹️ Stopping Tabata song');
@@ -232,6 +358,7 @@ export const stopTabataSong = () => {
 export const pauseTabataSong = () => {
   if (tabataPlayerReady && tabataAudio) {
     try {
+      stopTabataWatchdog();
       tabataAudio.pause();
       console.log('⏸️ Pausing Tabata song');
     } catch (error) {
@@ -244,7 +371,10 @@ export const resumeTabataSong = () => {
   if (tabataPlayerReady && tabataAudio) {
     try {
       tabataAudio.play();
-      console.log('▶️ Resuming Tabata song');
+      tabataPlaybackStartTime = Date.now();
+      tabataShouldBePlaying = true;
+      startTabataWatchdog();
+      console.log('▶️ Resuming Tabata song (watchdog enabled)');
     } catch (error) {
       console.error('Error resuming Tabata audio:', error);
     }
@@ -283,6 +413,176 @@ export const isTabataAudioPlaying = () => {
     return !tabataAudio.paused;
   }
   return false;
+};
+
+// Check if we should ignore pause events (within 2 seconds of playback start)
+export const shouldIgnoreTabataPause = () => {
+  const timeSinceStart = Date.now() - tabataPlaybackStartTime;
+  return timeSinceStart < 2000; // Ignore pauses within first 2 seconds
+};
+
+// ============ POMODORO AUDIO FUNCTIONS ============
+
+let pomodoroAudio = null;
+
+// Create and initialize Pomodoro audio player
+const createPomodoroAudioPlayer = () => {
+  return new Promise((resolve) => {
+    if (!pomodoroAudio) {
+      pomodoroAudio = new Audio(POMODORO_AUDIO_CONFIG.audioPath);
+      pomodoroAudio.preload = 'auto';
+      pomodoroAudio.loop = true; // Loop for continuous playback during work
+
+      // Add attributes to prevent unwanted pausing on mobile browsers
+      pomodoroAudio.playsInline = true;
+
+      // Prevent browser from auto-pausing due to inactivity
+      pomodoroAudio.addEventListener('suspend', (e) => {
+        console.log('🔇 Pomodoro audio suspend event', e);
+      });
+
+      pomodoroAudio.addEventListener('stalled', (e) => {
+        console.log('⚠️ Pomodoro audio stalled event', e);
+      });
+
+      pomodoroAudio.addEventListener('waiting', (e) => {
+        console.log('⏳ Pomodoro audio waiting event', e);
+      });
+
+      pomodoroAudio.addEventListener('canplaythrough', () => {
+        pomodoroPlayerReady = true;
+        resolve(true);
+      });
+
+      pomodoroAudio.addEventListener('error', (error) => {
+        console.error('Pomodoro audio loading error:', error);
+        pomodoroPlayerReady = false;
+        resolve(false);
+      });
+
+      pomodoroAudio.load();
+    } else {
+      resolve(pomodoroPlayerReady);
+    }
+  });
+};
+
+// Check if Pomodoro player is ready
+export const isPomodoroPlayerReady = () => pomodoroPlayerReady;
+export const isPomodoroPlayerLoading = () => pomodoroPlayerLoading;
+
+// Initialize Pomodoro audio player
+export const initializePomodoroAudioPlayer = async () => {
+  if (!pomodoroAudio && !pomodoroPlayerLoading) {
+    pomodoroPlayerLoading = true;
+    const ready = await createPomodoroAudioPlayer();
+    pomodoroPlayerLoading = false;
+    return ready;
+  }
+  return pomodoroPlayerReady;
+};
+
+// Watchdog to detect and fix auto-pauses for Pomodoro
+const startPomodoroWatchdog = () => {
+  if (pomodoroWatchdog) clearInterval(pomodoroWatchdog);
+
+  pomodoroWatchdog = setInterval(() => {
+    if (pomodoroAudio && pomodoroPlayerReady && pomodoroShouldBePlaying) {
+      if (pomodoroAudio.paused) {
+        const timeSinceStart = Date.now() - pomodoroPlaybackStartTime;
+        if (timeSinceStart > 3000) {
+          console.log('⚠️ Pomodoro auto-pause detected! Resuming...');
+          pomodoroAudio.play().catch(err => console.error('Auto-resume failed:', err));
+          pomodoroPlaybackStartTime = Date.now();
+        }
+      }
+    }
+  }, 300);
+};
+
+const stopPomodoroWatchdog = () => {
+  if (pomodoroWatchdog) {
+    clearInterval(pomodoroWatchdog);
+    pomodoroWatchdog = null;
+  }
+  pomodoroShouldBePlaying = false;
+};
+
+export const playPomodoroSong = async () => {
+  if (!pomodoroAudio) {
+    pomodoroPlayerLoading = true;
+    await createPomodoroAudioPlayer();
+    pomodoroPlayerLoading = false;
+  }
+
+  if (pomodoroPlayerReady && pomodoroAudio) {
+    try {
+      pomodoroAudio.currentTime = POMODORO_AUDIO_CONFIG.startTime;
+      await pomodoroAudio.play();
+      pomodoroPlaybackStartTime = Date.now();
+      pomodoroShouldBePlaying = true;
+      startPomodoroWatchdog();
+      console.log('🎵 Playing Pomodoro song (watchdog enabled)');
+    } catch (error) {
+      console.error('Error playing Pomodoro audio:', error);
+    }
+  }
+};
+
+export const stopPomodoroSong = () => {
+  if (pomodoroPlayerReady && pomodoroAudio) {
+    try {
+      stopPomodoroWatchdog();
+      pomodoroAudio.pause();
+      pomodoroAudio.currentTime = POMODORO_AUDIO_CONFIG.startTime;
+      console.log('⏹️ Stopping Pomodoro song');
+    } catch (error) {
+      console.error('Error stopping Pomodoro audio:', error);
+    }
+  }
+};
+
+export const pausePomodoroSong = () => {
+  if (pomodoroPlayerReady && pomodoroAudio) {
+    try {
+      stopPomodoroWatchdog();
+      pomodoroAudio.pause();
+      console.log('⏸️ Pausing Pomodoro song');
+    } catch (error) {
+      console.error('Error pausing Pomodoro audio:', error);
+    }
+  }
+};
+
+export const resumePomodoroSong = () => {
+  if (pomodoroPlayerReady && pomodoroAudio) {
+    try {
+      pomodoroAudio.play();
+      pomodoroPlaybackStartTime = Date.now();
+      pomodoroShouldBePlaying = true;
+      startPomodoroWatchdog();
+      console.log('▶️ Resuming Pomodoro song (watchdog enabled)');
+    } catch (error) {
+      console.error('Error resuming Pomodoro audio:', error);
+    }
+  }
+};
+
+// Get Pomodoro audio player instance
+export const getPomodoroAudioPlayer = () => pomodoroAudio;
+
+// Check if Pomodoro audio is currently playing
+export const isPomodoroAudioPlaying = () => {
+  if (pomodoroPlayerReady && pomodoroAudio) {
+    return !pomodoroAudio.paused;
+  }
+  return false;
+};
+
+// Check if we should ignore pause events (within 2 seconds of playback start)
+export const shouldIgnorePomodoroPause = () => {
+  const timeSinceStart = Date.now() - pomodoroPlaybackStartTime;
+  return timeSinceStart < 2000; // Ignore pauses within first 2 seconds
 };
 
 // ============ BEEP SOUNDS ============

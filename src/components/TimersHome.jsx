@@ -1,4 +1,4 @@
-import './TimerCarousel.scss'
+import './TimersHome.scss'
 
 // Timer data configuration
 const timerData = [
@@ -70,15 +70,15 @@ const timerData = [
   }
 ]
 
-function TimerCarousel({ onTimerSelect, activeTimer }) {
+function TimersHome({ onTimerSelect, activeTimer }) {
   const handleCardClick = (timer) => {
     // Launch the timer directly
     onTimerSelect(timer)
   }
 
   return (
-    <div className="timer-carousel">
-      <div className="timer-carousel__grid">
+    <div className="timers-home">
+      <div className="timers-home__grid">
         {timerData.map((timer) => {
           const isRunning = activeTimer && activeTimer.component === timer.component
 
@@ -131,4 +131,4 @@ function TimerCarousel({ onTimerSelect, activeTimer }) {
   )
 }
 
-export default TimerCarousel
+export default TimersHome

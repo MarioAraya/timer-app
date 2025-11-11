@@ -4,6 +4,7 @@ const STORAGE_KEYS = {
   FAVORITE_TIMER: 'timerApp_favoriteTimer',
   HIIT_STATE: 'timerApp_hiitState',
   TABATA_STATE: 'timerApp_tabataState',
+  POMODORO_STATE: 'timerApp_pomodoroState',
   ACTIVE_TIMER: 'timerApp_activeTimer'
 }
 
@@ -136,10 +137,49 @@ export const clearTabataState = () => {
   return removeFromStorage(STORAGE_KEYS.TABATA_STATE)
 }
 
+// Pomodoro timer state management
+export const savePomodoroState = (state) => {
+  const stateToSave = {
+    currentSession: state.currentSession,
+    timeLeft: state.timeLeft,
+    isWorkPhase: state.isWorkPhase,
+    isRunning: state.isRunning,
+    isFinished: state.isFinished,
+    currentMessage: state.currentMessage,
+    currentSubtitle: state.currentSubtitle,
+    musicMode: state.musicMode,
+    volume: state.volume,
+    timestamp: Date.now() // For detecting stale data
+  }
+  return saveToStorage(STORAGE_KEYS.POMODORO_STATE, stateToSave)
+}
+
+export const loadPomodoroState = () => {
+  const state = loadFromStorage(STORAGE_KEYS.POMODORO_STATE)
+
+  // Don't restore state if it's older than 1 hour (stale)
+  if (state && state.timestamp) {
+    const age = Date.now() - state.timestamp
+    const ONE_HOUR = 60 * 60 * 1000
+
+    if (age > ONE_HOUR) {
+      clearPomodoroState()
+      return null
+    }
+  }
+
+  return state
+}
+
+export const clearPomodoroState = () => {
+  return removeFromStorage(STORAGE_KEYS.POMODORO_STATE)
+}
+
 // Clear all app data
 export const clearAllTimerData = () => {
   clearActiveTimer()
   clearHiitState()
   clearTabataState()
+  clearPomodoroState()
   return true
 }

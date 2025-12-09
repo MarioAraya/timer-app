@@ -63,11 +63,26 @@ const createAudioPlayer = () => {
       hiitAudio.preload = 'auto';
 
       // Add attributes to prevent unwanted pausing on mobile browsers
-      hiitAudio.playsInline = true;
+      hiitAudio.setAttribute('playsinline', '');
+      hiitAudio.setAttribute('webkit-playsinline', '');
+      hiitAudio.setAttribute('disableRemotePlayback', '');
+      hiitAudio.setAttribute('x-webkit-airplay', 'deny');
+
+      // Set volume to ensure it's audible
+      hiitAudio.volume = 0.7;
 
       // Prevent browser from auto-pausing due to inactivity
       hiitAudio.addEventListener('suspend', (e) => {
         console.log('🔇 Audio suspend event', e);
+        // Attempt to resume if we should be playing
+        if (hiitShouldBePlaying) {
+          setTimeout(() => {
+            if (hiitAudio.paused && hiitShouldBePlaying) {
+              console.log('🔄 Auto-resuming after suspend');
+              hiitAudio.play().catch(err => console.error('Resume after suspend failed:', err));
+            }
+          }, 100);
+        }
       });
 
       hiitAudio.addEventListener('stalled', (e) => {
@@ -119,14 +134,15 @@ const startHiitWatchdog = () => {
     if (hiitAudio && audioPlayerReady && hiitShouldBePlaying) {
       if (hiitAudio.paused) {
         const timeSinceStart = Date.now() - hiitPlaybackStartTime;
-        if (timeSinceStart > 3000) { // After 3 seconds, aggressively resume
-          console.log('⚠️ HIIT auto-pause detected! Resuming...');
+        // Aggressive resume after 500ms (was 3000ms)
+        if (timeSinceStart > 500) {
+          console.log('⚠️ HIIT auto-pause detected! Resuming... (paused for', timeSinceStart, 'ms)');
           hiitAudio.play().catch(err => console.error('Auto-resume failed:', err));
           hiitPlaybackStartTime = Date.now();
         }
       }
     }
-  }, 300); // Check every 300ms
+  }, 100); // Check every 100ms (was 300ms)
 };
 
 const stopHiitWatchdog = () => {
@@ -247,11 +263,26 @@ const createTabataAudioPlayer = () => {
       tabataAudio.preload = 'auto';
 
       // Add attributes to prevent unwanted pausing on mobile browsers
-      tabataAudio.playsInline = true;
+      tabataAudio.setAttribute('playsinline', '');
+      tabataAudio.setAttribute('webkit-playsinline', '');
+      tabataAudio.setAttribute('disableRemotePlayback', '');
+      tabataAudio.setAttribute('x-webkit-airplay', 'deny');
+
+      // Set volume to ensure it's audible
+      tabataAudio.volume = 0.7;
 
       // Prevent browser from auto-pausing due to inactivity
       tabataAudio.addEventListener('suspend', (e) => {
         console.log('🔇 Tabata audio suspend event', e);
+        // Attempt to resume if we should be playing
+        if (tabataShouldBePlaying) {
+          setTimeout(() => {
+            if (tabataAudio.paused && tabataShouldBePlaying) {
+              console.log('🔄 Auto-resuming after suspend');
+              tabataAudio.play().catch(err => console.error('Resume after suspend failed:', err));
+            }
+          }, 100);
+        }
       });
 
       tabataAudio.addEventListener('stalled', (e) => {
@@ -303,14 +334,15 @@ const startTabataWatchdog = () => {
     if (tabataAudio && tabataPlayerReady && tabataShouldBePlaying) {
       if (tabataAudio.paused) {
         const timeSinceStart = Date.now() - tabataPlaybackStartTime;
-        if (timeSinceStart > 3000) {
-          console.log('⚠️ Tabata auto-pause detected! Resuming...');
+        // Aggressive resume after 500ms (was 3000ms)
+        if (timeSinceStart > 500) {
+          console.log('⚠️ Tabata auto-pause detected! Resuming... (paused for', timeSinceStart, 'ms)');
           tabataAudio.play().catch(err => console.error('Auto-resume failed:', err));
           tabataPlaybackStartTime = Date.now();
         }
       }
     }
-  }, 300);
+  }, 100); // Check every 100ms (was 300ms)
 };
 
 const stopTabataWatchdog = () => {
@@ -434,11 +466,26 @@ const createPomodoroAudioPlayer = () => {
       pomodoroAudio.loop = true; // Loop for continuous playback during work
 
       // Add attributes to prevent unwanted pausing on mobile browsers
-      pomodoroAudio.playsInline = true;
+      pomodoroAudio.setAttribute('playsinline', '');
+      pomodoroAudio.setAttribute('webkit-playsinline', '');
+      pomodoroAudio.setAttribute('disableRemotePlayback', '');
+      pomodoroAudio.setAttribute('x-webkit-airplay', 'deny');
+
+      // Set volume to ensure it's audible
+      pomodoroAudio.volume = 0.7;
 
       // Prevent browser from auto-pausing due to inactivity
       pomodoroAudio.addEventListener('suspend', (e) => {
         console.log('🔇 Pomodoro audio suspend event', e);
+        // Attempt to resume if we should be playing
+        if (pomodoroShouldBePlaying) {
+          setTimeout(() => {
+            if (pomodoroAudio.paused && pomodoroShouldBePlaying) {
+              console.log('🔄 Auto-resuming after suspend');
+              pomodoroAudio.play().catch(err => console.error('Resume after suspend failed:', err));
+            }
+          }, 100);
+        }
       });
 
       pomodoroAudio.addEventListener('stalled', (e) => {
@@ -490,14 +537,15 @@ const startPomodoroWatchdog = () => {
     if (pomodoroAudio && pomodoroPlayerReady && pomodoroShouldBePlaying) {
       if (pomodoroAudio.paused) {
         const timeSinceStart = Date.now() - pomodoroPlaybackStartTime;
-        if (timeSinceStart > 3000) {
-          console.log('⚠️ Pomodoro auto-pause detected! Resuming...');
+        // Aggressive resume after 500ms (was 3000ms)
+        if (timeSinceStart > 500) {
+          console.log('⚠️ Pomodoro auto-pause detected! Resuming... (paused for', timeSinceStart, 'ms)');
           pomodoroAudio.play().catch(err => console.error('Auto-resume failed:', err));
           pomodoroPlaybackStartTime = Date.now();
         }
       }
     }
-  }, 300);
+  }, 100); // Check every 100ms (was 300ms)
 };
 
 const stopPomodoroWatchdog = () => {
@@ -630,3 +678,32 @@ export const playCountdownSound = (count) => {
 export const playPrepSound = () => {
   playBeep(500, 100, 0.25);
 };
+
+// ============ VISIBILITY CHANGE HANDLER ============
+
+// Aggressively resume audio when tab becomes visible again
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      console.log('📱 Tab became visible');
+
+      // Resume HIIT if it should be playing
+      if (hiitAudio && hiitShouldBePlaying && hiitAudio.paused) {
+        console.log('🔄 Resuming HIIT audio after visibility change');
+        hiitAudio.play().catch(err => console.error('Failed to resume HIIT:', err));
+      }
+
+      // Resume Tabata if it should be playing
+      if (tabataAudio && tabataShouldBePlaying && tabataAudio.paused) {
+        console.log('🔄 Resuming Tabata audio after visibility change');
+        tabataAudio.play().catch(err => console.error('Failed to resume Tabata:', err));
+      }
+
+      // Resume Pomodoro if it should be playing
+      if (pomodoroAudio && pomodoroShouldBePlaying && pomodoroAudio.paused) {
+        console.log('🔄 Resuming Pomodoro audio after visibility change');
+        pomodoroAudio.play().catch(err => console.error('Failed to resume Pomodoro:', err));
+      }
+    }
+  });
+}

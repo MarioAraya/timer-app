@@ -73,6 +73,7 @@ export const saveHiitState = (state) => {
     currentSubtitle: state.currentSubtitle,
     musicMode: state.musicMode,
     audioPosition: state.audioPosition, // Current position in song
+    volume: state.volume, // Volume level
     timestamp: Date.now() // For detecting stale data
   }
   return saveToStorage(STORAGE_KEYS.HIIT_STATE, stateToSave)
@@ -111,6 +112,7 @@ export const saveTabataState = (state) => {
     currentSubtitle: state.currentSubtitle,
     musicMode: state.musicMode,
     audioPosition: state.audioPosition, // Current position in song
+    volume: state.volume, // Volume level
     timestamp: Date.now() // For detecting stale data
   }
   return saveToStorage(STORAGE_KEYS.TABATA_STATE, stateToSave)

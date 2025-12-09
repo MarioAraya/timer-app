@@ -11,33 +11,33 @@ export const HIIT_CONFIG = {
   
   // Preparation phase (time before first round starts)
   preparation: {
-    duration: 10, // seconds - intro countdown before workout
+    duration: 9, // seconds - intro countdown before workout
     subtitle: "Get ready to start!" // optional message during preparation
   },
   
   // Workout rounds configuration based on exact song timing
   rounds: [
     {
-      work: 40.22, // Vuelta 2: 00:40,22 (first work phase)
-      rest: 20.53, // Vuelta 3: 00:20,53 (first rest phase)
+      work: 41.66, // Vuelta 2: 00:40,22 (first work phase)
+      rest: 19.33, // Vuelta 3: 00:19,53 (first rest phase - reduced 1s to start round 2 earlier)
       workSubtitle: "Go! Go! Go! Round one!",
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 40.78, // Vuelta 4: 00:40,78
-      rest: 20.38, // Vuelta 5: 00:20,38
+      work: 39.66, // Vuelta 4: 00:40,78
+      rest: 19.33, // Vuelta 5: 00:20,38
       workSubtitle: "Go! Go! Go! Round two!",
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 40.95, // Vuelta 6: 00:40,95
-      rest: 20.35, // Vuelta 7: 00:20,35
+      work: 39.66, // Vuelta 6: 00:40,95
+      rest: 19.33, // Vuelta 7: 00:20,35
       workSubtitle: "Go! Go! Go! Round three!",
       restSubtitle: "Break, break, break!"
     },
     {
       work: 40.93, // Vuelta 8: 00:40,93
-      rest: 20.50, // Vuelta 9: 00:20,50
+      rest: 19.50, // Vuelta 9: 00:20,50
       workSubtitle: "Go! Go! Go! Round four!",
       restSubtitle: "Break, break, break!"
     },
@@ -49,43 +49,43 @@ export const HIIT_CONFIG = {
     },
     {
       work: 40.03, // Vuelta 12: 00:40,03
-      rest: 20.19, // Vuelta 13: 00:20,19
+      rest: 20.00, // Vuelta 13: 00:20,19
       workSubtitle: "Go! Go! Go! Round six!",
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 40.93, // Vuelta 14: 00:40,93
-      rest: 20.40, // Vuelta 15: 00:20,40
+      work: 40.00, // Vuelta 14: 00:40,93
+      rest: 20.00, // Vuelta 15: 00:20,40
       workSubtitle: "Go! Go! Go! Round seven!",
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 40.83, // Vuelta 16: 00:40,83
-      rest: 20.34, // Vuelta 17: 00:20,34
+      work: 40.00, // Vuelta 16: 00:40,83
+      rest: 20.00, // Vuelta 17: 00:20,34
       workSubtitle: "Go! Go! Go! Round eight!",
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 40.73, // Vuelta 18: 00:40,73
-      rest: 20.56, // Vuelta 19: 00:20,56
+      work: 40.00, // Vuelta 18: 00:40,73
+      rest: 20.00, // Vuelta 19: 00:20,56
       workSubtitle: "Go! Go! Go! Round nine!",
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 40.65, // Vuelta 20: 00:40,65
-      rest: 20.56, // Vuelta 21: 00:20,56
+      work: 40.00, // Vuelta 20: 00:40,65
+      rest: 20.00, // Vuelta 21: 00:20,56
       workSubtitle: "Go! Go! Go! Round ten!",
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 40.05, // Vuelta 22: 00:40,05
-      rest: 20.18, // Vuelta 23: 00:20,18
+      work: 40.00, // Vuelta 22: 00:40,05
+      rest: 20.00, // Vuelta 23: 00:20,18
       workSubtitle: "Round eleven!",
       restSubtitle: "Break, break, break!"
     },
     {
-      work: 40.95, // Vuelta 24: 00:40,95
-      rest: 13.98, // Vuelta 25: 00:13,98 (final rest)
+      work: 40.00, // Vuelta 24: 00:40,95
+      rest: 13.00, // Vuelta 25: 00:13,98 (final rest)
       workSubtitle: "Final round, champ!",
       restSubtitle: "Final rest - you did it!"
     }

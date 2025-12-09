@@ -22,6 +22,7 @@ import Confetti from './Confetti'
  * @param {boolean} props.showBackButton - Show/hide back button
  * @param {Function} props.onBackClick - Back navigation handler
  * @param {boolean} props.hasFinalRest - Whether workout has rest after final work phase
+ * @param {boolean} props.showSkipButton - Show/hide skip phase button
  */
 function WorkoutTimer({
   workoutType,
@@ -35,7 +36,8 @@ function WorkoutTimer({
   autoStart = false,
   showBackButton = true,
   onBackClick,
-  hasFinalRest = false
+  hasFinalRest = false,
+  showSkipButton = true
 }) {
   // Try to restore saved state
   const savedState = storageFunctions.load()
@@ -52,14 +54,60 @@ function WorkoutTimer({
   const [playerStatus, setPlayerStatus] = useState('idle') // 'idle', 'loading', 'ready'
   const [showConfetti, setShowConfetti] = useState(false)
   const [stateRestored, setStateRestored] = useState(false)
-  const [volume, setVolume] = useState(0.7) // Volume state (0.0 to 1.0)
+  const [volume, setVolume] = useState(savedState?.volume ?? 0.7) // Volume state (0.0 to 1.0)
+  const [showControls, setShowControls] = useState(false) // Show controls when mouse in bottom 20%
 
   // Use refs for ignore flags so they persist across renders and are accessible everywhere
   const ignoreNextPause = useRef(false)
   const ignoreNextPlay = useRef(false)
+  const containerRef = useRef(null)
+
+  // Ref to track current state for cleanup
+  const stateRef = useRef({
+    currentRound,
+    timeLeft,
+    isWorkPhase,
+    isPreparationPhase,
+    isRunning,
+    isFinished,
+    currentSubtitle,
+    musicMode,
+    volume
+  })
 
   const totalRounds = config.rounds.length
   const preparationTime = config.preparation.duration
+
+  // Update state ref whenever state changes
+  useEffect(() => {
+    stateRef.current = {
+      currentRound,
+      timeLeft,
+      isWorkPhase,
+      isPreparationPhase,
+      isRunning,
+      isFinished,
+      currentSubtitle,
+      musicMode,
+      volume
+    }
+  }, [currentRound, timeLeft, isWorkPhase, isPreparationPhase, isRunning, isFinished, currentSubtitle, musicMode, volume])
+
+  // Handle mouse move to show/hide controls based on position
+  const handleMouseMove = (e) => {
+    if (!containerRef.current) return
+
+    const rect = containerRef.current.getBoundingClientRect()
+    const mouseY = e.clientY - rect.top
+    const containerHeight = rect.height
+    const bottomThreshold = containerHeight * 0.8 // 80% from top = 20% from bottom
+
+    setShowControls(mouseY >= bottomThreshold)
+  }
+
+  const handleMouseLeave = () => {
+    setShowControls(false)
+  }
 
   // Handle click anywhere to pause/resume (only in maximized mode)
   const handleContainerClick = (e) => {
@@ -73,6 +121,102 @@ function WorkoutTimer({
       handleDoubleClick()
     }
   }
+
+  // Seek forward/backward in timer and audio
+  const handleSeek = (seconds) => {
+    if (isFinished || isPreparationPhase) return
+
+    // Calculate total elapsed time from start of workout
+    let totalElapsedTime = preparationTime // Start with prep time
+
+    // Add completed rounds
+    for (let i = 0; i < currentRound - 1; i++) {
+      totalElapsedTime += config.rounds[i].work + config.rounds[i].rest
+    }
+
+    // Add current phase time
+    const currentRoundConfig = config.rounds[currentRound - 1]
+    if (isWorkPhase) {
+      totalElapsedTime += currentRoundConfig.work - timeLeft
+    } else {
+      totalElapsedTime += currentRoundConfig.work + (currentRoundConfig.rest - timeLeft)
+    }
+
+    // Apply seek offset
+    totalElapsedTime += seconds
+
+    // Clamp to valid range (prep time to total workout time)
+    const totalWorkoutTime = preparationTime + config.rounds.reduce((sum, r) => sum + r.work + r.rest, 0)
+    totalElapsedTime = Math.max(preparationTime, Math.min(totalElapsedTime, totalWorkoutTime - 1))
+
+    // Calculate new position (round, phase, time)
+    let remainingTime = totalElapsedTime - preparationTime
+    let newRound = 1
+    let newIsWorkPhase = true
+    let newTimeLeft = 0
+
+    for (let i = 0; i < config.rounds.length; i++) {
+      const roundConfig = config.rounds[i]
+
+      if (remainingTime <= roundConfig.work) {
+        // In work phase of this round
+        newRound = i + 1
+        newIsWorkPhase = true
+        newTimeLeft = roundConfig.work - remainingTime
+        break
+      }
+      remainingTime -= roundConfig.work
+
+      if (remainingTime <= roundConfig.rest) {
+        // In rest phase of this round
+        newRound = i + 1
+        newIsWorkPhase = false
+        newTimeLeft = roundConfig.rest - remainingTime
+        break
+      }
+      remainingTime -= roundConfig.rest
+    }
+
+    // Update state
+    setCurrentRound(newRound)
+    setIsWorkPhase(newIsWorkPhase)
+    setTimeLeft(Math.max(1, newTimeLeft))
+    setIsPreparationPhase(false)
+    setCurrentSubtitle(
+      newIsWorkPhase
+        ? config.rounds[newRound - 1].workSubtitle
+        : config.rounds[newRound - 1].restSubtitle
+    )
+
+    // Seek audio if in music mode
+    if (musicMode && playerStatus === 'ready') {
+      const audioPlayer = audioFunctions.getPlayer()
+      if (audioPlayer) {
+        const newAudioTime = totalElapsedTime
+        audioPlayer.currentTime = newAudioTime
+        console.log(`⏩ Seeked to ${seconds > 0 ? '+' : ''}${seconds}s (audio: ${newAudioTime.toFixed(2)}s, round: ${newRound}, ${newIsWorkPhase ? 'work' : 'rest'})`)
+      }
+    }
+  }
+
+  // Handle keyboard events for seeking
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Only handle arrow keys when timer is running and not finished
+      if (!isRunning || isFinished) return
+
+      if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        handleSeek(10) // Forward 10 seconds
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        handleSeek(-10) // Backward 10 seconds
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isRunning, isFinished, isPreparationPhase, currentRound, timeLeft, isWorkPhase, musicMode, playerStatus])
 
   // Initialize audio player when music mode is enabled
   useEffect(() => {
@@ -215,7 +359,8 @@ function WorkoutTimer({
         isFinished,
         currentSubtitle,
         musicMode,
-        audioPosition
+        audioPosition,
+        volume
       }
 
       storageFunctions.save(currentState)
@@ -228,43 +373,26 @@ function WorkoutTimer({
     return () => {
       console.log(`🔄 Unmounting ${workoutType} timer...`)
 
-      if (musicMode && isRunning) {
+      // Get current values at cleanup time
+      const audioPlayer = audioFunctions.getPlayer()
+      const currentAudioPosition = audioPlayer ? audioFunctions.getPosition() : null
+
+      if (audioPlayer && !audioPlayer.paused) {
         console.log('⏸️ Pausing music before saving state')
         audioFunctions.pause()
+      }
 
-        setTimeout(() => {
-          const audioPosition = musicMode ? audioFunctions.getPosition() : null
-
-          storageFunctions.save({
-            currentRound,
-            timeLeft,
-            isWorkPhase,
-            isPreparationPhase,
-            isRunning,
-            isFinished,
-            currentSubtitle,
-            musicMode,
-            audioPosition
-          })
-          console.log(`💾 Saved ${workoutType} state after pausing music, position:`, audioPosition)
-        }, 100)
-      } else {
-        const audioPosition = musicMode ? audioFunctions.getPosition() : null
+      // Save state using ref (has the latest values)
+      setTimeout(() => {
+        const state = stateRef.current
         storageFunctions.save({
-          currentRound,
-          timeLeft,
-          isWorkPhase,
-          isPreparationPhase,
-          isRunning,
-          isFinished,
-          currentSubtitle,
-          musicMode,
-          audioPosition
+          ...state,
+          audioPosition: currentAudioPosition
         })
         console.log(`💾 Saved ${workoutType} state on unmount`)
-      }
+      }, 100)
     }
-  }, [musicMode, isRunning, currentRound, timeLeft, isWorkPhase, isPreparationPhase, isFinished, currentSubtitle])
+  }, []) // Empty deps - only run on actual unmount
 
   // Timer interval logic
   useEffect(() => {
@@ -474,8 +602,11 @@ function WorkoutTimer({
 
   return (
     <div
-      className={`${className} ${isFinished ? 'finished' : ''} ${isWorkPhase || isPreparationPhase ? 'work-phase' : 'rest-phase'} ${isMaximized ? 'maximized' : ''}`}
+      ref={containerRef}
+      className={`${className} ${isFinished ? 'finished' : ''} ${isWorkPhase || isPreparationPhase ? 'work-phase' : 'rest-phase'} ${isMaximized ? 'maximized' : ''} ${showControls ? 'show-controls' : ''} ${!isRunning && hasStarted() && !isFinished ? 'paused' : ''}`}
       onClick={handleContainerClick}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       {/* Back button */}
       {onBackClick && (
@@ -527,7 +658,7 @@ function WorkoutTimer({
           {getPhaseMessage()}
         </div>
 
-        {currentSubtitle && hasStarted() && (
+        {currentSubtitle && hasStarted() && !isFinished && (
           <div className="timer-subtitle">
             {currentSubtitle}
           </div>
@@ -563,18 +694,20 @@ function WorkoutTimer({
 
         {hasStarted() && (
           <>
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                handleSkip()
-              }}
-              className="btn btn-icon btn-skip"
-              disabled={isFinished}
-              title="Skip Phase"
-            >
-              <span className="btn-icon-symbol">⏭️</span>
-              <span className="btn-tooltip">Skip Phase</span>
-            </button>
+            {showSkipButton && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleSkip()
+                }}
+                className="btn btn-icon btn-skip"
+                disabled={isFinished}
+                title="Skip Phase"
+              >
+                <span className="btn-icon-symbol">⏭️</span>
+                <span className="btn-tooltip">Skip Phase</span>
+              </button>
+            )}
 
             <button
               onClick={(e) => {
@@ -592,7 +725,7 @@ function WorkoutTimer({
       </div>
 
       {/* Music mode toggle */}
-      <div className="timer-music-toggle">
+      <div className="timer-music-toggle" onClick={(e) => e.stopPropagation()}>
         <label className="toggle-container">
           <input
             type="checkbox"
@@ -609,41 +742,19 @@ function WorkoutTimer({
       </div>
 
       {/* Volume control */}
-      {musicMode && (
-        <div className="timer-volume-control">
-          <label className="volume-label">
-            <span className="volume-icon">🔊</span>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={volume * 100}
-              onChange={(e) => setVolume(e.target.value / 100)}
-              className="volume-slider"
-            />
-            <span className="volume-value">{Math.round(volume * 100)}%</span>
-          </label>
-        </div>
-      )}
-
-      {/* Stats */}
-      <div className="timer-stats">
-        <div className="stat">
-          <span className="stat-label">Song:</span>
-          <span className="stat-value">
-            <a href={audioFunctions.config.url} target="_blank" rel="noopener noreferrer" className="song-link">
-              🎵 Local MP3
-            </a>
-          </span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Rounds:</span>
-          <span className="stat-value">{totalRounds}</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Total:</span>
-          <span className="stat-value">{config.calculateTotalTime()}</span>
-        </div>
+      <div className="timer-volume-control" onClick={(e) => e.stopPropagation()}>
+        <label className="volume-label">
+          <span className="volume-icon">🔊</span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={volume * 100}
+            onChange={(e) => setVolume(e.target.value / 100)}
+            className="volume-slider"
+          />
+          <span className="volume-value">{Math.round(volume * 100)}%</span>
+        </label>
       </div>
 
       <Confetti

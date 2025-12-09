@@ -11,7 +11,7 @@ export const TABATA_CONFIG = {
 
   // Preparation phase (time before first round starts)
   preparation: {
-    duration: 7, // seconds - countdown before workout
+    duration: 11, // seconds - countdown before workout
     subtitle: "Get ready to push your limits!" // optional message during preparation
   },
 

@@ -81,6 +81,7 @@ function TabataTimer({ name = 'Tabata Protocol', autoMaximize = false, autoStart
       showBackButton={showBackButton}
       onBackClick={onBackClick}
       hasFinalRest={false} // Tabata completes immediately after final work phase
+      showSkipButton={false} // Hide skip button for Tabata
     />
   )
 }

@@ -15,6 +15,35 @@
   color: $color-tabata-primary;
   position: relative;
 
+  // Show controls when mouse is in bottom 20% of container
+  &.show-controls {
+    .timer-controls,
+    .timer-music-toggle,
+    .timer-volume-control {
+      opacity: 1;
+      transition: opacity $transition-fast;
+    }
+  }
+
+  // Blur and slow breathing when paused
+  &.paused {
+    .timer-progress {
+      filter: blur(1px);
+      opacity: 0.7;
+    }
+
+    .timer-central-content {
+      filter: blur(1px);
+      opacity: 0.7;
+    }
+
+    .timer-phase,
+    .timer-display,
+    .timer-message {
+      animation: pausedBreathe 3s ease-in-out infinite !important;
+    }
+  }
+
   &.work-phase {
     background: linear-gradient(135deg, #000000, $color-tabata-bg);
     border-color: $color-tabata-primary;
@@ -64,7 +93,7 @@
     }
 
     .timer-message {
-      font-size: $font-size-2xl;
+      font-size: calc($font-size-2xl * 2); // 3rem - doubled
       margin: $spacing-xl 0;
     }
 
@@ -83,6 +112,28 @@
   }
   50% {
     transform: scale(1.02);
+  }
+}
+
+@keyframes workBreathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.85;
+  }
+}
+
+@keyframes pausedBreathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.95;
   }
 }
 
@@ -168,6 +219,7 @@
   max-width: 600px;
   margin: $spacing-md auto;
   text-align: center;
+  transition: filter $transition-fast, opacity $transition-fast;
 
   .progress-bar {
     width: 100%;
@@ -199,6 +251,7 @@
   align-items: center;
   justify-content: center;
   padding: $spacing-md 0;
+  transition: filter $transition-fast, opacity $transition-fast;
 }
 
 .timer-phase {
@@ -225,6 +278,19 @@
       color: #ff6bb3;
     }
   }
+
+  // Breathing animation during work phase
+  .work-phase & {
+    animation: workBreathe 1.5s ease-in-out infinite;
+  }
+
+  .rest-phase & {
+    animation: none;
+  }
+
+  .finished & {
+    animation: none;
+  }
 }
 
 .timer-display {
@@ -234,14 +300,40 @@
   color: inherit;
   font-family: 'Courier New', monospace;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+  // Breathing animation during work phase
+  .work-phase & {
+    animation: workBreathe 1.5s ease-in-out infinite;
+  }
+
+  .rest-phase & {
+    animation: none;
+  }
+
+  .finished & {
+    animation: none;
+  }
 }
 
 .timer-message {
-  font-size: $font-size-xl;
+  font-size: calc($font-size-xl * 2); // 2.4rem - doubled
   font-weight: bold;
   margin: $spacing-md 0;
   color: inherit;
   text-align: center;
+
+  // Breathing animation during work phase
+  .work-phase & {
+    animation: workBreathe 1.5s ease-in-out infinite;
+  }
+
+  .rest-phase & {
+    animation: none;
+  }
+
+  .finished & {
+    animation: none;
+  }
 }
 
 .timer-subtitle {
@@ -263,6 +355,14 @@
   align-items: center;
   margin: $spacing-lg 0;
   flex-wrap: wrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $transition-fast;
+
+  // Enable pointer events on buttons when visible
+  .btn {
+    pointer-events: auto;
+  }
 
   .btn {
     @include button-base;
@@ -351,8 +451,12 @@
   margin: $spacing-md 0;
   display: flex;
   justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $transition-fast;
 
   .toggle-container {
+    pointer-events: auto;
     display: flex;
     align-items: center;
     gap: $spacing-sm;
@@ -381,7 +485,7 @@
       }
 
       &:checked {
-        background: #00ff88;
+        background: #00a85a; // Darker green
 
         &:before {
           transform: translateX(26px);
@@ -407,8 +511,12 @@
   margin: $spacing-sm 0;
   display: flex;
   justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $transition-fast;
 
   .volume-label {
+    pointer-events: auto;
     display: flex;
     align-items: center;
     gap: $spacing-sm;

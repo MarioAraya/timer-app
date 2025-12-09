@@ -79,6 +79,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
       showBackButton={showBackButton}
       onBackClick={onBackClick}
       hasFinalRest={true} // HIIT has a final rest phase after last work
+      showSkipButton={false} // Hide skip button for HIIT
     />
   )
 }

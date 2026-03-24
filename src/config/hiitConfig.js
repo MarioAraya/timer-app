@@ -1,93 +1,107 @@
 // HIIT Timer Configuration
-// Modify these settings to customize your HIIT workout timing and phrases
+// Calibrated from: hiit_next-level_40-20.mp3
+// Calibration date: 2026-02-11
 
 export const HIIT_CONFIG = {
-  // Song information
   song: {
-    title: "HIIT Workout Song", 
-    youtubeUrl: "https://www.youtube.com/watch?v=your-video-id",
+    title: "Next Level - HIIT 40/20",
+    mp3File: "/hiit_next-level_40-20.mp3",
     totalDuration: "12:09"
   },
-  
-  // Preparation phase (time before first round starts)
+
+  // Preparation phase (intro before round 1)
   preparation: {
-    duration: 9, // seconds - intro countdown before workout
-    subtitle: "Get ready to start!" // optional message during preparation
+    duration: 9,
+    subtitle: "Get ready!"
   },
-  
-  // Workout rounds configuration based on exact song timing
+
+  // 12 rounds calibrated to MP3
+  // Rounds 1-6: calibrated from audio marks
+  // Rounds 7-12: standard 40s work / 20s rest
   rounds: [
     {
-      work: 41.66, // Vuelta 2: 00:40,22 (first work phase)
-      rest: 19.33, // Vuelta 3: 00:19,53 (first rest phase - reduced 1s to start round 2 earlier)
-      workSubtitle: "Go! Go! Go! Round one!",
-      restSubtitle: "Break, break, break!"
+      // Round 1: WORK starts 10.589s, REST starts 51.324s
+      work: 40.74,  // 51.324 - 10.589
+      rest: 20.41,  // 71.730 - 51.324
+      workSubtitle: "Let's go! Round 1!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 39.66, // Vuelta 4: 00:40,78
-      rest: 19.33, // Vuelta 5: 00:20,38
-      workSubtitle: "Go! Go! Go! Round two!",
-      restSubtitle: "Break, break, break!"
+      // Round 2: WORK starts 71.730s, REST starts 112.797s
+      work: 41.07,  // 112.797 - 71.730
+      rest: 20.08,  // 132.877 - 112.797
+      workSubtitle: "Push it! Round 2!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 39.66, // Vuelta 6: 00:40,95
-      rest: 19.33, // Vuelta 7: 00:20,35
-      workSubtitle: "Go! Go! Go! Round three!",
-      restSubtitle: "Break, break, break!"
+      // Round 3: WORK starts 132.877s, REST starts 173.863s
+      work: 40.99,  // 173.863 - 132.877
+      rest: 20.45,  // 194.310 - 173.863
+      workSubtitle: "Keep going! Round 3!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 40.93, // Vuelta 8: 00:40,93
-      rest: 19.50, // Vuelta 9: 00:20,50
-      workSubtitle: "Go! Go! Go! Round four!",
-      restSubtitle: "Break, break, break!"
+      // Round 4: WORK starts 194.310s, REST starts 235.048s
+      work: 40.74,  // 235.048 - 194.310
+      rest: 20.51,  // 255.555 - 235.048
+      workSubtitle: "You got this! Round 4!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 40.31, // Vuelta 10: 00:40,31
-      rest: 20.95, // Vuelta 11: 00:20,95
-      workSubtitle: "Go! Go! Go! Round five!",
-      restSubtitle: "Break, break, break!"
+      // Round 5: WORK starts 255.555s, REST starts 296.424s
+      work: 40.87,  // 296.424 - 255.555
+      rest: 20.71,  // 317.134 - 296.424
+      workSubtitle: "Halfway there! Round 5!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 40.03, // Vuelta 12: 00:40,03
-      rest: 20.00, // Vuelta 13: 00:20,19
-      workSubtitle: "Go! Go! Go! Round six!",
-      restSubtitle: "Break, break, break!"
+      // Round 6: WORK starts 317.134s, REST starts 357.645s
+      work: 40.51,  // 357.645 - 317.134
+      rest: 25.90,  // 383.549 - 357.645 (longer transition)
+      workSubtitle: "Don't stop! Round 6!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 40.00, // Vuelta 14: 00:40,93
-      rest: 20.00, // Vuelta 15: 00:20,40
-      workSubtitle: "Go! Go! Go! Round seven!",
-      restSubtitle: "Break, break, break!"
+      // Round 7: WORK starts 383.549s (from calibration)
+      work: 40.00,
+      rest: 20.00,
+      workSubtitle: "Second half! Round 7!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 40.00, // Vuelta 16: 00:40,83
-      rest: 20.00, // Vuelta 17: 00:20,34
-      workSubtitle: "Go! Go! Go! Round eight!",
-      restSubtitle: "Break, break, break!"
+      // Round 8
+      work: 40.00,
+      rest: 20.00,
+      workSubtitle: "Stay strong! Round 8!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 40.00, // Vuelta 18: 00:40,73
-      rest: 20.00, // Vuelta 19: 00:20,56
-      workSubtitle: "Go! Go! Go! Round nine!",
-      restSubtitle: "Break, break, break!"
+      // Round 9
+      work: 40.00,
+      rest: 20.00,
+      workSubtitle: "Almost there! Round 9!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 40.00, // Vuelta 20: 00:40,65
-      rest: 20.00, // Vuelta 21: 00:20,56
-      workSubtitle: "Go! Go! Go! Round ten!",
-      restSubtitle: "Break, break, break!"
+      // Round 10
+      work: 40.00,
+      rest: 20.00,
+      workSubtitle: "Final push! Round 10!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 40.00, // Vuelta 22: 00:40,05
-      rest: 20.00, // Vuelta 23: 00:20,18
-      workSubtitle: "Round eleven!",
-      restSubtitle: "Break, break, break!"
+      // Round 11
+      work: 40.00,
+      rest: 20.00,
+      workSubtitle: "One more after this! Round 11!",
+      restSubtitle: "Breathe... recover"
     },
     {
-      work: 40.00, // Vuelta 24: 00:40,95
-      rest: 13.00, // Vuelta 25: 00:13,98 (final rest)
-      workSubtitle: "Final round, champ!",
-      restSubtitle: "Final rest - you did it!"
+      // Round 12 - Final round
+      work: 40.00,
+      rest: 9.00,  // Outro / cooldown
+      workSubtitle: "FINAL ROUND! Give it all!",
+      restSubtitle: "Amazing workout!"
     }
   ]
 }
@@ -98,30 +112,28 @@ export const calculateTotalTime = () => {
   const roundsTime = HIIT_CONFIG.rounds.reduce((total, round) => {
     return total + round.work + round.rest
   }, 0)
-  
+
   const totalSeconds = prepTime + roundsTime
   const minutes = Math.floor(totalSeconds / 60)
   const seconds = Math.floor(totalSeconds % 60)
-  
+
   return `${minutes}:${seconds.toString().padStart(2, '0')}`
 }
 
-// Export individual configurations for different songs/workouts
-export const SONG_CONFIGURATIONS = {
-  // Current default configuration
-  default: HIIT_CONFIG,
-  
-  // Example: Different song configuration
-  // songName: {
-  //   song: {
-  //     title: "Different Song",
-  //     youtubeUrl: "https://www.youtube.com/watch?v=different-id",
-  //     totalDuration: "10:00"
-  //   },
-  //   preparation: { duration: 8, subtitle: "Get ready!" },
-  //   rounds: [
-  //     { work: 30, rest: 15, workSubtitle: "Work!", restSubtitle: "Rest!" },
-  //     // ... more rounds
-  //   ]
-  // }
+// Raw calibration timestamps for reference
+export const CALIBRATION_MARKS = {
+  // From audio calibration 2026-02-11
+  prep_end: 10.589,      // WORK Round 1 starts
+  r1_rest: 51.324,       // REST Round 1 starts
+  r2_work: 71.730,       // WORK Round 2 starts
+  r2_rest: 112.797,      // REST Round 2 starts
+  r3_work: 132.877,      // WORK Round 3 starts
+  r3_rest: 173.863,      // REST Round 3 starts
+  r4_work: 194.310,      // WORK Round 4 starts
+  r4_rest: 235.048,      // REST Round 4 starts
+  r5_work: 255.555,      // WORK Round 5 starts
+  r5_rest: 296.424,      // REST Round 5 starts
+  r6_work: 317.134,      // WORK Round 6 starts
+  r6_rest: 357.645,      // REST Round 6 starts
+  r7_work: 383.549,      // WORK Round 7 starts (last calibrated mark)
 }

@@ -1,18 +1,7 @@
 import './TimerCarousel.scss'
 
-// Timer data configuration
+// Timer data configuration with Material icons
 const timerData = [
-  {
-    id: "pomodoro",
-    name: "Pomodoro",
-    title: "Pomodoro Timer",
-    description: "Focus for 25 minutes, then take a 5-minute break. Perfect for productivity and deep work sessions.",
-    category: "Productivity",
-    duration: "25 min",
-    sessions: 1247,
-    icon: "🍅",
-    component: "PomodoroTimer"
-  },
   {
     id: "hiit",
     name: "HIIT",
@@ -21,8 +10,9 @@ const timerData = [
     category: "Fitness",
     duration: "12 min",
     sessions: 892,
-    icon: "💪",
-    component: "HiitTimer"
+    icon: "local_fire_department",
+    component: "HiitTimer",
+    accentColor: "#00cc88"
   },
   {
     id: "tabata",
@@ -32,8 +22,21 @@ const timerData = [
     category: "Fitness",
     duration: "4 min",
     sessions: 634,
-    icon: "⚡",
-    component: "TabataTimer"
+    icon: "bolt",
+    component: "TabataTimer",
+    accentColor: "#ff6b35"
+  },
+  {
+    id: "pomodoro",
+    name: "Pomodoro",
+    title: "Pomodoro Timer",
+    description: "Focus for 25 minutes, then take a 5-minute break. Perfect for productivity and deep work sessions.",
+    category: "Productivity",
+    duration: "25 min",
+    sessions: 1247,
+    icon: "timer",
+    component: "PomodoroTimer",
+    accentColor: "#ff6b6b"
   },
   {
     id: "box-breathing",
@@ -43,8 +46,9 @@ const timerData = [
     category: "Wellness",
     duration: "5 min",
     sessions: 1156,
-    icon: "🫁",
-    component: "BoxBreathingTimer"
+    icon: "self_improvement",
+    component: "BoxBreathingTimer",
+    accentColor: "#4ecdc4"
   },
   {
     id: "relaxing-breath",
@@ -54,8 +58,9 @@ const timerData = [
     category: "Wellness",
     duration: "3 min",
     sessions: 923,
-    icon: "😌",
-    component: "RelaxingBreathTimer"
+    icon: "nights_stay",
+    component: "RelaxingBreathTimer",
+    accentColor: "#9b59b6"
   },
   {
     id: "calming-breath",
@@ -65,19 +70,26 @@ const timerData = [
     category: "Wellness",
     duration: "4 min",
     sessions: 756,
-    icon: "🧘",
-    component: "CalmingBreathTimer"
+    icon: "spa",
+    component: "CalmingBreathTimer",
+    accentColor: "#3498db"
   }
 ]
 
 function TimerCarousel({ onTimerSelect, activeTimer }) {
   const handleCardClick = (timer) => {
-    // Launch the timer directly
     onTimerSelect(timer)
   }
 
   return (
     <div className="timer-carousel">
+      <header className="carousel-header">
+        <div className="header-content">
+          <span className="header-label">WORKOUT TIMERS</span>
+          <h1 className="header-title">Choose Your Timer</h1>
+        </div>
+      </header>
+
       <div className="timer-carousel__grid">
         {timerData.map((timer) => {
           const isRunning = activeTimer && activeTimer.component === timer.component
@@ -87,40 +99,45 @@ function TimerCarousel({ onTimerSelect, activeTimer }) {
               key={timer.id}
               className={`timer-card ${isRunning ? 'timer-card--running' : ''}`}
               onClick={() => handleCardClick(timer)}
+              style={{ '--accent-color': timer.accentColor }}
             >
               {isRunning && (
                 <div className="timer-card__now-playing">
-                  <span className="timer-card__playing-icon">▶</span>
+                  <span className="material-symbols-outlined">play_arrow</span>
                   Now Playing
                 </div>
               )}
 
-              <div className="timer-card__header">
-                <div className="timer-card__category">
-                  {timer.category}
-                </div>
-                <div className="timer-card__duration">
-                  <span className="timer-card__clock">⏱️</span>
-                  {timer.duration}
-                </div>
+              <div className="timer-card__icon-wrapper">
+                <div className="icon-glow"></div>
+                <span className="material-symbols-outlined timer-card__icon">{timer.icon}</span>
               </div>
 
               <div className="timer-card__content">
-                <div className="timer-card__title">
-                  <span className="timer-card__icon">{timer.icon}</span>
-                  {timer.title}
+                <div className="timer-card__badges">
+                  <div className="timer-card__category">
+                    {timer.category}
+                  </div>
+                  <div className="timer-card__duration">
+                    <span className="material-symbols-outlined">schedule</span>
+                    {timer.duration}
+                  </div>
                 </div>
 
-                <div className="timer-card__description">
+                <h3 className="timer-card__title">{timer.title}</h3>
+
+                <p className="timer-card__description">
                   {timer.description}
-                </div>
+                </p>
               </div>
 
               <div className="timer-card__footer">
                 <div className="timer-card__stats">
-                  <span className="timer-card__sessions">
-                    {timer.sessions} sessions
-                  </span>
+                  <span className="material-symbols-outlined">bar_chart</span>
+                  {timer.sessions.toLocaleString()} sessions
+                </div>
+                <div className="timer-card__start">
+                  <span className="material-symbols-outlined">play_circle</span>
                 </div>
               </div>
             </div>

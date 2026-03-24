@@ -1082,7 +1082,7 @@ npm install
 # Start development server (http://localhost:5173)
 npm run dev
 
-# Build for production
+#   for production
 npm run build
 
 # Preview production build

@@ -3,7 +3,13 @@
     "allow": [
       "Bash(npm run dev:*)",
       "Bash(npm run build:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(node --version:*)",
+      "Bash(npm:*)",
+      "Bash(git --version:*)",
+      "Bash(sudo rm:*)",
+      "Bash(curl:*)",
+      "Bash(lsof:*)"
     ],
     "deny": []
   }

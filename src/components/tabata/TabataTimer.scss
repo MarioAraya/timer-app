@@ -1,0 +1,1583 @@
+// Tabata Timer New Design Styles
+// Modern dark theme with orange/red accent
+
+// Material Symbols filled variant
+.material-symbols-outlined.filled,
+.material-symbols-outlined[data-filled="true"] {
+  font-variation-settings: 'FILL' 1;
+}
+
+// Colors - Orange/Red theme for Tabata
+$primary: #ff6b35;
+$primary-glow: rgba(255, 107, 53, 0.3);
+$primary-light: rgba(255, 107, 53, 0.1);
+$primary-border: rgba(255, 107, 53, 0.2);
+$bg-dark: #18181b;
+$bg-card: rgba(255, 255, 255, 0.05);
+$bg-card-border: rgba(255, 255, 255, 0.1);
+$text-primary: #ffffff;
+$text-secondary: rgba(255, 255, 255, 0.4);
+$text-muted: rgba(255, 255, 255, 0.6);
+
+// Rest mode colors
+$rest-color: #4ecdc4;
+$rest-glow: rgba(78, 205, 196, 0.3);
+
+// ============================================
+// TABATA Timer Container
+// ============================================
+.tabata-timer-new {
+  font-family: 'Lexend', sans-serif;
+  background: $bg-dark;
+  color: $text-primary;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+
+  // When inside the timer-view (fullscreen from app.jsx)
+  .timer-view & {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    z-index: 100;
+  }
+}
+
+// ============================================
+// SETUP VIEW STYLES
+// ============================================
+.tabata-setup-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
+  background: $bg-dark;
+  padding-bottom: 120px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  // Header
+  .setup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    background: rgba(24, 24, 27, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+
+    .back-button,
+    .settings-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      color: $text-primary;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background 0.2s;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .material-symbols-outlined {
+        font-size: 24px;
+      }
+    }
+
+    .settings-button .material-symbols-outlined {
+      color: $primary;
+    }
+
+    .setup-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+
+  // Main content
+  .setup-main {
+    flex: 1;
+    padding: 24px 16px;
+  }
+
+  // Preview ring
+  .setup-preview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+
+    .preview-ring {
+      position: relative;
+      width: 192px;
+      height: 192px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .preview-ring-outer {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 12px solid rgba($primary, 0.2);
+
+        &::after {
+          content: '';
+          position: absolute;
+          inset: -12px;
+          border-radius: 50%;
+          border: 12px solid $primary;
+          border-left-color: transparent;
+          border-bottom-color: transparent;
+          transform: rotate(-45deg);
+        }
+      }
+
+      .preview-ring-inner {
+        position: absolute;
+        inset: 16px;
+        border-radius: 50%;
+        border: 12px solid rgba($primary, 0.1);
+
+        &::after {
+          content: '';
+          position: absolute;
+          inset: -12px;
+          border-radius: 50%;
+          border: 12px solid rgba(255, 255, 255, 0.2);
+          border-bottom-color: transparent;
+          border-right-color: transparent;
+          transform: rotate(12deg);
+        }
+      }
+
+      .preview-content {
+        text-align: center;
+        z-index: 1;
+
+        .preview-label {
+          display: block;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.2em;
+          color: $primary;
+          text-transform: uppercase;
+        }
+
+        .preview-time {
+          display: block;
+          font-size: 36px;
+          font-weight: 700;
+          margin: 4px 0;
+        }
+
+        .preview-info {
+          display: block;
+          font-size: 10px;
+          color: $text-secondary;
+          font-style: italic;
+        }
+      }
+    }
+  }
+
+  // Interval settings
+  .interval-settings {
+    .settings-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: $text-secondary;
+      margin: 0 0 16px 8px;
+    }
+  }
+
+  // Interval cards
+  .interval-card {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 10px rgba(255, 107, 53, 0.05);
+
+    &.active {
+      border: 2px solid rgba($primary, 0.5);
+      box-shadow: 0 0 20px $primary-glow;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 16px;
+
+      .card-label {
+        .label-category {
+          display: block;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          color: $text-secondary;
+          text-transform: uppercase;
+          margin-bottom: 4px;
+
+          &.primary {
+            color: $primary;
+          }
+        }
+
+        .label-title {
+          display: block;
+          font-size: 18px;
+          font-weight: 700;
+        }
+      }
+
+      .card-time {
+        font-size: 24px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+
+        &.primary {
+          color: $primary;
+        }
+      }
+    }
+
+    .slider-container {
+      position: relative;
+      height: 24px;
+      display: flex;
+      align-items: center;
+
+      .slider {
+        position: absolute;
+        width: 100%;
+        height: 6px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+        z-index: 2;
+
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: white;
+          border: 2px solid $primary;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          cursor: pointer;
+        }
+
+        &::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: white;
+          border: 2px solid $primary;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          cursor: pointer;
+        }
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+
+      .slider-fill {
+        position: absolute;
+        height: 6px;
+        background: $primary;
+        border-radius: 3px;
+        pointer-events: none;
+        box-shadow: 0 0 10px $primary-glow;
+
+        &:not(.primary) {
+          opacity: 0.6;
+        }
+      }
+
+      .slider-thumb {
+        display: none;
+      }
+    }
+  }
+
+  // Quote preview
+  .quote-preview {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 32px;
+
+    .quote-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba($primary, 0.1);
+      border: 1px solid rgba($primary, 0.2);
+      border-radius: 8px;
+      padding: 8px 12px;
+
+      .badge-phase {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: $primary;
+      }
+
+      .badge-time {
+        font-size: 12px;
+        font-weight: 700;
+        color: $primary;
+      }
+    }
+
+    .quote-text {
+      flex: 1;
+      font-size: 14px;
+      font-style: italic;
+      color: $text-muted;
+      margin: 0;
+    }
+  }
+
+  // Footer
+  .setup-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px;
+    background: linear-gradient(to top, $bg-dark, $bg-dark 80%, transparent);
+
+    .start-button {
+      width: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: $primary;
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 20px;
+      font-family: 'Lexend', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 10px 30px $primary-glow;
+      transition: all 0.2s;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 40px $primary-glow;
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      .material-symbols-outlined {
+        font-size: 24px;
+        font-variation-settings: 'FILL' 1;
+      }
+    }
+  }
+
+  // Desktop styles for setup view
+  @media (min-width: 768px) {
+    padding-bottom: 140px;
+
+    .setup-header {
+      padding: 24px 48px;
+
+      .setup-title {
+        font-size: 24px;
+      }
+
+      .back-button,
+      .settings-button {
+        width: 48px;
+        height: 48px;
+
+        .material-symbols-outlined {
+          font-size: 28px;
+        }
+      }
+    }
+
+    .setup-main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 48px;
+    }
+
+    .setup-preview {
+      margin-bottom: 48px;
+
+      .preview-ring {
+        width: 280px;
+        height: 280px;
+
+        .preview-ring-outer {
+          border-width: 16px;
+
+          &::after {
+            inset: -16px;
+            border-width: 16px;
+          }
+        }
+
+        .preview-ring-inner {
+          inset: 24px;
+          border-width: 16px;
+
+          &::after {
+            inset: -16px;
+            border-width: 16px;
+          }
+        }
+
+        .preview-content {
+          .preview-label {
+            font-size: 14px;
+            letter-spacing: 0.25em;
+          }
+
+          .preview-time {
+            font-size: 56px;
+            margin: 8px 0;
+          }
+
+          .preview-info {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+
+    .interval-settings {
+      .settings-section-title {
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+    }
+
+    .interval-card {
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      border-radius: 20px;
+
+      .card-header {
+        margin-bottom: 20px;
+
+        .card-label {
+          .label-category {
+            font-size: 12px;
+            margin-bottom: 6px;
+          }
+
+          .label-title {
+            font-size: 24px;
+          }
+        }
+
+        .card-time {
+          font-size: 32px;
+        }
+      }
+
+      .slider-container {
+        height: 32px;
+
+        &::before {
+          height: 8px;
+          border-radius: 4px;
+        }
+
+        .slider-fill {
+          height: 8px;
+          border-radius: 4px;
+        }
+
+        .slider {
+          height: 8px;
+
+          &::-webkit-slider-thumb {
+            width: 28px;
+            height: 28px;
+          }
+
+          &::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+          }
+        }
+      }
+    }
+
+    .quote-preview {
+      padding: 20px 24px;
+      margin-top: 40px;
+      border-radius: 16px;
+
+      .quote-badge {
+        padding: 10px 16px;
+
+        .badge-phase {
+          font-size: 10px;
+        }
+
+        .badge-time {
+          font-size: 14px;
+        }
+      }
+
+      .quote-text {
+        font-size: 16px;
+      }
+    }
+
+    .setup-footer {
+      padding: 32px 48px;
+
+      .start-button {
+        max-width: 600px;
+        padding: 24px 40px;
+        font-size: 20px;
+        border-radius: 20px;
+
+        .material-symbols-outlined {
+          font-size: 28px;
+        }
+      }
+    }
+  }
+
+  // Extra large desktop
+  @media (min-width: 1200px) {
+    .setup-main {
+      max-width: 900px;
+      padding: 48px 64px;
+    }
+
+    .setup-preview {
+      margin-bottom: 56px;
+
+      .preview-ring {
+        width: 320px;
+        height: 320px;
+
+        .preview-content {
+          .preview-label {
+            font-size: 16px;
+          }
+
+          .preview-time {
+            font-size: 64px;
+          }
+
+          .preview-info {
+            font-size: 16px;
+          }
+        }
+      }
+    }
+
+    .interval-card {
+      padding: 32px 40px;
+
+      .card-header {
+        .card-label .label-title {
+          font-size: 28px;
+        }
+
+        .card-time {
+          font-size: 36px;
+        }
+      }
+    }
+
+    .setup-footer .start-button {
+      max-width: 700px;
+      padding: 28px 48px;
+      font-size: 22px;
+    }
+  }
+}
+
+// ============================================
+// ACTIVE VIEW STYLES
+// ============================================
+.tabata-active-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
+  background: $bg-dark;
+  position: relative;
+  overflow: hidden;
+
+  // Background glows
+  .bg-glow {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+
+    &.top-left {
+      width: 256px;
+      height: 256px;
+      top: -80px;
+      left: -80px;
+      background: $primary-light;
+      filter: blur(100px);
+    }
+
+    &.bottom-right {
+      width: 320px;
+      height: 320px;
+      bottom: 160px;
+      right: -80px;
+      background: rgba($primary, 0.1);
+      filter: blur(120px);
+    }
+  }
+
+  // Rest mode colors
+  &.rest-mode {
+    .stat-card.mode {
+      background: rgba($rest-color, 0.1);
+      border-color: rgba($rest-color, 0.2);
+
+      .stat-label {
+        color: rgba($rest-color, 0.6);
+      }
+
+      .stat-value {
+        color: $rest-color;
+      }
+    }
+
+    .progress-badge {
+      background: rgba($rest-color, 0.2);
+
+      span {
+        color: $rest-color;
+      }
+    }
+
+    .circular-progress-container {
+      .progress-ring-fill.inner {
+        stroke: $rest-color;
+        filter: drop-shadow(0 0 10px $rest-glow);
+      }
+    }
+
+    .set-progress .progress-fill {
+      background: $rest-color;
+      box-shadow: 0 0 10px $rest-glow;
+    }
+
+    .motivational-text .highlight {
+      color: $rest-color;
+    }
+
+    .bg-glow {
+      &.top-left {
+        background: rgba($rest-color, 0.05);
+      }
+
+      &.bottom-right {
+        background: rgba($rest-color, 0.1);
+      }
+    }
+  }
+
+  // Work mode - orange colors
+  &.work-mode {
+    .circular-progress-container {
+      .progress-ring-fill.outer {
+        stroke: $primary;
+      }
+
+      .progress-ring-fill.inner {
+        stroke: $primary;
+        filter: drop-shadow(0 0 10px $primary-glow);
+      }
+    }
+
+    .progress-badge {
+      background: rgba($primary, 0.2);
+
+      span {
+        color: $primary;
+      }
+    }
+
+    .set-progress .progress-fill {
+      background: $primary;
+      box-shadow: 0 0 10px $primary-glow;
+    }
+
+    .motivational-text .highlight {
+      color: $primary;
+    }
+
+    .progress-time {
+      text-shadow: 0 0 15px $primary-glow;
+    }
+  }
+
+  // Finished mode
+  &.finished-mode {
+    .circular-progress-container {
+      .progress-ring-fill {
+        stroke: #ffd700;
+      }
+    }
+
+    .progress-badge {
+      background: rgba(255, 215, 0, 0.2);
+
+      span {
+        color: #ffd700;
+      }
+    }
+
+    .motivational-text .highlight {
+      color: #ffd700;
+    }
+  }
+
+  // Maximized mode
+  &.maximized {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    z-index: 1000;
+
+    .circular-progress-container {
+      transform: scale(1.3);
+    }
+
+    .progress-time {
+      font-size: 120px;
+    }
+  }
+
+  // Header
+  .active-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+    position: relative;
+    z-index: 1;
+
+    .back-button,
+    .fullscreen-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border: none;
+      background: transparent;
+      color: $text-muted;
+      cursor: pointer;
+      transition: color 0.2s;
+
+      &:hover {
+        color: $text-primary;
+      }
+
+      .material-symbols-outlined {
+        font-size: 24px;
+      }
+    }
+
+    .header-center {
+      text-align: center;
+
+      .session-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        color: $primary;
+        text-transform: uppercase;
+      }
+
+      .round-info {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+      }
+    }
+  }
+
+  // Main content
+  .active-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  // Stats HUD
+  .stats-hud {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+
+    .stat-card {
+      flex: 1;
+      padding: 16px;
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+
+      &.elapsed {
+        background: $bg-card;
+        border: 1px solid $bg-card-border;
+      }
+
+      &.mode {
+        background: $primary-light;
+        border: 1px solid $primary-border;
+
+        .stat-label {
+          color: rgba($primary, 0.6);
+        }
+
+        .stat-value {
+          color: $primary;
+        }
+      }
+
+      .stat-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        color: $text-secondary;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+
+      .stat-value {
+        font-size: 20px;
+        font-weight: 700;
+      }
+    }
+
+    // Side controls (audio toggle & reset)
+    .side-controls {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      margin-top: 8px;
+
+      .side-control-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        background: $bg-card;
+        border: 1px solid $bg-card-border;
+        border-radius: 10px;
+        color: $text-muted;
+        font-family: 'Lexend', sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: $text-primary;
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .material-symbols-outlined {
+          font-size: 16px;
+        }
+
+        .side-control-label {
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        &.reset {
+          &:hover {
+            color: #ff6b6b;
+            border-color: rgba(255, 107, 107, 0.3);
+          }
+        }
+      }
+    }
+  }
+
+  // Circular Progress - Override colors for Tabata
+  .circular-progress-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 320px;
+    height: 320px;
+
+    .circular-progress-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .progress-ring-bg {
+      stroke: $bg-card;
+
+      &.outer {
+        stroke-width: 8;
+      }
+
+      &.inner {
+        stroke-width: 16;
+      }
+    }
+
+    .progress-ring-fill {
+      transition: stroke-dashoffset 0.3s ease;
+
+      &.outer {
+        stroke: $primary;
+        opacity: 0.3;
+        stroke-width: 8;
+      }
+
+      &.inner {
+        stroke: $primary;
+        filter: drop-shadow(0 0 10px $primary-glow);
+        stroke-width: 16;
+      }
+    }
+
+    .circular-progress-content {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      inset: 0;
+
+      .progress-label {
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        color: $text-secondary;
+        text-transform: uppercase;
+        margin-bottom: -10px;
+      }
+
+      .progress-time {
+        font-size: 100px;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        text-shadow: 0 0 15px $primary-glow;
+      }
+
+      .progress-badge {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba($primary, 0.2);
+        padding: 6px 12px;
+        border-radius: 20px;
+        margin-top: 8px;
+
+        .material-symbols-outlined {
+          font-size: 14px;
+          color: $primary;
+        }
+
+        span {
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          color: $primary;
+        }
+      }
+    }
+  }
+
+  // Set progress
+  .set-progress {
+    width: 100%;
+    max-width: 280px;
+    margin-top: 48px;
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: $text-secondary;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: $bg-card;
+      border-radius: 3px;
+      overflow: hidden;
+
+      .progress-fill {
+        height: 100%;
+        background: $primary;
+        border-radius: 3px;
+        box-shadow: 0 0 10px $primary-glow;
+        transition: width 0.3s ease;
+      }
+    }
+  }
+
+  // Footer
+  .active-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 32px 24px 48px;
+    position: relative;
+    z-index: 1;
+
+    .motivational-text {
+      text-align: center;
+
+      h3 {
+        font-size: 28px;
+        font-weight: 900;
+        font-style: italic;
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
+        margin: 0;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+
+        .highlight {
+          color: $primary;
+        }
+      }
+
+      .subtitle-text {
+        font-size: 20px;
+        font-weight: 700;
+        font-style: italic;
+        color: $text-muted;
+      }
+    }
+
+    .playback-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+
+      .control-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &.secondary {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: $bg-card;
+          border: 1px solid $bg-card-border;
+          color: $text-muted;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: $text-primary;
+          }
+
+          .material-symbols-outlined {
+            font-size: 24px;
+          }
+        }
+
+        &.primary {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: $primary;
+          color: #fff;
+          box-shadow: 0 8px 24px $primary-glow;
+
+          &:hover {
+            transform: scale(1.05);
+          }
+
+          &:active {
+            transform: scale(0.95);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+          }
+
+          .material-symbols-outlined {
+            font-size: 36px;
+
+            &.filled {
+              font-variation-settings: 'FILL' 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE - Desktop
+// ============================================
+
+// Mobile small
+@media (max-width: 480px) {
+  .tabata-active-view {
+    .circular-progress-container {
+      transform: scale(0.85);
+    }
+
+    .active-footer {
+      .motivational-text h3 {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+// Desktop / Large screens
+@media (min-width: 768px) {
+  .tabata-timer-new {
+    max-width: none;
+  }
+
+  .tabata-active-view {
+    // Reposition stats to corners - smaller and more discrete
+    .stats-hud {
+      position: absolute;
+      top: 100px;
+      left: 32px;
+      right: auto;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 0;
+      z-index: 5;
+      width: auto;
+
+      .stat-card {
+        flex: 0 0 auto;
+        min-width: 140px;
+        padding: 10px 16px;
+        border-radius: 10px;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+
+        &:hover {
+          opacity: 1;
+        }
+
+        .stat-label {
+          font-size: 8px;
+          letter-spacing: 0.08em;
+        }
+
+        .stat-value {
+          font-size: 14px;
+        }
+      }
+
+      .side-controls {
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 12px;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+
+        &:hover {
+          opacity: 1;
+        }
+
+        .side-control-btn {
+          padding: 8px 12px;
+          font-size: 10px;
+
+          .material-symbols-outlined {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+
+    // Enlarge circular progress for desktop
+    .active-main {
+      justify-content: center;
+      padding-top: 0;
+    }
+
+    .circular-progress-container {
+      width: 450px;
+      height: 450px;
+
+      .progress-ring-bg.outer,
+      .progress-ring-fill.outer {
+        stroke-width: 12;
+      }
+
+      .progress-ring-bg.inner,
+      .progress-ring-fill.inner {
+        stroke-width: 24;
+      }
+
+      .circular-progress-content {
+        .progress-label {
+          font-size: 18px;
+          letter-spacing: 0.3em;
+          margin-bottom: -15px;
+        }
+
+        .progress-time {
+          font-size: 160px;
+          font-weight: 900;
+        }
+
+        .progress-badge {
+          padding: 10px 20px;
+          margin-top: 12px;
+
+          .material-symbols-outlined {
+            font-size: 18px;
+          }
+
+          span {
+            font-size: 13px;
+          }
+        }
+      }
+    }
+
+    // Set progress bar wider
+    .set-progress {
+      max-width: 450px;
+      margin-top: 48px;
+
+      .progress-header {
+        font-size: 12px;
+      }
+
+      .progress-bar {
+        height: 8px;
+      }
+    }
+
+    // Larger motivational text
+    .active-footer {
+      padding: 40px 24px 56px;
+
+      .motivational-text {
+        h3 {
+          font-size: 36px;
+        }
+
+        .subtitle-text {
+          font-size: 28px;
+        }
+      }
+
+      .playback-controls {
+        gap: 40px;
+
+        .control-button {
+          &.secondary {
+            width: 64px;
+            height: 64px;
+
+            .material-symbols-outlined {
+              font-size: 28px;
+            }
+          }
+
+          &.primary {
+            width: 88px;
+            height: 88px;
+
+            .material-symbols-outlined {
+              font-size: 42px;
+            }
+          }
+        }
+      }
+    }
+
+    // Header adjustments
+    .active-header {
+      padding: 28px 40px;
+
+      .header-center {
+        .session-label {
+          font-size: 11px;
+        }
+
+        .round-info {
+          font-size: 22px;
+        }
+      }
+
+      .back-button,
+      .fullscreen-button {
+        width: 52px;
+        height: 52px;
+
+        .material-symbols-outlined {
+          font-size: 26px;
+        }
+      }
+    }
+
+    // Larger background glows
+    .bg-glow {
+      &.top-left {
+        width: 350px;
+        height: 350px;
+        filter: blur(140px);
+      }
+
+      &.bottom-right {
+        width: 450px;
+        height: 450px;
+        filter: blur(160px);
+      }
+    }
+  }
+}
+
+// Extra large screens (1200px+)
+@media (min-width: 1200px) {
+  .tabata-active-view {
+    .stats-hud {
+      left: 48px;
+      top: 120px;
+
+      .stat-card {
+        min-width: 160px;
+        padding: 12px 20px;
+
+        .stat-label {
+          font-size: 9px;
+        }
+
+        .stat-value {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .circular-progress-container {
+      width: 550px;
+      height: 550px;
+
+      .progress-ring-bg.outer,
+      .progress-ring-fill.outer {
+        stroke-width: 16;
+      }
+
+      .progress-ring-bg.inner,
+      .progress-ring-fill.inner {
+        stroke-width: 32;
+      }
+
+      .circular-progress-content {
+        .progress-label {
+          font-size: 22px;
+          margin-bottom: -20px;
+        }
+
+        .progress-time {
+          font-size: 200px;
+        }
+
+        .progress-badge {
+          padding: 12px 24px;
+          margin-top: 16px;
+
+          .material-symbols-outlined {
+            font-size: 20px;
+          }
+
+          span {
+            font-size: 15px;
+          }
+        }
+      }
+    }
+
+    .set-progress {
+      max-width: 550px;
+      margin-top: 56px;
+
+      .progress-header {
+        font-size: 13px;
+      }
+    }
+
+    .active-footer {
+      .motivational-text {
+        h3 {
+          font-size: 44px;
+        }
+
+        .subtitle-text {
+          font-size: 34px;
+        }
+      }
+
+      .playback-controls {
+        gap: 48px;
+
+        .control-button {
+          &.secondary {
+            width: 72px;
+            height: 72px;
+
+            .material-symbols-outlined {
+              font-size: 32px;
+            }
+          }
+
+          &.primary {
+            width: 100px;
+            height: 100px;
+
+            .material-symbols-outlined {
+              font-size: 48px;
+            }
+          }
+        }
+      }
+    }
+
+    .active-header {
+      padding: 32px 56px;
+
+      .header-center {
+        .session-label {
+          font-size: 12px;
+        }
+
+        .round-info {
+          font-size: 26px;
+        }
+      }
+    }
+  }
+}
+
+// Ultra wide screens (1600px+)
+@media (min-width: 1600px) {
+  .tabata-active-view {
+    .circular-progress-container {
+      width: 650px;
+      height: 650px;
+
+      .progress-ring-bg.outer,
+      .progress-ring-fill.outer {
+        stroke-width: 18;
+      }
+
+      .progress-ring-bg.inner,
+      .progress-ring-fill.inner {
+        stroke-width: 36;
+      }
+
+      .circular-progress-content {
+        .progress-label {
+          font-size: 26px;
+          margin-bottom: -24px;
+        }
+
+        .progress-time {
+          font-size: 240px;
+        }
+
+        .progress-badge {
+          padding: 14px 28px;
+          margin-top: 20px;
+
+          .material-symbols-outlined {
+            font-size: 24px;
+          }
+
+          span {
+            font-size: 17px;
+          }
+        }
+      }
+    }
+
+    .set-progress {
+      max-width: 650px;
+    }
+
+    .active-footer {
+      .motivational-text h3 {
+        font-size: 52px;
+      }
+    }
+  }
+}

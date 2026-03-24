@@ -28,7 +28,8 @@ function HiitTimerNew({
   autoMaximize = false,
   autoStart = false,
   showBackButton = true,
-  onBackClick
+  onBackClick,
+  onFinish
 }) {
   // Load saved state
   const savedState = loadHiitState()
@@ -229,6 +230,7 @@ function HiitTimerNew({
     // The song has its own ending/cooldown built in
 
     clearHiitState()
+    if (onFinish) onFinish()
   }
 
   // Control handlers

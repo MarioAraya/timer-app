@@ -74,6 +74,11 @@ class WorkoutAudioPlayer {
         console.log(`⏳ ${this.config.name} audio waiting event`, e)
       })
 
+      this.audio.addEventListener('ended', () => {
+        console.log(`🏁 ${this.config.name} audio ended`)
+        this.stopWatchdog()
+      })
+
       this.audio.addEventListener('canplaythrough', () => {
         this.playerReady = true
         this.playerLoading = false
@@ -100,6 +105,12 @@ class WorkoutAudioPlayer {
     this.watchdog = setInterval(() => {
       if (this.audio && this.playerReady && this.shouldBePlaying) {
         if (this.audio.paused) {
+          // Don't resume if the audio reached the end naturally
+          if (this.audio.ended) {
+            console.log(`🏁 ${this.config.name} audio ended naturally, stopping watchdog`)
+            this.stopWatchdog()
+            return
+          }
           const timeSinceStart = Date.now() - this.playbackStartTime
           // Aggressive resume after 500ms
           if (timeSinceStart > 500) {

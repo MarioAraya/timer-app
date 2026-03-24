@@ -1,0 +1,23 @@
+﻿
+HiitTimerNew.jsx:343 [MARK 1] 00:10.405 - WORK Round 1
+HiitTimerNew.jsx:343 [MARK 2] 00:51.559 - REST Round 1
+HiitTimerNew.jsx:343 [MARK 3] 01:12.172 - WORK Round 2
+HiitTimerNew.jsx:343 [MARK 4] 01:52.775 - REST Round 2
+HiitTimerNew.jsx:343 [MARK 5] 02:12.969 - WORK Round 3
+HiitTimerNew.jsx:343 [MARK 6] 02:54.029 - REST Round 3
+HiitTimerNew.jsx:343 [MARK 7] 03:56.203 - WORK Round 4
+HiitTimerNew.jsx:343 [MARK 8] 03:59.891 - REST Round 4
+HiitTimerNew.jsx:343 [MARK 9] 04:15.536 - WORK Round 5
+HiitTimerNew.jsx:343 [MARK 10] 04:56.751 - REST Round 5
+HiitTimerNew.jsx:343 [MARK 11] 05:57.988 - WORK Round 6
+HiitTimerNew.jsx:343 [MARK 12] 06:18.128 - REST Round 6
+HiitTimerNew.jsx:343 [MARK 13] 06:59.054 - WORK Round 7
+HiitTimerNew.jsx:343 [MARK 14] 07:19.376 - REST Round 7
+HiitTimerNew.jsx:343 [MARK 15] 08:00.450 - WORK Round 8
+HiitTimerNew.jsx:343 [MARK 16] 08:20.641 - REST Round 8
+HiitTimerNew.jsx:343 [MARK 17] 09:02.132 - WORK Round 9
+HiitTimerNew.jsx:343 [MARK 18] 09:21.838 - REST Round 9
+HiitTimerNew.jsx:343 [MARK 19] 10:03.368 - WORK Round 10
+HiitTimerNew.jsx:343 [MARK 20] 10:23.283 - REST Round 10
+HiitTimerNew.jsx:343 [MARK 21] 11:04.482 - WORK Round 11
+HiitTimerNew.jsx:343 [MARK 22] 12:09.159 - REST Round 11

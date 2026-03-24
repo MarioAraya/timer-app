@@ -97,7 +97,11 @@ function App() {
     // DON'T clear active timer - keep it to show "Now Playing" indicator
     // The timer's own cleanup will save its state
     setCurrentView('carousel')
-    // console.log('🔙 Going back to carousel, keeping active timer reference')
+  }
+
+  const handleTimerFinish = () => {
+    setActiveTimer(null)
+    clearActiveTimer()
   }
 
   const handleSetFavorite = (timerData) => {
@@ -141,7 +145,8 @@ function App() {
       autoMaximize: true,
       autoStart: false, // Never auto-start - let user control when to start/resume
       showBackButton: showBackButton,
-      onBackClick: handleBackToCarousel
+      onBackClick: handleBackToCarousel,
+      onFinish: handleTimerFinish
     }
 
     switch (activeTimer.component) {

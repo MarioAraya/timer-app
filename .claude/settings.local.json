@@ -9,7 +9,11 @@
       "Bash(git --version:*)",
       "Bash(sudo rm:*)",
       "Bash(curl:*)",
-      "Bash(lsof:*)"
+      "Bash(lsof:*)",
+      "Bash(git:*)",
+      "Bash(ls:*)",
+      "Bash(ffprobe -v quiet -show_entries format=duration -of csv=p=0 /Users/maaya/dev/timer-app/public/tabata_rocky_20-10_x4.mp3)",
+      "Bash(afinfo /Users/maaya/dev/timer-app/public/tabata_rocky_20-10_x4.mp3)"
     ],
     "deny": []
   }

@@ -28,7 +28,8 @@ function TabataTimerNew({
   autoMaximize = false,
   autoStart = false,
   showBackButton = true,
-  onBackClick
+  onBackClick,
+  onFinish
 }) {
   // Load saved state
   const savedState = loadTabataState()
@@ -130,8 +131,7 @@ function TabataTimerNew({
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => {
           if (prev <= 0.1) {
-            handlePhaseComplete()
-            return 0
+            return handlePhaseComplete()
           }
           return prev - 0.1
         })
@@ -164,41 +164,42 @@ function TabataTimerNew({
     }
   }, [timeLeft, isRunning, isFinished, isWorkPhase, isPreparationPhase, musicMode])
 
-  // Handle phase completion
+  // Handle phase completion - returns the new timeLeft value
   const handlePhaseComplete = () => {
     if (isPreparationPhase) {
       // Move to first work phase
       setIsPreparationPhase(false)
       setIsWorkPhase(true)
-      setTimeLeft(TABATA_CONFIG.rounds[0].work)
       setCurrentSubtitle(TABATA_CONFIG.rounds[0].workSubtitle)
       if (!musicMode) playWorkSound()
+      return TABATA_CONFIG.rounds[0].work
     } else if (isWorkPhase) {
       const currentRoundConfig = TABATA_CONFIG.rounds[currentRound - 1]
 
       // Check if this is the last round with no rest
       if (currentRound >= totalRounds && currentRoundConfig.rest === 0) {
         handleWorkoutComplete()
-        return
+        return 0
       }
 
       // Move to rest phase
       setIsWorkPhase(false)
-      setTimeLeft(currentRoundConfig.rest)
       setCurrentSubtitle(currentRoundConfig.restSubtitle)
+      return currentRoundConfig.rest
     } else {
       // Rest phase complete
       if (currentRound >= totalRounds) {
         // Workout complete
         handleWorkoutComplete()
+        return 0
       } else {
         // Move to next round
         const nextRound = currentRound + 1
         setCurrentRound(nextRound)
         setIsWorkPhase(true)
-        setTimeLeft(TABATA_CONFIG.rounds[nextRound - 1].work)
         setCurrentSubtitle(TABATA_CONFIG.rounds[nextRound - 1].workSubtitle)
         if (!musicMode) playWorkSound()
+        return TABATA_CONFIG.rounds[nextRound - 1].work
       }
     }
   }
@@ -215,6 +216,7 @@ function TabataTimerNew({
     }
 
     clearTabataState()
+    if (onFinish) onFinish()
   }
 
   // Control handlers
@@ -280,7 +282,8 @@ function TabataTimerNew({
 
   const handleSkip = () => {
     if (isFinished) return
-    handlePhaseComplete()
+    const newTime = handlePhaseComplete()
+    setTimeLeft(newTime)
   }
 
   const handleStartWorkout = () => {

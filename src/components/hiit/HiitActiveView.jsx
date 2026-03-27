@@ -1,137 +1,62 @@
-import CircularProgress from './CircularProgress'
-import Confetti from '../Confetti'
+import WorkoutActiveView from '../shared/WorkoutActiveView'
 
-/**
- * HIIT Active Session View Component
- * Simplified: circle timer + controls only
- */
+const EXERCISES = ['Skipping', 'Jumping Jacks', 'Coordinacion piernas', 'Boxeo 1-2!']
+
 function HiitActiveView({
-  currentRound,
-  totalRounds,
-  timeLeft,
-  isWorkPhase,
-  isPreparationPhase,
-  isRunning,
-  isFinished,
-  currentSubtitle,
-  showConfetti,
-  setShowConfetti,
-  roundProgress,
-  phaseProgress,
-  onBackClick,
-  onStart,
-  onPause,
-  onReset,
-  onSkip,
-  onToggleFullscreen,
-  isMaximized,
-  musicMode,
-  onToggleMusicMode,
-  onCalibrate
+  currentRound, totalRounds, timeLeft, totalElapsed,
+  isWorkPhase, isPreparationPhase, isRunning, isFinished,
+  currentSubtitle, showConfetti, setShowConfetti,
+  totalProgress, roundProgress,
+  onBackClick, onStart, onPause, onReset, onSkip,
+  onToggleFullscreen, isMaximized,
+  musicMode, onToggleMusicMode,
 }) {
   const getPhaseLabel = () => {
-    if (isFinished) return 'DONE!'
-    if (isPreparationPhase) return 'GET READY'
+    if (isFinished) return 'COMPLETE'
+    if (isPreparationPhase) return 'PREP'
     return isWorkPhase ? 'WORK' : 'REST'
   }
 
+  const getExerciseName = () => {
+    if (isFinished || isPreparationPhase) return null
+    return EXERCISES[(currentRound - 1) % EXERCISES.length]
+  }
+
+  const getMotivation = () => {
+    if (isFinished) return { text: 'HIIT', highlight: 'COMPLETE!' }
+    if (isWorkPhase) return { text: 'PUSH YOUR', highlight: 'LIMITS!' }
+    return { text: 'BREATHE &', highlight: 'RECOVER' }
+  }
+
   return (
-    <div className={`hiit-active-view ${isWorkPhase || isPreparationPhase ? 'work-mode' : 'rest-mode'} ${isFinished ? 'finished-mode' : ''} ${isMaximized ? 'maximized' : ''}`}>
-      {/* Minimal Header */}
-      <header className="active-header">
-        <button className="icon-btn" onClick={onBackClick} aria-label="Back">
-          <span className="material-symbols-outlined">arrow_back</span>
-        </button>
-
-        <div className="header-title">
-          <span className="phase-label">{getPhaseLabel()}</span>
-          <span className="round-label">Round {currentRound}/{totalRounds}</span>
-        </div>
-
-        <button className="icon-btn" onClick={onToggleFullscreen} aria-label="Fullscreen">
-          <span className="material-symbols-outlined">
-            {isMaximized ? 'fullscreen_exit' : 'fullscreen'}
-          </span>
-        </button>
-      </header>
-
-      {/* Main Content - Just the Circle */}
-      <main className="active-main">
-        <CircularProgress
-          roundProgress={roundProgress}
-          phaseProgress={phaseProgress}
-          timeDisplay={Math.floor(timeLeft)}
-          label={currentSubtitle || (isPreparationPhase ? 'GET READY' : isWorkPhase ? 'PUSH IT!' : 'BREATHE')}
-          onClick={isRunning ? onPause : onStart}
-          isRunning={isRunning}
-          isFinished={isFinished}
-          isWorkPhase={isWorkPhase}
-          isPreparationPhase={isPreparationPhase}
-        />
-      </main>
-
-      {/* Simple Footer Controls */}
-      <footer className="active-footer">
-        <div className="playback-controls">
-          <button className="control-btn" onClick={onToggleMusicMode} aria-label={musicMode ? 'Music mode' : 'Beeps mode'}>
-            <span className="material-symbols-outlined">
-              {musicMode ? 'music_note' : 'volume_up'}
-            </span>
-          </button>
-
-          <button className="control-btn" onClick={onReset} aria-label="Reset">
-            <span className="material-symbols-outlined">refresh</span>
-          </button>
-
-          {!isRunning ? (
-            <button
-              className="control-btn primary"
-              onClick={onStart}
-              disabled={isFinished}
-              aria-label="Play"
-            >
-              <span className="material-symbols-outlined">play_arrow</span>
-            </button>
-          ) : (
-            <button className="control-btn primary" onClick={onPause} aria-label="Pause">
-              <span className="material-symbols-outlined">pause</span>
-            </button>
-          )}
-
-          <button
-            className="control-btn"
-            onClick={onSkip}
-            disabled={isFinished}
-            aria-label="Skip"
-          >
-            <span className="material-symbols-outlined">skip_next</span>
-          </button>
-
-          <button
-            className="control-btn calibrate"
-            onClick={onCalibrate}
-            aria-label="Calibrate"
-          >
-            <span className="material-symbols-outlined">flag</span>
-          </button>
-        </div>
-
-        {/* Progress indicator */}
-        <div className="progress-bar-container">
-          <div className="progress-bar">
-            <div
-              className="progress-fill"
-              style={{ width: `${roundProgress}%` }}
-            />
-          </div>
-        </div>
-      </footer>
-
-      <Confetti
-        isActive={showConfetti}
-        onComplete={() => setShowConfetti(false)}
-      />
-    </div>
+    <WorkoutActiveView
+      currentRound={currentRound}
+      totalRounds={totalRounds}
+      timeLeft={timeLeft}
+      totalElapsed={totalElapsed}
+      isWorkPhase={isWorkPhase}
+      isPreparationPhase={isPreparationPhase}
+      isRunning={isRunning}
+      isFinished={isFinished}
+      currentSubtitle={currentSubtitle}
+      showConfetti={showConfetti}
+      setShowConfetti={setShowConfetti}
+      totalProgress={totalProgress}
+      roundProgress={roundProgress}
+      onBackClick={onBackClick}
+      onStart={onStart}
+      onPause={onPause}
+      onReset={onReset}
+      onSkip={onSkip}
+      onToggleFullscreen={onToggleFullscreen}
+      isMaximized={isMaximized}
+      musicMode={musicMode}
+      onToggleMusicMode={onToggleMusicMode}
+      themeClass="theme-hiit"
+      phaseLabel={getPhaseLabel()}
+      motivationalContent={getMotivation()}
+      exerciseName={getExerciseName()}
+    />
   )
 }
 

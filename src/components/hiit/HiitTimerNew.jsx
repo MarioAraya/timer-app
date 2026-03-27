@@ -103,32 +103,16 @@ function HiitTimerNew({
   }
 
   // Calculate progress percentages
-  // Outer circle: rounds progress (12 rounds total)
-  const calculateRoundProgress = () => {
+  // Outer circle: total workout progress (all 12 minutes)
+  const calculateTotalProgress = () => {
     if (isFinished) return 100
-    if (isPreparationPhase) return 0
-
-    const currentRoundConfig = HIIT_CONFIG.rounds[currentRound - 1]
-    if (!currentRoundConfig) return 100
-
-    const roundDuration = currentRoundConfig.work + currentRoundConfig.rest
-
-    // Calculate how much of current round has elapsed
-    let elapsedInRound = 0
-    if (isWorkPhase) {
-      elapsedInRound = currentRoundConfig.work - timeLeft
-    } else {
-      elapsedInRound = currentRoundConfig.work + (currentRoundConfig.rest - timeLeft)
-    }
-
-    const roundProgress = elapsedInRound / roundDuration
-    const completedRounds = currentRound - 1
-
-    return ((completedRounds + roundProgress) / totalRounds) * 100
+    const totalSeconds = getTotalWorkoutSeconds()
+    const elapsed = calculateElapsedTime()
+    return Math.min(100, (elapsed / totalSeconds) * 100)
   }
 
-  // Inner circle: current phase progress (work or rest)
-  const calculatePhaseProgress = () => {
+  // Inner circle: current round progress (work + rest of this round)
+  const calculateCurrentRoundProgress = () => {
     if (isFinished) return 100
     if (isPreparationPhase) {
       return ((preparationTime - timeLeft) / preparationTime) * 100
@@ -137,8 +121,12 @@ function HiitTimerNew({
     const currentRoundConfig = HIIT_CONFIG.rounds[currentRound - 1]
     if (!currentRoundConfig) return 0
 
-    const phaseDuration = isWorkPhase ? currentRoundConfig.work : currentRoundConfig.rest
-    return ((phaseDuration - timeLeft) / phaseDuration) * 100
+    const roundDuration = currentRoundConfig.work + currentRoundConfig.rest
+    let elapsedInRound = isWorkPhase
+      ? currentRoundConfig.work - timeLeft
+      : currentRoundConfig.work + (currentRoundConfig.rest - timeLeft)
+
+    return Math.min(100, (elapsedInRound / roundDuration) * 100)
   }
 
   // Update elapsed time
@@ -226,11 +214,13 @@ function HiitTimerNew({
     setShowConfetti(true)
     setCurrentSubtitle("Amazing workout! You crushed it!")
 
-    // Don't stop music - let it play to the end naturally
-    // The song has its own ending/cooldown built in
-
     clearHiitState()
-    if (onFinish) onFinish()
+
+    // Auto-reset after 5 seconds, then notify parent
+    setTimeout(() => {
+      handleReset()
+      if (onFinish) onFinish()
+    }, 5000)
   }
 
   // Control handlers
@@ -397,8 +387,8 @@ function HiitTimerNew({
           currentSubtitle={currentSubtitle}
           showConfetti={showConfetti}
           setShowConfetti={setShowConfetti}
-          roundProgress={calculateRoundProgress()}
-          phaseProgress={calculatePhaseProgress()}
+          totalProgress={calculateTotalProgress()}
+          roundProgress={calculateCurrentRoundProgress()}
           onBackClick={handleBackToSetup}
           onStart={handleStart}
           onPause={handlePause}

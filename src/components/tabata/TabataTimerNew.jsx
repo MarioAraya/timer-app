@@ -216,7 +216,12 @@ function TabataTimerNew({
     }
 
     clearTabataState()
-    if (onFinish) onFinish()
+
+    // Auto-reset after 5 seconds, then notify parent
+    setTimeout(() => {
+      handleReset()
+      if (onFinish) onFinish()
+    }, 5000)
   }
 
   // Control handlers
@@ -348,7 +353,7 @@ function TabataTimerNew({
           showConfetti={showConfetti}
           setShowConfetti={setShowConfetti}
           totalProgress={calculateTotalProgress()}
-          intervalProgress={calculateIntervalProgress()}
+          roundProgress={calculateIntervalProgress()}
           onBackClick={handleBackToSetup}
           onStart={handleStart}
           onPause={handlePause}

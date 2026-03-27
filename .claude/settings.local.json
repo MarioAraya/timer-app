@@ -13,7 +13,10 @@
       "Bash(git:*)",
       "Bash(ls:*)",
       "Bash(ffprobe -v quiet -show_entries format=duration -of csv=p=0 /Users/maaya/dev/timer-app/public/tabata_rocky_20-10_x4.mp3)",
-      "Bash(afinfo /Users/maaya/dev/timer-app/public/tabata_rocky_20-10_x4.mp3)"
+      "Bash(afinfo /Users/maaya/dev/timer-app/public/tabata_rocky_20-10_x4.mp3)",
+      "Bash(grep -r \"workbox\\\\|vite-plugin-pwa\" /Users/maaya/dev/timer-app --include=*.js --include=*.json --include=*.jsx)",
+      "Bash(find /Users/maaya/dev/timer-app -name *cache* -o -name *offline* -o -name *pwa*)",
+      "Bash(npx vite:*)"
     ],
     "deny": []
   }

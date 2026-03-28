@@ -24,10 +24,39 @@ $primary-glow: rgba(0, 204, 136, 0.3);
     padding: 24px 24px 16px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
     .header-content {
       max-width: 1400px;
       margin: 0 auto;
+    }
+
+    .header-auth {
+      flex-shrink: 0;
+
+      &__login-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        color: #a1a1aa;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+
+        .material-symbols-outlined { font-size: 18px; }
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: #fff;
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+      }
     }
 
     .header-label {

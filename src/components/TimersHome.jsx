@@ -1,4 +1,5 @@
 import './TimersHome.scss'
+import UserMenu from './auth/UserMenu'
 
 // Timer data configuration with Material icons
 const timerData = [
@@ -76,7 +77,7 @@ const timerData = [
   }
 ]
 
-function TimersHome({ onTimerSelect, activeTimer }) {
+function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOut }) {
   const handleCardClick = (timer) => {
     onTimerSelect(timer)
   }
@@ -87,6 +88,16 @@ function TimersHome({ onTimerSelect, activeTimer }) {
         <div className="header-content">
           <span className="header-label">WORKOUT TIMERS</span>
           <h1 className="header-title">Choose Your Timer</h1>
+        </div>
+        <div className="header-auth">
+          {session ? (
+            <UserMenu session={session} onSignOut={onSignOut} />
+          ) : (
+            <button className="header-auth__login-btn" onClick={onAuthClick}>
+              <span className="material-symbols-outlined">account_circle</span>
+              Entrar
+            </button>
+          )}
         </div>
       </header>
 

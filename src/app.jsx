@@ -8,8 +8,13 @@ import BoxBreathingTimer from './components/BoxBreathingTimer'
 import RelaxingBreathTimer from './components/RelaxingBreathTimer'
 import CalmingBreathTimer from './components/CalmingBreathTimer'
 import { saveActiveTimer, loadActiveTimer, clearActiveTimer, saveFavoriteTimer, loadFavoriteTimer } from './utils/localStorage'
+import { useAuth } from './hooks/useAuth'
+import AuthModal from './components/auth/AuthModal'
 
 function App() {
+  const { session, loading: authLoading, signInWithGoogle, signInWithMagicLink, signOut } = useAuth()
+  const [showAuthModal, setShowAuthModal] = useState(false)
+
   // Try to restore active timer on mount
   const savedActiveTimer = loadActiveTimer()
 
@@ -188,6 +193,9 @@ function App() {
             onSetFavorite={handleSetFavorite}
             favoriteTimer={favoriteTimer}
             activeTimer={activeTimer}
+            session={session}
+            onAuthClick={() => setShowAuthModal(true)}
+            onSignOut={signOut}
           />
         ) : (
           <div className="timer-view">
@@ -195,6 +203,14 @@ function App() {
           </div>
         )}
       </main>
+
+      {showAuthModal && !session && (
+        <AuthModal
+          onClose={() => setShowAuthModal(false)}
+          signInWithGoogle={signInWithGoogle}
+          signInWithMagicLink={signInWithMagicLink}
+        />
+      )}
     </div>
   )
 }

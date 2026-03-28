@@ -1,0 +1,231 @@
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.auth-modal {
+  background: #27272a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 380px;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+
+  &__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #71717a;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+
+    &:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .material-symbols-outlined { font-size: 20px; }
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+
+    h2 {
+      margin: 0.5rem 0 0.25rem;
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      color: #a1a1aa;
+      font-size: 0.875rem;
+    }
+  }
+
+  &__logo {
+    font-size: 2.5rem;
+    color: #00cc88;
+  }
+
+  &__google-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    color: #3c4043;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+
+    &:hover:not(:disabled) {
+      background: #f1f3f4;
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.25rem 0;
+    color: #52525b;
+    font-size: 0.8rem;
+
+    &::before, &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  &__email-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #18181b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+
+    &::placeholder { color: #52525b; }
+
+    &:focus {
+      border-color: #00cc88;
+    }
+  }
+
+  &__email-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: #00cc88;
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.1s;
+    min-height: 48px;
+
+    &:hover:not(:disabled) {
+      background: #00b378;
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+
+  &__spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+
+  &__error {
+    color: #f87171;
+    font-size: 0.85rem;
+    text-align: center;
+    margin: 0.5rem 0 0;
+  }
+
+  &__disclaimer {
+    color: #52525b;
+    font-size: 0.78rem;
+    text-align: center;
+    margin: 1rem 0 0;
+  }
+
+  // Success state
+  &__success {
+    text-align: center;
+    padding: 0.5rem 0;
+
+    .material-symbols-outlined {
+      font-size: 3rem;
+      color: #00cc88;
+    }
+
+    h3 {
+      color: #fff;
+      margin: 0.75rem 0 0.5rem;
+    }
+
+    p {
+      color: #a1a1aa;
+      font-size: 0.9rem;
+      margin: 0 0 1.25rem;
+
+      strong { color: #fff; }
+    }
+  }
+
+  &__back-link {
+    background: none;
+    border: none;
+    color: #00cc88;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+
+    &:hover { color: #00b378; }
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

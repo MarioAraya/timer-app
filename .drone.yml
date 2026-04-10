@@ -1,0 +1,32 @@
+kind: pipeline
+type: docker
+name: deploy-timer-app
+
+trigger:
+  branch:
+    - main
+    - release
+  event:
+    - push
+
+steps:
+  - name: build-and-push
+    image: plugins/docker
+    settings:
+      repo: registry.lab/maaya/timer-app
+      registry: registry.lab
+      insecure: true
+      tags:
+        - latest
+        - ${DRONE_COMMIT_SHA:0:8}
+
+  - name: deploy
+    image: appleboy/drone-ssh
+    settings:
+      host: 192.168.0.104
+      username: maaya
+      key:
+        from_secret: ssh_key
+      script:
+        - docker pull registry.lab/maaya/timer-app:latest
+        - cd /home/maaya/app && docker compose up -d --force-recreate preact-frontend

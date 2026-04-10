@@ -40,6 +40,9 @@ self.addEventListener('fetch', event => {
 
   const isAudio = AUDIO_EXTENSIONS.some(ext => url.pathname.endsWith(ext));
 
+  // Skip range requests (audio seeking) — let the browser handle them directly
+  if (event.request.headers.get('range')) return;
+
   if (isAudio) {
     // Audio files: cache-first (large files, rarely change)
     event.respondWith(
@@ -52,7 +55,7 @@ self.addEventListener('fetch', event => {
           }
           return response;
         });
-      })
+      }).catch(() => fetch(event.request))
     );
   } else {
     // Everything else: network-first, fallback to cache

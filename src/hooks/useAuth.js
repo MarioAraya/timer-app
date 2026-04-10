@@ -6,6 +6,11 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     // Restaurar sesión existente al montar
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -21,18 +26,18 @@ export function useAuth() {
   }, [])
 
   const signInWithGoogle = () =>
-    supabase.auth.signInWithOAuth({
+    supabase?.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin },
     })
 
   const signInWithMagicLink = (email) =>
-    supabase.auth.signInWithOtp({
+    supabase?.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: window.location.origin },
     })
 
-  const signOut = () => supabase.auth.signOut()
+  const signOut = () => supabase?.auth.signOut()
 
   return { session, loading, signInWithGoogle, signInWithMagicLink, signOut }
 }

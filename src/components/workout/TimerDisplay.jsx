@@ -35,7 +35,7 @@ function TimerDisplay({
         {currentMessage}
       </div>
 
-      {currentSubtitle && hasStarted && !isFinished && (
+      {currentSubtitle && hasStarted && !isFinished && (isWorkPhase || isPreparationPhase) && (
         <div className="timer-subtitle">
           {currentSubtitle}
         </div>

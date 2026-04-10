@@ -76,6 +76,8 @@
 
   &.maximized {
     @include timer-maximized;
+    overflow-y: auto;
+    padding: $spacing-md $spacing-lg;
 
     .timer-progress {
       width: 60%;
@@ -88,19 +90,24 @@
     }
 
     .timer-display {
-      font-size: $font-size-9xl;
-      margin: $spacing-xl 0;
+      font-size: clamp(4rem, 12vh, $font-size-9xl);
+      margin: $spacing-md 0;
     }
 
     .timer-message {
-      font-size: calc($font-size-2xl * 2); // 3rem - doubled
-      margin: $spacing-xl 0;
+      font-size: clamp(1.4rem, 4vh, 3rem);
+      margin: $spacing-md 0;
     }
 
     .timer-subtitle {
       font-size: $font-size-lg;
       max-width: 70%;
       padding: $spacing-md $spacing-lg;
+    }
+
+    .timer-central-content {
+      flex: 1 1 auto;
+      min-height: 0;
     }
   }
 }
@@ -615,7 +622,22 @@
   }
 }
 
-// Responsive adjustments
+// Desktop responsive adjustments
+@media (min-width: 769px) {
+  .timer-central-content {
+    padding: $spacing-lg 0;
+  }
+
+  .timer-display {
+    font-size: clamp(4rem, 8vw, $font-size-6xl);
+  }
+
+  .timer-message {
+    font-size: clamp(1.2rem, 3vw, 2.4rem);
+  }
+}
+
+// Mobile responsive adjustments
 @media (max-width: 480px) {
   .timer-display {
     font-size: $font-size-4xl;

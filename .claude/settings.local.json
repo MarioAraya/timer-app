@@ -29,7 +29,8 @@
       "Bash(mkdir -p /Users/maaya/dev/timer-app/backend/internal/handlers)",
       "Bash(mkdir -p /Users/maaya/dev/timer-app/backend/internal/models)",
       "Bash(go mod:*)",
-      "Bash(go build:*)"
+      "Bash(go build:*)",
+      "Bash(npx vitest:*)"
     ],
     "deny": []
   }

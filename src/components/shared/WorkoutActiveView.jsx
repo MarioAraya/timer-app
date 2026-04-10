@@ -1,3 +1,4 @@
+import { useEffect, useCallback, useRef } from 'preact/hooks'
 import CircularProgress from './CircularProgress'
 import Confetti from '../Confetti'
 import './WorkoutActiveView.scss'
@@ -19,16 +20,84 @@ function WorkoutActiveView({
   motivationalContent,
   exerciseName,
 }) {
+  const containerRef = useRef(null)
+
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
+  // Native fullscreen toggle with CSS fallback
+  const handleFullscreen = useCallback(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const doc = document
+    const isNativeFullscreen = doc.fullscreenElement || doc.webkitFullscreenElement
+
+    if (!isNativeFullscreen) {
+      const request = el.requestFullscreen || el.webkitRequestFullscreen
+      if (request) {
+        request.call(el).catch(() => {
+          // Fallback to CSS maximized if native fails
+          onToggleFullscreen()
+        })
+      } else {
+        onToggleFullscreen()
+      }
+    } else {
+      const exit = doc.exitFullscreen || doc.webkitExitFullscreen
+      if (exit) {
+        exit.call(doc)
+      } else {
+        onToggleFullscreen()
+      }
+    }
+  }, [onToggleFullscreen])
+
+  // Toggle fullscreen with F key
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+      if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault()
+        handleFullscreen()
+      }
+      if (e.key === ' ') {
+        e.preventDefault()
+        if (isFinished) return
+        isRunning ? onPause() : onStart()
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [handleFullscreen, isRunning, isFinished, onPause, onStart])
+
+  // Sync isMaximized state with native fullscreen changes
+  useEffect(() => {
+    const handleChange = () => {
+      const isNative = !!(document.fullscreenElement || document.webkitFullscreenElement)
+      // If native fullscreen state doesn't match isMaximized, sync it
+      if (isNative !== isMaximized) {
+        onToggleFullscreen()
+      }
+    }
+    document.addEventListener('fullscreenchange', handleChange)
+    document.addEventListener('webkitfullscreenchange', handleChange)
+    return () => {
+      document.removeEventListener('fullscreenchange', handleChange)
+      document.removeEventListener('webkitfullscreenchange', handleChange)
+    }
+  }, [isMaximized, onToggleFullscreen])
+
   const modeClass = isWorkPhase || isPreparationPhase ? 'work-mode' : 'rest-mode'
 
   return (
-    <div className={`workout-active-view ${themeClass} ${modeClass} ${isFinished ? 'finished-mode' : ''} ${isMaximized ? 'maximized' : ''}`}>
+    <div
+      ref={containerRef}
+      className={`workout-active-view ${themeClass} ${modeClass} ${isFinished ? 'finished-mode' : ''} ${isMaximized ? 'maximized' : ''}`}
+    >
       {/* Header */}
       <header className="active-header">
         <button className="back-button" onClick={onBackClick}>
@@ -38,7 +107,7 @@ function WorkoutActiveView({
           <span className="session-label">ACTIVE SESSION</span>
           <h2 className="round-info">Round {currentRound} of {totalRounds}</h2>
         </div>
-        <button className="fullscreen-button" onClick={onToggleFullscreen}>
+        <button className="fullscreen-button" onClick={handleFullscreen}>
           <span className="material-symbols-outlined">
             {isMaximized ? 'fullscreen_exit' : 'fullscreen'}
           </span>
@@ -55,28 +124,6 @@ function WorkoutActiveView({
           <div className={`stat-card mode ${isWorkPhase || isPreparationPhase ? 'work' : 'rest'}`}>
             <span className="stat-label">CURRENT MODE</span>
             <span className="stat-value">{phaseLabel}</span>
-          </div>
-
-          <div className="side-controls">
-            <button
-              className="side-control-btn"
-              onClick={onToggleMusicMode}
-              title={musicMode ? 'Switch to Beeps' : 'Switch to Music'}
-            >
-              <span className="material-symbols-outlined">
-                {musicMode ? 'music_note' : 'volume_up'}
-              </span>
-              <span className="side-control-label">{musicMode ? 'Music' : 'Beeps'}</span>
-            </button>
-
-            <button
-              className="side-control-btn reset"
-              onClick={onReset}
-              title="Reset Workout"
-            >
-              <span className="material-symbols-outlined">restart_alt</span>
-              <span className="side-control-label">Reset</span>
-            </button>
           </div>
         </div>
 
@@ -109,7 +156,7 @@ function WorkoutActiveView({
       {/* Footer */}
       <footer className="active-footer">
         {/* Exercise name (HIIT) */}
-        {exerciseName && (
+        {exerciseName && (isWorkPhase || isPreparationPhase) && (
           <div className="exercise-name">{exerciseName}</div>
         )}
 
@@ -127,8 +174,22 @@ function WorkoutActiveView({
 
         {/* Controls */}
         <div className="playback-controls">
-          <button className="control-button secondary" onClick={onReset}>
+          <button
+            className="control-button secondary"
+            onClick={onToggleMusicMode}
+          >
+            <span className="material-symbols-outlined">
+              {musicMode ? 'music_note' : 'volume_up'}
+            </span>
+            <span className="btn-tooltip">{musicMode ? 'Music ON' : 'Beeps ON'}</span>
+          </button>
+
+          <button
+            className="control-button secondary"
+            onClick={onReset}
+          >
             <span className="material-symbols-outlined">refresh</span>
+            <span className="btn-tooltip">Reset</span>
           </button>
 
           {!isRunning ? (
@@ -138,10 +199,12 @@ function WorkoutActiveView({
               disabled={isFinished}
             >
               <span className="material-symbols-outlined filled">play_arrow</span>
+              <span className="btn-tooltip">Start</span>
             </button>
           ) : (
             <button className="control-button primary" onClick={onPause}>
               <span className="material-symbols-outlined filled">pause</span>
+              <span className="btn-tooltip">Pause</span>
             </button>
           )}
 
@@ -151,6 +214,7 @@ function WorkoutActiveView({
             disabled={isFinished}
           >
             <span className="material-symbols-outlined">skip_next</span>
+            <span className="btn-tooltip">Skip</span>
           </button>
         </div>
       </footer>

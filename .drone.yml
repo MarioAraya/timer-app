@@ -8,6 +8,7 @@ trigger:
     - release
   event:
     - push
+    - custom
 
 steps:
   - name: build-and-push

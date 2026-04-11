@@ -30,4 +30,4 @@ steps:
         from_secret: ssh_key
       script:
         - docker pull registry.lab/maaya/timer-app:latest
-        - cd /home/maaya/app && docker compose up -d --force-recreate preact-frontend
+        - cd /home/maaya/app && docker compose up -d --force-recreate frontend

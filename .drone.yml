@@ -14,8 +14,8 @@ steps:
   - name: build-and-push
     image: plugins/docker
     settings:
-      repo: registry.lab/maaya/timer-app
-      registry: registry.lab
+      repo: 192.168.0.103:5000/maaya/timer-app
+      registry: 192.168.0.103:5000
       insecure: true
       tags:
         - latest

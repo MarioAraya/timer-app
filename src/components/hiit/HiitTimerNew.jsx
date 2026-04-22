@@ -215,12 +215,6 @@ function HiitTimerNew({
     setCurrentSubtitle("Amazing workout! You crushed it!")
 
     clearHiitState()
-
-    // Auto-reset after 5 seconds, then notify parent
-    setTimeout(() => {
-      handleReset()
-      if (onFinish) onFinish()
-    }, 5000)
   }
 
   // Control handlers

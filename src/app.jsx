@@ -99,8 +99,8 @@ function App() {
   }
 
   const handleBackToCarousel = () => {
-    // DON'T clear active timer - keep it to show "Now Playing" indicator
-    // The timer's own cleanup will save its state
+    setActiveTimer(null)
+    clearActiveTimer()
     setCurrentView('carousel')
   }
 

@@ -24,8 +24,6 @@ function App() {
   const [touchStart, setTouchStart] = useState(null)
   const [touchEnd, setTouchEnd] = useState(null)
   const [favoriteTimer, setFavoriteTimer] = useState(loadFavoriteTimer())
-  const [showBackButton, setShowBackButton] = useState(true)
-  const [hideButtonTimeout, setHideButtonTimeout] = useState(null)
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -52,38 +50,12 @@ function App() {
 
     window.addEventListener('popstate', handlePopState)
 
-    // Mouse movement detection for auto-hiding back button
-    const handleMouseMove = () => {
-      // Show back button on movement
-      setShowBackButton(true)
-
-      // Clear existing timeout
-      if (hideButtonTimeout) {
-        clearTimeout(hideButtonTimeout)
-      }
-
-      // Set new timeout to hide after 3 seconds
-      const timeout = setTimeout(() => {
-        setShowBackButton(false)
-      }, 3000)
-
-      setHideButtonTimeout(timeout)
-    }
-
-    if (currentView === 'timer') {
-      window.addEventListener('mousemove', handleMouseMove)
-    }
-
     return () => {
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
       window.removeEventListener('popstate', handlePopState)
-      window.removeEventListener('mousemove', handleMouseMove)
-      if (hideButtonTimeout) {
-        clearTimeout(hideButtonTimeout)
-      }
     }
-  }, [currentView, hideButtonTimeout])
+  }, [currentView])
 
   const handleTimerSelect = (timerData) => {
     setActiveTimer(timerData)
@@ -146,7 +118,7 @@ function App() {
       name: activeTimer.title,
       autoMaximize: true,
       autoStart: false, // Never auto-start - let user control when to start/resume
-      showBackButton: showBackButton,
+      showBackButton: true,
       onBackClick: handleBackToCarousel,
       onFinish: handleTimerFinish
     }

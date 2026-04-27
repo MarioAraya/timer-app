@@ -1,6 +1,30 @@
 // Shared Workout Active View Styles
 // Themed via CSS custom properties set by .theme-hiit / .theme-tabata
 
+// ============================================
+// KEYFRAMES
+// ============================================
+@keyframes rest-breathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.04); }
+}
+
+@keyframes rest-glow-inner {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(var(--rest-rgb), 0.4)); }
+  50%       { filter: drop-shadow(0 0 28px rgba(var(--rest-rgb), 1)); }
+}
+
+@keyframes rest-glow-outer {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.75; }
+}
+
+@keyframes work-tick {
+  0%   { filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), 0.4)); }
+  50%  { filter: drop-shadow(0 0 18px rgba(var(--accent-rgb), 0.8)); }
+  100% { filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), 0.4)); }
+}
+
 $bg-dark: #18181b;
 $bg-card: rgba(255, 255, 255, 0.05);
 $bg-card-border: rgba(255, 255, 255, 0.1);
@@ -80,6 +104,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
     .progress-ring-fill.inner {
       stroke: rgb(var(--accent-rgb));
       filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), 0.3));
+      animation: work-tick 2s ease-in-out infinite;
     }
 
     .set-progress .progress-fill {
@@ -116,9 +141,19 @@ $text-muted: rgba(255, 255, 255, 0.6);
       }
     }
 
+    // Breathing container
+    .circular-progress-container {
+      animation: rest-breathe 2.8s ease-in-out infinite;
+    }
+
+    .progress-ring-fill.outer {
+      stroke: rgb(var(--rest-rgb));
+      animation: rest-glow-outer 2.8s ease-in-out infinite;
+    }
+
     .progress-ring-fill.inner {
       stroke: rgb(var(--rest-rgb));
-      filter: drop-shadow(0 0 10px rgba(var(--rest-rgb), 0.3));
+      animation: rest-glow-inner 2.8s ease-in-out infinite;
     }
 
     .set-progress .progress-fill {
@@ -152,12 +187,24 @@ $text-muted: rgba(255, 255, 255, 0.6);
 
   // ── Finished mode ──
   &.finished-mode {
+    .circular-progress-container {
+      animation: none;
+    }
+
     .progress-ring-fill {
       stroke: #ffd700;
+      animation: none;
     }
 
     .motivational-text .highlight {
       color: #ffd700;
+    }
+
+    .header-center {
+      .round-info {
+        font-size: 12px;
+        font-weight: 600;
+      }
     }
   }
 
@@ -307,18 +354,18 @@ $text-muted: rgba(255, 255, 255, 0.6);
     }
 
     .progress-ring-fill {
-      transition: stroke-dashoffset 0.3s ease;
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                  stroke 0.4s ease,
+                  opacity 0.4s ease;
 
       &.outer {
         stroke: rgb(var(--accent-rgb));
-        opacity: 0.3;
-        stroke-width: 8;
+        opacity: 0.55;
       }
 
       &.inner {
         stroke: rgb(var(--accent-rgb));
-        filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), 0.3));
-        stroke-width: 16;
+        filter: drop-shadow(0 0 12px rgba(var(--accent-rgb), 0.5));
       }
     }
 
@@ -345,6 +392,13 @@ $text-muted: rgba(255, 255, 255, 0.6);
         line-height: 1;
         letter-spacing: -0.02em;
         text-shadow: 0 0 15px rgba(var(--accent-rgb), 0.3);
+      }
+
+      .progress-done-icon {
+        font-size: min(110px, 15vh);
+        font-variation-settings: 'FILL' 1;
+        color: rgb(var(--accent-rgb));
+        filter: drop-shadow(0 0 20px rgba(var(--accent-rgb), 0.5));
       }
     }
   }

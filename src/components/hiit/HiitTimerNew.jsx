@@ -157,20 +157,20 @@ function HiitTimerNew({
   // Countdown beeps effect (3-2-1 before work phase starts)
   const lastBeepRef = useRef(0)
   useEffect(() => {
-    if (!musicMode && isRunning && !isFinished && !isWorkPhase && !isPreparationPhase) {
-      // During rest phase, play countdown beeps at 3, 2, 1 seconds
+    if (!musicMode && isRunning && !isFinished && !isWorkPhase) {
       const secondsLeft = Math.ceil(timeLeft)
-      const isFinalRest = currentRound >= totalRounds
+      const isFinalRest = !isPreparationPhase && currentRound >= totalRounds
 
-      // Don't play countdown on final rest (celebration phase)
+      // Beep during prep phase (before round 1) and during rest phases (before next round)
+      // Skip final rest (celebration phase)
       if (!isFinalRest && secondsLeft <= 3 && secondsLeft >= 1 && lastBeepRef.current !== secondsLeft) {
         lastBeepRef.current = secondsLeft
         playCountdownSound(secondsLeft)
       }
     }
 
-    // Reset beep tracker when phase changes
-    if (isWorkPhase || isPreparationPhase) {
+    // Reset beep tracker when work phase starts
+    if (isWorkPhase) {
       lastBeepRef.current = 0
     }
   }, [timeLeft, isRunning, isFinished, isWorkPhase, isPreparationPhase, musicMode, currentRound, totalRounds])

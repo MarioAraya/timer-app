@@ -104,8 +104,16 @@ function WorkoutActiveView({
           <span className="material-symbols-outlined">arrow_back_ios</span>
         </button>
         <div className="header-center">
-          <span className="session-label">ACTIVE SESSION</span>
-          <h2 className="round-info">Round {currentRound} of {totalRounds}</h2>
+          <span className="session-label">
+            {isFinished
+              ? `${themeClass.includes('hiit') ? 'HIIT' : 'Tabata'} Finished!`
+              : 'ACTIVE SESSION'}
+          </span>
+          <h2 className="round-info">
+            {isFinished
+              ? `You've just completed the ${totalRounds} Rounds! Congratulations!`
+              : `Round ${currentRound} of ${totalRounds}`}
+          </h2>
         </div>
         <button className="fullscreen-button" onClick={handleFullscreen}>
           <span className="material-symbols-outlined">

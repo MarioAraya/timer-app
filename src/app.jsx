@@ -28,17 +28,6 @@ function App() {
   const [hideButtonTimeout, setHideButtonTimeout] = useState(null)
 
   useEffect(() => {
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-          // console.log('SW registered: ', registration);
-        })
-        .catch(registrationError => {
-          console.error('SW registration failed: ', registrationError);
-        });
-    }
-
     // Network status detection
     const handleOnline = () => setIsOnline(true)
     const handleOffline = () => setIsOnline(false)

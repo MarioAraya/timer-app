@@ -4,17 +4,7 @@ import { useDoubleClick } from '../hooks/useDoubleClick'
 import { usePomodoroTimer } from '../hooks/usePomodoroTimer'
 import { usePomodoroControls } from '../hooks/usePomodoroControls'
 import { isClickOnButton } from '../utils/timerHelpers'
-import {
-  initializePomodoroAudioPlayer,
-  isPomodoroPlayerReady,
-  isPomodoroPlayerLoading,
-  getPomodoroAudioPlayer,
-  shouldIgnorePomodoroPause,
-  playPomodoroSong,
-  stopPomodoroSong,
-  pausePomodoroSong,
-  resumePomodoroSong
-} from '../utils/audioUtils'
+import { pomodoroAudio } from '../utils/audioUtils'
 import Confetti from './Confetti'
 import PomodoroDisplay from './pomodoro/PomodoroDisplay'
 import PomodoroProgress from './pomodoro/PomodoroProgress'
@@ -41,16 +31,7 @@ function PomodoroTimer({
   const ignoreNextPause = useRef(false)
   const ignoreNextPlay = useRef(false)
 
-  // Audio functions object
-  const audioFunctions = {
-    initialize: initializePomodoroAudioPlayer,
-    play: playPomodoroSong,
-    stop: stopPomodoroSong,
-    pause: pausePomodoroSong,
-    resume: resumePomodoroSong,
-    getPlayer: getPomodoroAudioPlayer,
-    shouldIgnorePause: shouldIgnorePomodoroPause
-  }
+  const audioFunctions = pomodoroAudio
 
   // Storage functions object
   const storageFunctions = {
@@ -98,7 +79,7 @@ function PomodoroTimer({
   useEffect(() => {
     if (musicMode && playerStatus === 'idle') {
       setPlayerStatus('loading')
-      initializePomodoroAudioPlayer().then((ready) => {
+      pomodoroAudio.initialize().then((ready) => {
         setPlayerStatus(ready ? 'ready' : 'error')
       })
     }
@@ -106,7 +87,7 @@ function PomodoroTimer({
 
   // Update audio volume
   useEffect(() => {
-    const audioPlayer = getPomodoroAudioPlayer()
+    const audioPlayer = pomodoroAudio.getPlayer()
     if (audioPlayer) {
       audioPlayer.volume = volume
     }
@@ -122,7 +103,7 @@ function PomodoroTimer({
         return
       }
 
-      if (shouldIgnorePomodoroPause()) {
+      if (pomodoroAudio.shouldIgnorePause()) {
         return
       }
 
@@ -142,7 +123,7 @@ function PomodoroTimer({
       }
     }
 
-    const audioPlayer = getPomodoroAudioPlayer()
+    const audioPlayer = pomodoroAudio.getPlayer()
     if (audioPlayer) {
       audioPlayer.addEventListener('pause', handleAudioPause)
       audioPlayer.addEventListener('play', handleAudioPlay)
@@ -158,7 +139,7 @@ function PomodoroTimer({
         navigator.mediaSession.setActionHandler('play', () => {
           if (!isRunning && !isFinished && isWorkPhase && playerStatus === 'ready') {
             ignoreNextPlay.current = true
-            resumePomodoroSong()
+            pomodoroAudio.resume()
             setIsRunning(true)
           }
         })
@@ -166,7 +147,7 @@ function PomodoroTimer({
         navigator.mediaSession.setActionHandler('pause', () => {
           if (isRunning && isWorkPhase) {
             ignoreNextPause.current = true
-            pausePomodoroSong()
+            pomodoroAudio.pause()
             setIsRunning(false)
           }
         })
@@ -211,7 +192,7 @@ function PomodoroTimer({
   useEffect(() => {
     return () => {
       if (musicMode && isWorkPhase) {
-        pausePomodoroSong()
+        pomodoroAudio.pause()
       }
 
       savePomodoroState({

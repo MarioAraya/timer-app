@@ -2,20 +2,7 @@ import { useState, useEffect, useRef } from 'preact/hooks'
 import './HiitTimer.scss'
 import HiitSetupView from './HiitSetupView'
 import HiitActiveView from './HiitActiveView'
-import {
-  playHiitSong,
-  stopHiitSong,
-  pauseHiitSong,
-  resumeHiitSong,
-  HIIT_AUDIO_CONFIG,
-  initializeAudioPlayer,
-  getAudioPosition,
-  setAudioPosition,
-  getAudioPlayer,
-  shouldIgnoreHiitPause,
-  playWorkSound,
-  playCountdownSound
-} from '../../utils/audioUtils'
+import { hiitAudio, playWorkSound, playCountdownSound } from '../../utils/audioUtils'
 import { HIIT_CONFIG, calculateTotalTime } from '../../config/hiitConfig'
 import { saveHiitState, loadHiitState, clearHiitState } from '../../utils/localStorage'
 
@@ -225,11 +212,11 @@ function HiitTimerNew({
 
     // Always control audio when in music mode, regardless of phase
     if (musicMode) {
-      const audioPlayer = getAudioPlayer()
+      const audioPlayer = hiitAudio.getPlayer()
       if (audioPlayer && audioPlayer.paused) {
-        resumeHiitSong()
+        hiitAudio.resume()
       } else if (!audioPlayer) {
-        playHiitSong()
+        hiitAudio.play()
       }
     }
   }
@@ -239,7 +226,7 @@ function HiitTimerNew({
 
     // Always pause audio when in music mode
     if (musicMode) {
-      pauseHiitSong()
+      hiitAudio.pause()
     }
 
     // Save state
@@ -267,7 +254,7 @@ function HiitTimerNew({
     setShowConfetti(false)
 
     if (musicMode) {
-      stopHiitSong()
+      hiitAudio.stop()
     }
 
     clearHiitState()
@@ -288,7 +275,7 @@ function HiitTimerNew({
     setView('active')
     // Initialize audio if in music mode
     if (musicMode) {
-      initializeAudioPlayer()
+      hiitAudio.initialize()
     }
   }
 
@@ -299,7 +286,7 @@ function HiitTimerNew({
   const handleToggleMusicMode = () => {
     // Stop current audio if switching modes
     if (musicMode) {
-      stopHiitSong()
+      hiitAudio.stop()
     }
     setMusicMode(!musicMode)
   }
@@ -307,7 +294,7 @@ function HiitTimerNew({
   // Calibration: log current audio time to console
   const calibrationMarksRef = useRef([])
   const handleCalibrate = () => {
-    const audioTime = getAudioPosition()
+    const audioTime = hiitAudio.getPosition()
     const markIndex = calibrationMarksRef.current.length
     const isWork = markIndex % 2 === 0
     const roundNum = Math.floor(markIndex / 2) + 1

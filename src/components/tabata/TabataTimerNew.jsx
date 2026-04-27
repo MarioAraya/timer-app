@@ -2,20 +2,7 @@ import { useState, useEffect, useRef } from 'preact/hooks'
 import './TabataTimer.scss'
 import TabataSetupView from './TabataSetupView'
 import TabataActiveView from './TabataActiveView'
-import {
-  playTabataSong,
-  stopTabataSong,
-  pauseTabataSong,
-  resumeTabataSong,
-  TABATA_AUDIO_CONFIG,
-  initializeTabataAudioPlayer,
-  getTabataAudioPosition,
-  setTabataAudioPosition,
-  getTabataAudioPlayer,
-  shouldIgnoreTabataPause,
-  playWorkSound,
-  playCountdownSound
-} from '../../utils/audioUtils'
+import { tabataAudio, playWorkSound, playCountdownSound } from '../../utils/audioUtils'
 import { TABATA_CONFIG, calculateTabataTotalTime } from '../../config/tabataConfig'
 import { saveTabataState, loadTabataState, clearTabataState } from '../../utils/localStorage'
 
@@ -212,7 +199,7 @@ function TabataTimerNew({
     setCurrentSubtitle("Tabata complete! You crushed it!")
 
     if (musicMode) {
-      stopTabataSong()
+      tabataAudio.stop()
     }
 
     clearTabataState()
@@ -226,11 +213,11 @@ function TabataTimerNew({
 
     // Always control audio when in music mode, regardless of phase
     if (musicMode) {
-      const audioPlayer = getTabataAudioPlayer()
+      const audioPlayer = tabataAudio.getPlayer()
       if (audioPlayer && audioPlayer.paused) {
-        resumeTabataSong()
+        tabataAudio.resume()
       } else if (!audioPlayer) {
-        playTabataSong()
+        tabataAudio.play()
       }
     }
   }
@@ -240,7 +227,7 @@ function TabataTimerNew({
 
     // Always pause audio when in music mode
     if (musicMode) {
-      pauseTabataSong()
+      tabataAudio.pause()
     }
 
     // Save state
@@ -268,7 +255,7 @@ function TabataTimerNew({
     setShowConfetti(false)
 
     if (musicMode) {
-      stopTabataSong()
+      tabataAudio.stop()
     }
 
     clearTabataState()
@@ -289,7 +276,7 @@ function TabataTimerNew({
     setView('active')
     // Initialize audio if in music mode
     if (musicMode) {
-      initializeTabataAudioPlayer()
+      tabataAudio.initialize()
     }
   }
 
@@ -300,7 +287,7 @@ function TabataTimerNew({
   const handleToggleMusicMode = () => {
     // Stop current audio if switching modes
     if (musicMode) {
-      stopTabataSong()
+      tabataAudio.stop()
     }
     setMusicMode(!musicMode)
   }

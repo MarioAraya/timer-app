@@ -29,5 +29,5 @@ steps:
       key:
         from_secret: ssh_key
       script:
-        - docker pull registry.lab/maaya/timer-app:latest
+        - docker pull 192.168.0.103:5000/maaya/timer-app:latest
         - cd /home/maaya/app && docker compose up -d --force-recreate frontend

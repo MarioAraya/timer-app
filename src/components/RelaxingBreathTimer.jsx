@@ -3,9 +3,9 @@ import BreathingTimer from './BreathingTimer'
 
 const RELAXING_BREATHING_CONFIG = {
   phases: [
-    { name: 'Inhale', duration: 4, instruction: 'Breathe In', color: 'inhale' },
-    { name: 'Hold', duration: 7, instruction: 'Hold', color: 'hold' },
-    { name: 'Exhale', duration: 8, instruction: 'Breathe Out', color: 'exhale' }
+    { name: 'Inhale', duration: 4, instruction: 'Breathe In',  color: 'inhale', type: 'inhale' },
+    { name: 'Hold',   duration: 7, instruction: 'Hold',        color: 'hold',   type: 'hold'   },
+    { name: 'Exhale', duration: 8, instruction: 'Breathe Out', color: 'exhale', type: 'exhale' }
   ]
 }
 

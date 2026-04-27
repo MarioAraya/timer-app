@@ -1,21 +1,20 @@
-import { useState, useEffect } from 'preact/hooks'
+import { useState, useEffect, useRef } from 'preact/hooks'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { isClickOnButton } from '../utils/timerHelpers'
+import './BreathingTimer.scss'
 
-/**
- * Generic Breathing Timer Component
- * Shared base for all breathing exercise timers
- *
- * @param {Object} props
- * @param {string} props.name - Display name
- * @param {Array} props.phases - Breathing phases configuration
- * @param {string} props.patternName - Pattern description (e.g., "4-4-4-4 (Box Breathing)")
- * @param {string} props.className - CSS class name
- * @param {boolean} props.autoMaximize - Auto-enter fullscreen
- * @param {boolean} props.autoStart - Auto-start timer
- * @param {boolean} props.showBackButton - Show back button
- * @param {Function} props.onBackClick - Back navigation handler
- */
+const SCALE_MIN = 0.65
+const SCALE_MAX = 1.35
+
+// For hold phases, find the scale of the last non-hold phase before this one
+function getHoldScale(phases, phaseIndex) {
+  for (let i = phaseIndex - 1; i >= 0; i--) {
+    if (phases[i].type === 'inhale') return SCALE_MAX
+    if (phases[i].type === 'exhale') return SCALE_MIN
+  }
+  return SCALE_MAX
+}
+
 function BreathingTimer({
   name,
   phases,
@@ -31,37 +30,67 @@ function BreathingTimer({
   const [isRunning, setIsRunning] = useState(false)
   const [cycleCount, setCycleCount] = useState(0)
   const [isMaximized, setIsMaximized] = useState(autoMaximize)
+  const circleRef = useRef(null)
 
-  // Auto-start if requested
   useEffect(() => {
-    if (autoStart && !isRunning) {
-      setIsRunning(true)
-    }
+    if (autoStart && !isRunning) setIsRunning(true)
   }, [autoStart])
+
+  // JS-driven circle scale animation
+  useEffect(() => {
+    const el = circleRef.current
+    if (!el) return
+
+    const phase = phases[currentPhase]
+
+    if (!isRunning) {
+      el.style.transition = 'none'
+      el.style.transform = `scale(${SCALE_MIN})`
+      return
+    }
+
+    if (phase.type === 'inhale') {
+      el.style.transition = 'none'
+      el.style.transform = `scale(${SCALE_MIN})`
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.style.transition = `transform ${phase.duration}s ease-in-out`
+          el.style.transform = `scale(${SCALE_MAX})`
+        })
+      })
+    } else if (phase.type === 'exhale') {
+      el.style.transition = 'none'
+      el.style.transform = `scale(${SCALE_MAX})`
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.style.transition = `transform ${phase.duration}s ease-in-out`
+          el.style.transform = `scale(${SCALE_MIN})`
+        })
+      })
+    } else {
+      // hold: freeze at whatever scale the previous phase ended on
+      el.style.transition = 'none'
+      el.style.transform = `scale(${getHoldScale(phases, currentPhase)})`
+    }
+  }, [currentPhase, isRunning, phases])
 
   // Timer countdown
   useEffect(() => {
-    let interval = null
+    if (!isRunning) return
 
-    if (isRunning) {
-      interval = setInterval(() => {
-        setTimeLeft(time => {
-          if (time <= 1) {
-            const nextPhase = (currentPhase + 1) % phases.length
-            if (nextPhase === 0) {
-              setCycleCount(count => count + 1)
-            }
-            setCurrentPhase(nextPhase)
-            return phases[nextPhase].duration
-          }
-          return time - 1
-        })
-      }, 1000)
-    }
+    const interval = setInterval(() => {
+      setTimeLeft(time => {
+        if (time <= 1) {
+          const nextPhase = (currentPhase + 1) % phases.length
+          if (nextPhase === 0) setCycleCount(count => count + 1)
+          setCurrentPhase(nextPhase)
+          return phases[nextPhase].duration
+        }
+        return time - 1
+      })
+    }, 1000)
 
-    return () => {
-      if (interval) clearInterval(interval)
-    }
+    return () => clearInterval(interval)
   }, [isRunning, currentPhase, phases])
 
   const handleStart = () => setIsRunning(true)
@@ -75,25 +104,17 @@ function BreathingTimer({
 
   const handleSkip = () => {
     const nextPhase = (currentPhase + 1) % phases.length
-    if (nextPhase === 0) {
-      setCycleCount(count => count + 1)
-    }
+    if (nextPhase === 0) setCycleCount(count => count + 1)
     setCurrentPhase(nextPhase)
     setTimeLeft(phases[nextPhase].duration)
   }
 
-  const handleDoubleClick = useDoubleClick(() => {
-    setIsMaximized(!isMaximized)
-  })
+  const handleDoubleClick = useDoubleClick(() => setIsMaximized(!isMaximized))
 
   const handleContainerClick = (e) => {
     if (!isClickOnButton(e)) {
       if (isMaximized) {
-        if (isRunning) {
-          handlePause()
-        } else {
-          handleStart()
-        }
+        isRunning ? handlePause() : handleStart()
       } else {
         handleDoubleClick()
       }
@@ -104,16 +125,12 @@ function BreathingTimer({
 
   return (
     <div
-      className={`${className} ${currentPhaseConfig.color} ${isMaximized ? 'maximized' : ''}`}
+      className={`breathing-timer-root ${className} ${currentPhaseConfig.color} ${isMaximized ? 'maximized' : ''}`}
       onClick={handleContainerClick}
     >
-      {/* Back button */}
       {onBackClick && (
         <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onBackClick()
-          }}
+          onClick={(e) => { e.stopPropagation(); onBackClick() }}
           className={`breathing-back-btn ${isMaximized ? 'maximized' : ''}`}
         >
           ← Back
@@ -123,13 +140,11 @@ function BreathingTimer({
       <h3 className="breathing-name">{name}</h3>
 
       <div className="breathing-cycle">
-        <div className="cycle-info">
-          Cycle {cycleCount + 1}
-        </div>
+        <div className="cycle-info">Cycle {cycleCount + 1}</div>
       </div>
 
       <div className="breathing-animation">
-        <div className={`breathing-circle ${isRunning ? 'breathing-circle--animated' : ''} ${currentPhaseConfig.color}`}>
+        <div ref={circleRef} className={`breathing-circle ${currentPhaseConfig.color}`}>
           <div className="breathing-circle-inner">
             <div className="breathing-timer-display">
               {Math.floor(timeLeft)}
@@ -149,20 +164,20 @@ function BreathingTimer({
 
       <div className="breathing-controls">
         {!isRunning ? (
-          <button onClick={(e) => { e.stopPropagation(); handleStart(); }} className="btn btn-start">
+          <button onClick={(e) => { e.stopPropagation(); handleStart() }} className="btn btn-start">
             {cycleCount === 0 && currentPhase === 0 ? 'Start' : 'Resume'}
           </button>
         ) : (
-          <button onClick={(e) => { e.stopPropagation(); handlePause(); }} className="btn btn-pause">
+          <button onClick={(e) => { e.stopPropagation(); handlePause() }} className="btn btn-pause">
             Pause
           </button>
         )}
 
-        <button onClick={(e) => { e.stopPropagation(); handleSkip(); }} className="btn btn-skip">
+        <button onClick={(e) => { e.stopPropagation(); handleSkip() }} className="btn btn-skip">
           Skip Phase
         </button>
 
-        <button onClick={(e) => { e.stopPropagation(); handleReset(); }} className="btn btn-reset">
+        <button onClick={(e) => { e.stopPropagation(); handleReset() }} className="btn btn-reset">
           Reset
         </button>
       </div>

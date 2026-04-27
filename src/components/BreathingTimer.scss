@@ -1,0 +1,319 @@
+// Shared styles for all breathing timers
+
+.breathing-back-btn {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.45rem 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  z-index: 10;
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.22);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  &.maximized {
+    opacity: 0.2;
+    transition: opacity 0.3s ease;
+    &:hover { opacity: 1; }
+  }
+}
+
+.breathing-name {
+  font-size: 1.35rem;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.02em;
+}
+
+.breathing-cycle {
+  margin-bottom: 1.25rem;
+
+  .cycle-info {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 0.3rem 0.85rem;
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+
+.breathing-animation {
+  position: relative;
+  margin: 1.25rem 0;
+  transition: transform 0.3s ease;
+}
+
+.breathing-circle {
+  width: 190px;
+  height: 190px;
+  margin: 0 auto;
+  position: relative;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.05) 55%, transparent 80%),
+    rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.14),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+  will-change: transform;
+
+  .breathing-circle-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 55%;
+      height: 55%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.22) 0%, transparent 75%);
+      animation: breathingGlow 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+  }
+}
+
+.breathing-timer-display {
+  font-size: 3.75rem;
+  font-weight: 700;
+  color: white;
+  z-index: 2;
+  position: relative;
+  text-shadow:
+    0 2px 16px rgba(0, 0, 0, 0.18),
+    0 0 40px rgba(255, 255, 255, 0.15);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.breathing-phase {
+  margin: 1.5rem 0 0.5rem;
+
+  .phase-indicator {
+    background: rgba(255, 255, 255, 0.13);
+    border-radius: 30px;
+    padding: 0.45rem 1.2rem;
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+  }
+}
+
+.breathing-instruction {
+  font-size: 2.1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  line-height: 1.2;
+}
+
+.breathing-controls {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+
+  .btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.28);
+    padding: 0.65rem 1.3rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    backdrop-filter: blur(8px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.35);
+      color: rgba(255, 255, 255, 0.95);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      background: rgba(255, 255, 255, 0.14);
+    }
+  }
+}
+
+.breathing-pattern {
+  .pattern-info {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    padding: 0.8rem 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    .pattern-label {
+      font-weight: 600;
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .pattern-value {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.72);
+    }
+  }
+}
+
+@keyframes breathingGlow {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.65; }
+}
+
+// ─── Maximized overrides (shared for all timers) ───────────────────────────
+
+.breathing-timer-root.maximized {
+  // Mobile maximized: scale the circle up
+  .breathing-animation { transform: scale(1.6); }
+  .breathing-timer-display { font-size: 5rem; }
+  .breathing-instruction { font-size: 2.5rem; }
+
+  // ─── Desktop two-column layout ─────────────────────────────────────────
+  @media (min-width: 900px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto 1fr auto auto;
+    grid-template-areas:
+      "anim name"
+      "anim cycle"
+      "anim phase"
+      "anim controls"
+      "anim pattern";
+    align-items: center;
+    align-content: center;
+    column-gap: 0;
+    padding: 0 6rem !important;  // override individual timer padding
+
+    .breathing-animation {
+      grid-area: anim;
+      transform: scale(2.0);  // bigger circle on desktop
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .breathing-name {
+      grid-area: name;
+      text-align: left;
+      font-size: 1.8rem;
+      align-self: end;
+      margin-bottom: 0.2rem;
+      padding-top: 0;
+    }
+
+    .breathing-cycle {
+      grid-area: cycle;
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+
+    .breathing-phase {
+      grid-area: phase;
+      text-align: left;
+      margin: 0 0 1.75rem;
+    }
+
+    .breathing-instruction {
+      font-size: 3.5rem;
+    }
+
+    .breathing-controls {
+      grid-area: controls;
+      justify-content: flex-start;
+      margin: 0 0 1.5rem;
+    }
+
+    .breathing-pattern {
+      grid-area: pattern;
+    }
+
+    .breathing-timer-display {
+      font-size: 5.5rem;
+    }
+
+    // Controls appear slightly more visible on desktop (easier to find on hover)
+    .breathing-controls {
+      opacity: 1 !important;
+
+      .btn { color: rgba(255, 255, 255, 0.35); }
+    }
+  }
+}
+
+// ─── Responsive (mobile/tablet) ────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .breathing-circle {
+    width: 165px;
+    height: 165px;
+  }
+
+  .breathing-timer-display { font-size: 3.25rem; }
+  .breathing-instruction { font-size: 1.75rem; }
+
+  .breathing-controls {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    .btn { padding: 0.6rem 1.1rem; }
+  }
+}
+
+@media (max-width: 480px) {
+  .breathing-circle {
+    width: 140px;
+    height: 140px;
+  }
+
+  .breathing-timer-display { font-size: 2.75rem; }
+  .breathing-instruction { font-size: 1.5rem; }
+
+  .breathing-controls .btn {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.82rem;
+  }
+}

@@ -3,10 +3,10 @@ import BreathingTimer from './BreathingTimer'
 
 const BOX_BREATHING_CONFIG = {
   phases: [
-    { name: 'Inhale', duration: 4, instruction: 'Breathe In', color: 'inhale' },
-    { name: 'Hold', duration: 4, instruction: 'Hold', color: 'hold1' },
-    { name: 'Exhale', duration: 4, instruction: 'Breathe Out', color: 'exhale' },
-    { name: 'Hold', duration: 4, instruction: 'Hold', color: 'hold2' }
+    { name: 'Inhale', duration: 4, instruction: 'Breathe In', color: 'inhale', type: 'inhale' },
+    { name: 'Hold',   duration: 4, instruction: 'Hold',       color: 'hold1', type: 'hold'   },
+    { name: 'Exhale', duration: 4, instruction: 'Breathe Out', color: 'exhale', type: 'exhale' },
+    { name: 'Hold',   duration: 4, instruction: 'Hold',       color: 'hold2', type: 'hold'   }
   ]
 }
 

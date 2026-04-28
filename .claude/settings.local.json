@@ -30,7 +30,12 @@
       "Bash(mkdir -p /Users/maaya/dev/timer-app/backend/internal/models)",
       "Bash(go mod:*)",
       "Bash(go build:*)",
-      "Bash(npx vitest:*)"
+      "Bash(npx vitest:*)",
+      "Bash(node_modules/.bin/vitest run *)",
+      "Bash(sed -n '38,42p' /Users/maaya/dev/timer-app/src/components/shared/WorkoutSetupView.jsx)",
+      "Bash(sed -n '115,122p' /Users/maaya/dev/timer-app/src/components/shared/WorkoutSetupView.jsx)",
+      "Bash(sed -n '102,106p' /Users/maaya/dev/timer-app/src/components/shared/WorkoutActiveView.jsx)",
+      "Bash(sed -n '184,220p' /Users/maaya/dev/timer-app/src/components/shared/WorkoutActiveView.jsx)"
     ],
     "deny": []
   }

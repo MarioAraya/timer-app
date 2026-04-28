@@ -35,6 +35,28 @@ $primary-glow: rgba(0, 204, 136, 0.3);
 
     .header-auth {
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .lang-toggle {
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        color: #a1a1aa;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.12);
+          color: #fff;
+          border-color: rgba(255, 255, 255, 0.25);
+        }
+      }
 
       &__login-btn {
         display: flex;

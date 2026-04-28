@@ -1,27 +1,29 @@
 import WorkoutSetupView from '../shared/WorkoutSetupView'
-
-const HIIT_THEME = {
-  name: 'hiit',
-  className: 'theme-hiit',
-  title: 'Workout Setup',
-  roundsLabel: 'Sets',
-  workLabel: 'HIGH INTENSITY',
-  startText: 'START WORKOUT',
-  defaultTotalTime: '12:00',
-  quote: {
-    phase: 'REST',
-    time: '0:05',
-    text: 'Deep breaths. Get ready for the next round.'
-  },
-  work: { default: 40, min: 20, max: 60 },
-  rest: { default: 20, min: 10, max: 30 }
-}
+import { useLang } from '../../context/LanguageContext'
 
 function HiitSetupView({ config, onStart, onBackClick, totalTime }) {
+  const { t } = useLang()
+
+  const theme = {
+    name: 'hiit',
+    className: 'theme-hiit',
+    title: t('hiit.setupTitle'),
+    roundsLabel: t('setup.sets'),
+    workLabel: t('hiit.workLabel'),
+    defaultTotalTime: '12:00',
+    quote: {
+      phase: t('hiit.quotePhase'),
+      time: '0:05',
+      text: t('hiit.quoteText'),
+    },
+    work: { default: 40, min: 20, max: 60 },
+    rest: { default: 20, min: 10, max: 30 },
+  }
+
   return (
     <WorkoutSetupView
       config={config}
-      theme={HIIT_THEME}
+      theme={theme}
       onStart={onStart}
       onBackClick={onBackClick}
       totalTime={totalTime}

@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks'
+import { useLang } from '../../context/LanguageContext'
 import './AuthModal.scss'
 
 function GoogleIcon() {
@@ -13,6 +14,7 @@ function GoogleIcon() {
 }
 
 export default function AuthModal({ onClose, signInWithGoogle, signInWithMagicLink }) {
+  const { t } = useLang()
   const [email, setEmail] = useState('')
   const [magicLinkSent, setMagicLinkSent] = useState(false)
   const [loadingGoogle, setLoadingGoogle] = useState(false)
@@ -53,15 +55,15 @@ export default function AuthModal({ onClose, signInWithGoogle, signInWithMagicLi
 
         <div className="auth-modal__header">
           <span className="material-symbols-outlined auth-modal__logo">fitness_center</span>
-          <h2>Inicia sesión</h2>
-          <p>Guarda tu progreso y rutinas personalizadas</p>
+          <h2>{t('auth.signIn')}</h2>
+          <p>{t('auth.saveProgress')}</p>
         </div>
 
         {magicLinkSent ? (
           <div className="auth-modal__success">
             <span className="material-symbols-outlined">mark_email_read</span>
-            <h3>Revisa tu correo</h3>
-            <p>Enviamos un link a <strong>{email}</strong>. Haz clic en él para entrar.</p>
+            <h3>{t('auth.checkEmail')}</h3>
+            <p>{t('auth.emailSent').replace('{email}', email)}</p>
             <button className="auth-modal__back-link" onClick={() => setMagicLinkSent(false)}>
               Usar otro correo
             </button>
@@ -77,7 +79,7 @@ export default function AuthModal({ onClose, signInWithGoogle, signInWithMagicLi
                 ? <span className="auth-modal__spinner" />
                 : <GoogleIcon />
               }
-              Continuar con Google
+              {t('auth.googleSignIn')}
             </button>
 
             <div className="auth-modal__divider">
@@ -101,7 +103,7 @@ export default function AuthModal({ onClose, signInWithGoogle, signInWithMagicLi
               >
                 {loadingEmail
                   ? <span className="auth-modal__spinner" />
-                  : 'Enviar link mágico'
+                  : t('auth.sendLink')
                 }
               </button>
             </form>

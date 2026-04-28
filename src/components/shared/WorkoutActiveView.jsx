@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useRef } from 'preact/hooks'
 import CircularProgress from './CircularProgress'
 import Confetti from '../Confetti'
+import { useLang } from '../../context/LanguageContext'
 import './WorkoutActiveView.scss'
 
 /**
@@ -20,6 +21,7 @@ function WorkoutActiveView({
   motivationalContent,
   exerciseName,
 }) {
+  const { t } = useLang()
   const containerRef = useRef(null)
 
   const formatTime = (seconds) => {
@@ -100,18 +102,18 @@ function WorkoutActiveView({
     >
       {/* Header */}
       <header className="active-header">
-        <button className="back-button" onClick={onBackClick}>
+        <button data-testid="active-back-btn" className="back-button" onClick={onBackClick}>
           <span className="material-symbols-outlined">arrow_back_ios</span>
         </button>
         <div className="header-center">
           <span className="session-label">
             {isFinished
-              ? `${themeClass.includes('hiit') ? 'HIIT' : 'Tabata'} Finished!`
-              : 'ACTIVE SESSION'}
+              ? t(`${themeClass.includes('hiit') ? 'hiit' : 'tabata'}.finishedTitle`)
+              : t('active.activeSession')}
           </span>
           <h2 className="round-info">
             {isFinished
-              ? `You've just completed the ${totalRounds} Rounds! Congratulations!`
+              ? t('active.completedRounds').replace('{n}', totalRounds)
               : `Round ${currentRound} of ${totalRounds}`}
           </h2>
         </div>
@@ -126,11 +128,11 @@ function WorkoutActiveView({
         {/* Stats HUD */}
         <div className="stats-hud">
           <div className="stat-card elapsed">
-            <span className="stat-label">TOTAL ELAPSED</span>
+            <span className="stat-label">{t('active.totalElapsed')}</span>
             <span className="stat-value">{formatTime(totalElapsed)}</span>
           </div>
           <div className={`stat-card mode ${isWorkPhase || isPreparationPhase ? 'work' : 'rest'}`}>
-            <span className="stat-label">CURRENT MODE</span>
+            <span className="stat-label">{t('active.currentMode')}</span>
             <span className="stat-value">{phaseLabel}</span>
           </div>
         </div>
@@ -140,7 +142,7 @@ function WorkoutActiveView({
           totalProgress={totalProgress}
           roundProgress={roundProgress}
           timeDisplay={Math.floor(timeLeft)}
-          label="SECONDS"
+          label={t('active.seconds')}
           onClick={isRunning ? onPause : onStart}
           isRunning={isRunning}
           isFinished={isFinished}
@@ -149,7 +151,7 @@ function WorkoutActiveView({
         {/* Set Progress Bar */}
         <div className="set-progress">
           <div className="progress-header">
-            <span>SET PROGRESS</span>
+            <span>{t('active.setProgress')}</span>
             <span>{Math.round(totalProgress)}%</span>
           </div>
           <div className="progress-bar">
@@ -189,30 +191,32 @@ function WorkoutActiveView({
             <span className="material-symbols-outlined">
               {musicMode ? 'music_note' : 'volume_up'}
             </span>
-            <span className="btn-tooltip">{musicMode ? 'Music ON' : 'Beeps ON'}</span>
+            <span className="btn-tooltip">{musicMode ? t('active.controls.musicOn') : t('active.controls.beepsOn')}</span>
           </button>
 
           <button
+            data-testid="ctrl-reset"
             className="control-button secondary"
             onClick={onReset}
           >
             <span className="material-symbols-outlined">refresh</span>
-            <span className="btn-tooltip">Reset</span>
+            <span className="btn-tooltip">{t('active.controls.reset')}</span>
           </button>
 
           {!isRunning ? (
             <button
+              data-testid="ctrl-start"
               className="control-button primary"
               onClick={onStart}
               disabled={isFinished}
             >
               <span className="material-symbols-outlined filled">play_arrow</span>
-              <span className="btn-tooltip">Start</span>
+              <span className="btn-tooltip">{t('active.controls.start')}</span>
             </button>
           ) : (
-            <button className="control-button primary" onClick={onPause}>
+            <button data-testid="ctrl-pause" className="control-button primary" onClick={onPause}>
               <span className="material-symbols-outlined filled">pause</span>
-              <span className="btn-tooltip">Pause</span>
+              <span className="btn-tooltip">{t('active.controls.pause')}</span>
             </button>
           )}
 
@@ -222,7 +226,7 @@ function WorkoutActiveView({
             disabled={isFinished}
           >
             <span className="material-symbols-outlined">skip_next</span>
-            <span className="btn-tooltip">Skip</span>
+            <span className="btn-tooltip">{t('active.controls.skip')}</span>
           </button>
         </div>
       </footer>

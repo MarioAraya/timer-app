@@ -132,21 +132,19 @@ function TabataTimerNew({
     }
   }, [isRunning, isFinished, currentRound, isWorkPhase, isPreparationPhase])
 
-  // Countdown beeps effect (3-2-1 before work phase starts)
+  // Countdown beeps effect (3-2-1 before every phase transition)
   const lastBeepRef = useRef(0)
   useEffect(() => {
-    if (!musicMode && isRunning && !isFinished && !isWorkPhase) {
+    if (!musicMode && isRunning && !isFinished) {
       const secondsLeft = Math.ceil(timeLeft)
 
-      // Beep during prep phase (before round 1) and during rest phases (before next round)
       if (secondsLeft <= 3 && secondsLeft >= 1 && lastBeepRef.current !== secondsLeft) {
         lastBeepRef.current = secondsLeft
         playCountdownSound(secondsLeft)
       }
     }
 
-    // Reset beep tracker when work phase starts
-    if (isWorkPhase) {
+    if (!isRunning || timeLeft <= 0) {
       lastBeepRef.current = 0
     }
   }, [timeLeft, isRunning, isFinished, isWorkPhase, isPreparationPhase, musicMode])

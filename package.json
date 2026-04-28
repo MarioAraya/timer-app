@@ -8,13 +8,16 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.1",
     "preact": "^10.19.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.52.0",
     "@preact/preset-vite": "^2.8.1",
     "sass": "^1.89.2",
     "vite": "^5.0.8",

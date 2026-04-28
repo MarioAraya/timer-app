@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ```bash
-npm run dev        # Start Vite dev server (http://localhost:5173)
+npm run dev        # Start Vite dev server (http://localhost:5177)
 npm run build      # Production build
 npm run preview    # Preview production build
 npm run test       # Run Vitest tests once

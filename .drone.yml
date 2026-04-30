@@ -30,4 +30,8 @@ steps:
         from_secret: ssh_key
       script:
         - docker pull 192.168.0.103:5000/maaya/timer-app:latest
-        - cd /home/maaya/app && docker compose up -d --force-recreate frontend
+        - docker stop timer-app || true
+        - docker rm timer-app || true
+        - docker run -d --name timer-app --restart unless-stopped
+            -p 5177:80
+            192.168.0.103:5000/maaya/timer-app:latest

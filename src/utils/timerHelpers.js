@@ -58,3 +58,17 @@ export function calculateTotalProgress({ config, preparationTime, currentRound, 
   const elapsed = calculateElapsedTime({ config, preparationTime, currentRound, timeLeft, isWorkPhase, isPreparationPhase })
   return Math.min(100, (elapsed / totalSeconds) * 100)
 }
+
+export function calculateRoundProgress({ config, preparationTime, currentRound, timeLeft, isWorkPhase, isPreparationPhase, isFinished }) {
+  if (isFinished) return 100
+  if (isPreparationPhase) {
+    return ((preparationTime - timeLeft) / preparationTime) * 100
+  }
+  const currentRoundConfig = config.rounds[currentRound - 1]
+  if (!currentRoundConfig) return 0
+  const roundDuration = currentRoundConfig.work + currentRoundConfig.rest
+  const elapsedInRound = isWorkPhase
+    ? currentRoundConfig.work - timeLeft
+    : currentRoundConfig.work + (currentRoundConfig.rest - timeLeft)
+  return Math.min(100, (elapsedInRound / roundDuration) * 100)
+}

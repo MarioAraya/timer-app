@@ -5,7 +5,7 @@ import HiitActiveView from './HiitActiveView'
 import { hiitAudio, playWorkSound, playCountdownSound } from '../../utils/audioUtils'
 import { HIIT_CONFIG, calculateTotalTime } from '../../config/hiitConfig'
 import { saveHiitState, loadHiitState, clearHiitState } from '../../utils/localStorage'
-import { calculateElapsedTime, calculateTotalProgress } from '../../utils/timerHelpers'
+import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
 import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
 
 /**
@@ -69,24 +69,6 @@ function HiitTimerNew({
       isFinished, currentSubtitle, musicMode, volume, hasStarted: true
     })
   })
-
-  // Inner circle: current round progress (work + rest of this round)
-  const calculateCurrentRoundProgress = () => {
-    if (isFinished) return 100
-    if (isPreparationPhase) {
-      return ((preparationTime - timeLeft) / preparationTime) * 100
-    }
-
-    const currentRoundConfig = HIIT_CONFIG.rounds[currentRound - 1]
-    if (!currentRoundConfig) return 0
-
-    const roundDuration = currentRoundConfig.work + currentRoundConfig.rest
-    let elapsedInRound = isWorkPhase
-      ? currentRoundConfig.work - timeLeft
-      : currentRoundConfig.work + (currentRoundConfig.rest - timeLeft)
-
-    return Math.min(100, (elapsedInRound / roundDuration) * 100)
-  }
 
   // Update elapsed time
   useEffect(() => {
@@ -291,7 +273,7 @@ function HiitTimerNew({
           showConfetti={showConfetti}
           setShowConfetti={setShowConfetti}
           totalProgress={calculateTotalProgress({ ...timerCtx, isFinished })}
-          roundProgress={calculateCurrentRoundProgress()}
+          roundProgress={calculateRoundProgress({ ...timerCtx, isFinished })}
           onBackClick={handleBackToSetup}
           onStart={handleStart}
           onPause={handlePause}

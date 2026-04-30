@@ -13,27 +13,27 @@ const initAudioContext = () => {
 
 export const HIIT_AUDIO_CONFIG = {
   name: 'HIIT',
-  audioPath: '/hiit_next-level_40-20_x12.mp3',
+  audioPath: '/audio/hiit_next-level_40-20_x12.mp3',
   startTime: 1.37,
-  url: '/hiit_next-level_40-20.mp3',
+  url: '/audio/hiit_next-level_40-20.mp3',
   defaultVolume: 0.7,
   loop: false
 }
 
 export const TABATA_AUDIO_CONFIG = {
   name: 'Tabata',
-  audioPath: '/tabata_rocky_20-10_x4.mp3',
+  audioPath: '/audio/tabata_rocky_20-10_x4.mp3',
   startTime: 0,
-  url: '/tabata_rocky_20-10_x4.mp3',
+  url: '/audio/tabata_rocky_20-10_x4.mp3',
   defaultVolume: 0.7,
   loop: false
 }
 
 export const POMODORO_AUDIO_CONFIG = {
   name: 'Pomodoro',
-  audioPath: '/lofi_morning_routine-chosic.com.mp3',
+  audioPath: '/audio/lofi_morning_routine-chosic.com.mp3',
   startTime: 0,
-  url: '/lofi_morning_routine-chosic.com.mp3',
+  url: '/audio/lofi_morning_routine-chosic.com.mp3',
   defaultVolume: 0.7,
   loop: true
 }

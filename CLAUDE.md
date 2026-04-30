@@ -95,9 +95,19 @@ The circle animation is **JS-driven** (not CSS keyframes): `BreathingTimer.jsx` 
 
 `PomodoroTimer.jsx` delegates to two hooks: `usePomodoroTimer` (countdown logic) and `usePomodoroControls` (start/pause/reset handlers). Sub-components in `src/components/pomodoro/` handle display, progress, and stats.
 
+### Internationalization (i18n)
+
+`src/i18n/` holds translation dictionaries (`es.js`, `en.js`) and a `t(lang, key)` helper that resolves dot-notation keys (e.g. `t(lang, 'timer.start')`). Default language is Spanish (`es`).
+
+`src/context/LanguageContext.jsx` wraps the app (via `main.jsx`'s `<LanguageProvider>`) and exposes the `useLang()` hook. Components call `useLang()` to get `{ lang, t }` — never call `t()` directly with a hardcoded lang string.
+
+`src/hooks/useLanguage.js` manages language state and persists selection via `src/i18n/languageStorage.js`.
+
 ### State Persistence (`src/utils/localStorage.js`)
 
 Save/load/clear functions per timer type (HIIT, Tabata, Pomodoro). All `load*State` functions enforce a 1-hour expiry via a `timestamp` field — stale state is cleared and returns `null`. State is saved on pause and unmount, restored on mount.
+
+`app.jsx` also persists the user's **favorite timer** (`saveFavoriteTimer` / `loadFavoriteTimer`) and **last active timer** (`saveActiveTimer` / `loadActiveTimer`) to survive page reloads.
 
 ### Auth
 
@@ -144,4 +154,10 @@ Maximized mode: double-click to toggle fullscreen; click anywhere to pause/resum
 ## Dead Code Note
 
 These hooks exist but have no active imports — candidates for removal:
-`useAudioSync.js`, `useMouseTracking.js`, `useSeekControls.js`, `useTimerPersistence.js`
+`useAudioSync.js`, `useSeekControls.js`, `useTimerPersistence.js`
+
+`useMouseTracking.js` — no active imports found; likely dead but verify before removing.
+
+Active hooks sometimes confused as dead: `useLanguage.js` (used by `LanguageContext.jsx`), `useWorkoutTimer.js` and `useDoubleClick.js` (both used by `PomodoroTimer.jsx` and `BreathingTimer.jsx`).
+
+Stale backup files in `src/components/`: `HiitTimer.jsx.backup`, `HiitTimer.scss.backup`, `TabataTimer.jsx.backup`, `TabataTimer.scss.backup` — safe to delete.

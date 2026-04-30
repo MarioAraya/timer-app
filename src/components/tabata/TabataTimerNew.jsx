@@ -5,6 +5,8 @@ import TabataActiveView from './TabataActiveView'
 import { tabataAudio, playWorkSound, playCountdownSound } from '../../utils/audioUtils'
 import { TABATA_CONFIG, calculateTabataTotalTime } from '../../config/tabataConfig'
 import { saveTabataState, loadTabataState, clearTabataState } from '../../utils/localStorage'
+import { calculateElapsedTime, calculateTotalProgress } from '../../utils/timerHelpers'
+import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
 
 /**
  * Tabata Timer Component - New Design
@@ -52,47 +54,19 @@ function TabataTimerNew({
   // Calculate total workout time
   const totalTime = calculateTabataTotalTime()
 
-  // Calculate total workout duration in seconds
-  const getTotalWorkoutSeconds = () => {
-    const prepTime = TABATA_CONFIG.preparation.duration
-    const roundsTime = TABATA_CONFIG.rounds.reduce((total, round) => total + round.work + round.rest, 0)
-    return prepTime + roundsTime
-  }
+  const timerCtx = { config: TABATA_CONFIG, preparationTime, currentRound, timeLeft, isWorkPhase, isPreparationPhase }
 
-  // Calculate elapsed time based on current position
-  const calculateElapsedTime = () => {
-    let elapsed = 0
-
-    if (isPreparationPhase) {
-      elapsed = preparationTime - timeLeft
-    } else {
-      elapsed = preparationTime // Prep time
-
-      // Add completed rounds
-      for (let i = 0; i < currentRound - 1; i++) {
-        elapsed += TABATA_CONFIG.rounds[i].work + TABATA_CONFIG.rounds[i].rest
-      }
-
-      // Add current round progress
-      const currentRoundConfig = TABATA_CONFIG.rounds[currentRound - 1]
-      if (currentRoundConfig) {
-        if (isWorkPhase) {
-          elapsed += currentRoundConfig.work - timeLeft
-        } else {
-          elapsed += currentRoundConfig.work + (currentRoundConfig.rest - timeLeft)
-        }
-      }
-    }
-
-    return Math.max(0, elapsed)
-  }
-
-  // Calculate progress percentages
-  const calculateTotalProgress = () => {
-    const totalSeconds = getTotalWorkoutSeconds()
-    const elapsed = calculateElapsedTime()
-    return Math.min(100, (elapsed / totalSeconds) * 100)
-  }
+  const { handleStart, handlePause, handleToggleMusicMode } = useWorkoutAudio({
+    audioObj: tabataAudio,
+    musicMode,
+    setMusicMode,
+    isFinished,
+    setIsRunning,
+    onPause: () => saveTabataState({
+      currentRound, timeLeft, isWorkPhase, isPreparationPhase,
+      isFinished, currentSubtitle, musicMode, volume, hasStarted: true
+    })
+  })
 
   const calculateIntervalProgress = () => {
     if (isPreparationPhase) {
@@ -109,7 +83,7 @@ function TabataTimerNew({
 
   // Update elapsed time
   useEffect(() => {
-    setTotalElapsed(calculateElapsedTime())
+    setTotalElapsed(calculateElapsedTime(timerCtx))
   }, [currentRound, timeLeft, isWorkPhase, isPreparationPhase])
 
   // Timer effect
@@ -203,45 +177,6 @@ function TabataTimerNew({
     clearTabataState()
   }
 
-  // Control handlers
-  const handleStart = () => {
-    if (isFinished) return
-
-    setIsRunning(true)
-
-    // Always control audio when in music mode, regardless of phase
-    if (musicMode) {
-      const audioPlayer = tabataAudio.getPlayer()
-      if (audioPlayer && audioPlayer.paused) {
-        tabataAudio.resume()
-      } else if (!audioPlayer) {
-        tabataAudio.play()
-      }
-    }
-  }
-
-  const handlePause = () => {
-    setIsRunning(false)
-
-    // Always pause audio when in music mode
-    if (musicMode) {
-      tabataAudio.pause()
-    }
-
-    // Save state
-    saveTabataState({
-      currentRound,
-      timeLeft,
-      isWorkPhase,
-      isPreparationPhase,
-      isFinished,
-      currentSubtitle,
-      musicMode,
-      volume,
-      hasStarted: true
-    })
-  }
-
   const handleReset = () => {
     setIsRunning(false)
     setCurrentRound(1)
@@ -280,14 +215,6 @@ function TabataTimerNew({
 
   const handleToggleFullscreen = () => {
     setIsMaximized(!isMaximized)
-  }
-
-  const handleToggleMusicMode = () => {
-    // Stop current audio if switching modes
-    if (musicMode) {
-      tabataAudio.stop()
-    }
-    setMusicMode(!musicMode)
   }
 
   // Save state on unmount
@@ -331,7 +258,7 @@ function TabataTimerNew({
           currentSubtitle={currentSubtitle}
           showConfetti={showConfetti}
           setShowConfetti={setShowConfetti}
-          totalProgress={calculateTotalProgress()}
+          totalProgress={calculateTotalProgress({ ...timerCtx, isFinished })}
           roundProgress={calculateIntervalProgress()}
           onBackClick={handleBackToSetup}
           onStart={handleStart}

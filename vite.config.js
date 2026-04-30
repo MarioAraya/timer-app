@@ -4,7 +4,7 @@ import preact from '@preact/preset-vite'
 export default defineConfig({
   plugins: [preact()],
   server: {
-    port: 5177
+    port: 5555
   },
   css: {
     preprocessorOptions: {

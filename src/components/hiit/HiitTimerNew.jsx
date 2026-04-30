@@ -5,6 +5,8 @@ import HiitActiveView from './HiitActiveView'
 import { hiitAudio, playWorkSound, playCountdownSound } from '../../utils/audioUtils'
 import { HIIT_CONFIG, calculateTotalTime } from '../../config/hiitConfig'
 import { saveHiitState, loadHiitState, clearHiitState } from '../../utils/localStorage'
+import { calculateElapsedTime, calculateTotalProgress } from '../../utils/timerHelpers'
+import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
 
 /**
  * HIIT Timer Component - New Design
@@ -54,49 +56,19 @@ function HiitTimerNew({
   // Calculate total workout time
   const totalTime = calculateTotalTime()
 
-  // Calculate total workout duration in seconds
-  const getTotalWorkoutSeconds = () => {
-    const prepTime = HIIT_CONFIG.preparation.duration
-    const roundsTime = HIIT_CONFIG.rounds.reduce((total, round) => total + round.work + round.rest, 0)
-    return prepTime + roundsTime
-  }
+  const timerCtx = { config: HIIT_CONFIG, preparationTime, currentRound, timeLeft, isWorkPhase, isPreparationPhase }
 
-  // Calculate elapsed time based on current position
-  const calculateElapsedTime = () => {
-    let elapsed = 0
-
-    if (isPreparationPhase) {
-      elapsed = preparationTime - timeLeft
-    } else {
-      elapsed = preparationTime // Prep time
-
-      // Add completed rounds
-      for (let i = 0; i < currentRound - 1; i++) {
-        elapsed += HIIT_CONFIG.rounds[i].work + HIIT_CONFIG.rounds[i].rest
-      }
-
-      // Add current round progress
-      const currentRoundConfig = HIIT_CONFIG.rounds[currentRound - 1]
-      if (currentRoundConfig) {
-        if (isWorkPhase) {
-          elapsed += currentRoundConfig.work - timeLeft
-        } else {
-          elapsed += currentRoundConfig.work + (currentRoundConfig.rest - timeLeft)
-        }
-      }
-    }
-
-    return Math.max(0, elapsed)
-  }
-
-  // Calculate progress percentages
-  // Outer circle: total workout progress (all 12 minutes)
-  const calculateTotalProgress = () => {
-    if (isFinished) return 100
-    const totalSeconds = getTotalWorkoutSeconds()
-    const elapsed = calculateElapsedTime()
-    return Math.min(100, (elapsed / totalSeconds) * 100)
-  }
+  const { handleStart, handlePause, handleToggleMusicMode } = useWorkoutAudio({
+    audioObj: hiitAudio,
+    musicMode,
+    setMusicMode,
+    isFinished,
+    setIsRunning,
+    onPause: () => saveHiitState({
+      currentRound, timeLeft, isWorkPhase, isPreparationPhase,
+      isFinished, currentSubtitle, musicMode, volume, hasStarted: true
+    })
+  })
 
   // Inner circle: current round progress (work + rest of this round)
   const calculateCurrentRoundProgress = () => {
@@ -118,7 +90,7 @@ function HiitTimerNew({
 
   // Update elapsed time
   useEffect(() => {
-    setTotalElapsed(calculateElapsedTime())
+    setTotalElapsed(calculateElapsedTime(timerCtx))
   }, [currentRound, timeLeft, isWorkPhase, isPreparationPhase])
 
   // Timer effect
@@ -201,45 +173,6 @@ function HiitTimerNew({
     clearHiitState()
   }
 
-  // Control handlers
-  const handleStart = () => {
-    if (isFinished) return
-
-    setIsRunning(true)
-
-    // Always control audio when in music mode, regardless of phase
-    if (musicMode) {
-      const audioPlayer = hiitAudio.getPlayer()
-      if (audioPlayer && audioPlayer.paused) {
-        hiitAudio.resume()
-      } else if (!audioPlayer) {
-        hiitAudio.play()
-      }
-    }
-  }
-
-  const handlePause = () => {
-    setIsRunning(false)
-
-    // Always pause audio when in music mode
-    if (musicMode) {
-      hiitAudio.pause()
-    }
-
-    // Save state
-    saveHiitState({
-      currentRound,
-      timeLeft,
-      isWorkPhase,
-      isPreparationPhase,
-      isFinished,
-      currentSubtitle,
-      musicMode,
-      volume,
-      hasStarted: true
-    })
-  }
-
   const handleReset = () => {
     setIsRunning(false)
     setCurrentRound(1)
@@ -278,14 +211,6 @@ function HiitTimerNew({
 
   const handleToggleFullscreen = () => {
     setIsMaximized(!isMaximized)
-  }
-
-  const handleToggleMusicMode = () => {
-    // Stop current audio if switching modes
-    if (musicMode) {
-      hiitAudio.stop()
-    }
-    setMusicMode(!musicMode)
   }
 
   // Calibration: log current audio time to console
@@ -365,7 +290,7 @@ function HiitTimerNew({
           currentSubtitle={currentSubtitle}
           showConfetti={showConfetti}
           setShowConfetti={setShowConfetti}
-          totalProgress={calculateTotalProgress()}
+          totalProgress={calculateTotalProgress({ ...timerCtx, isFinished })}
           roundProgress={calculateCurrentRoundProgress()}
           onBackClick={handleBackToSetup}
           onStart={handleStart}

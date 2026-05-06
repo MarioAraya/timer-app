@@ -26,8 +26,8 @@ function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOu
     <div className="timers-home">
       <header className="home-header">
         <div className="header-content">
-          <span className="header-label">WORKOUT TIMERS</span>
-          <h1 className="header-title">Choose Your Timer</h1>
+          <span className="header-label">{t('home.heading')}</span>
+          <h1 className="header-title">{t('home.subtitle')}</h1>
         </div>
         <div className="header-auth">
           <button
@@ -81,7 +81,7 @@ function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOu
               <div className="timer-card__footer">
                 <div className="timer-card__stats">
                   <span className="material-symbols-outlined">bar_chart</span>
-                  {timer.sessions.toLocaleString()} sessions
+                  {timer.sessions.toLocaleString()} {t('home.sessions')}
                 </div>
                 <div className="timer-card__start">
                   <span className="material-symbols-outlined">play_circle</span>

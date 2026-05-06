@@ -86,8 +86,13 @@ const es = {
     orUse: 'O usa',
     googleSignIn: 'Continuar con Google',
   },
+  home: {
+    heading: 'WORKOUT TIMERS',
+    subtitle: 'Elige tu timer',
+    sessions: 'sesiones',
+  },
   language: {
-    toggle: 'EN',
+    toggle: 'ES',
   },
 }
 

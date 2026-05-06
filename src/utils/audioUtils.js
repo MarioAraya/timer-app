@@ -11,29 +11,31 @@ const initAudioContext = () => {
 
 // ─── Audio configs ────────────────────────────────────────────────────────────
 
+const SUPABASE_AUDIO = 'https://veqjsjzuaviqctplwkdb.supabase.co/storage/v1/object/public/audio'
+
 export const HIIT_AUDIO_CONFIG = {
   name: 'HIIT',
-  audioPath: '/audio/hiit_next-level_40-20_x12.mp3',
+  audioPath: `${SUPABASE_AUDIO}/hiit_next-level_40-20_x12.mp3`,
   startTime: 1.37,
-  url: '/audio/hiit_next-level_40-20.mp3',
+  url: `${SUPABASE_AUDIO}/hiit_next-level_40-20_x12.mp3`,
   defaultVolume: 0.7,
   loop: false
 }
 
 export const TABATA_AUDIO_CONFIG = {
   name: 'Tabata',
-  audioPath: '/audio/tabata_rocky_20-10_x4.mp3',
+  audioPath: `${SUPABASE_AUDIO}/tabata_rocky_20-10_x4.mp3`,
   startTime: 0,
-  url: '/audio/tabata_rocky_20-10_x4.mp3',
+  url: `${SUPABASE_AUDIO}/tabata_rocky_20-10_x4.mp3`,
   defaultVolume: 0.7,
   loop: false
 }
 
 export const POMODORO_AUDIO_CONFIG = {
   name: 'Pomodoro',
-  audioPath: '/audio/lofi_morning_routine-chosic.com.mp3',
+  audioPath: `${SUPABASE_AUDIO}/lofi_morning_routine-chosic.com.mp3`,
   startTime: 0,
-  url: '/audio/lofi_morning_routine-chosic.com.mp3',
+  url: `${SUPABASE_AUDIO}/lofi_morning_routine-chosic.com.mp3`,
   defaultVolume: 0.7,
   loop: true
 }

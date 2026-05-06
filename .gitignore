@@ -29,3 +29,4 @@ vertical-carousel/
 # Large audio files (use external hosting or Git LFS)
 public/*.mp3
 dist/
+.vercel

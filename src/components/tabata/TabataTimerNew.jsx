@@ -4,7 +4,7 @@ import TabataSetupView from './TabataSetupView'
 import TabataActiveView from './TabataActiveView'
 import { tabataAudio, playWorkSound, playCountdownSound } from '../../utils/audioUtils'
 import { TABATA_CONFIG, calculateTabataTotalTime } from '../../config/tabataConfig'
-import { saveTabataState, loadTabataState, clearTabataState } from '../../utils/localStorage'
+import { saveTabataState, loadTabataState, clearTabataState, incrementSessionCount } from '../../utils/localStorage'
 import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
 import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
 
@@ -157,6 +157,7 @@ function TabataTimerNew({
     setIsFinished(true)
     setShowConfetti(true)
     setCurrentSubtitle("Tabata complete! You crushed it!")
+    incrementSessionCount('tabata')
     clearTabataState()
   }
 

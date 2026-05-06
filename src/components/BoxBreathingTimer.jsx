@@ -1,5 +1,6 @@
 import './BoxBreathingTimer.scss'
 import BreathingTimer from './BreathingTimer'
+import { incrementSessionCount } from '../utils/localStorage'
 
 const BOX_BREATHING_CONFIG = {
   phases: [
@@ -18,6 +19,7 @@ function BoxBreathingTimer(props) {
       phases={BOX_BREATHING_CONFIG.phases}
       patternName="4-4-4-4 (Box Breathing)"
       className="box-breath-timer"
+      onCycleComplete={() => incrementSessionCount('boxBreathing')}
     />
   )
 }

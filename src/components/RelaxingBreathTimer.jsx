@@ -1,5 +1,6 @@
 import './RelaxingBreathTimer.scss'
 import BreathingTimer from './BreathingTimer'
+import { incrementSessionCount } from '../utils/localStorage'
 
 const RELAXING_BREATHING_CONFIG = {
   phases: [
@@ -17,6 +18,7 @@ function RelaxingBreathTimer(props) {
       phases={RELAXING_BREATHING_CONFIG.phases}
       patternName="4-7-8 (Relaxing Breath)"
       className="relaxing-breath-timer"
+      onCycleComplete={() => incrementSessionCount('relaxingBreath')}
     />
   )
 }

@@ -23,7 +23,8 @@ function BreathingTimer({
   autoMaximize = false,
   autoStart = false,
   showBackButton = true,
-  onBackClick
+  onBackClick,
+  onCycleComplete,
 }) {
   const [currentPhase, setCurrentPhase] = useState(0)
   const [timeLeft, setTimeLeft] = useState(phases[0].duration)
@@ -82,7 +83,10 @@ function BreathingTimer({
       setTimeLeft(time => {
         if (time <= 1) {
           const nextPhase = (currentPhase + 1) % phases.length
-          if (nextPhase === 0) setCycleCount(count => count + 1)
+          if (nextPhase === 0) {
+            setCycleCount(count => count + 1)
+            onCycleComplete?.()
+          }
           setCurrentPhase(nextPhase)
           return phases[nextPhase].duration
         }
@@ -104,7 +108,10 @@ function BreathingTimer({
 
   const handleSkip = () => {
     const nextPhase = (currentPhase + 1) % phases.length
-    if (nextPhase === 0) setCycleCount(count => count + 1)
+    if (nextPhase === 0) {
+      setCycleCount(count => count + 1)
+      onCycleComplete?.()
+    }
     setCurrentPhase(nextPhase)
     setTimeLeft(phases[nextPhase].duration)
   }

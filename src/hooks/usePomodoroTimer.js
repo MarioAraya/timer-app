@@ -2,6 +2,7 @@ import { useState, useEffect } from 'preact/hooks'
 import { playWorkSound, playBeep, playCountdownSound } from '../utils/audioUtils'
 import { getBreakDuration, getPhaseMessage, getPhaseSubtitle } from '../config/pomodoroConfig'
 import { POMODORO_CONFIG } from '../config/pomodoroConfig'
+import { incrementSessionCount } from '../utils/localStorage'
 
 /**
  * Pomodoro timer logic hook
@@ -60,6 +61,7 @@ export function usePomodoroTimer({
                 playBeep(1500, 500, 0.5)
                 setCurrentMessage("🎉 Pomodoro Cycle Complete!")
                 setCurrentSubtitle(`Completed ${currentSession} sessions!`)
+                incrementSessionCount('pomodoro')
                 return 0
               } else {
                 // After short break, start next work session

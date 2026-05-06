@@ -4,7 +4,7 @@ import HiitSetupView from './HiitSetupView'
 import HiitActiveView from './HiitActiveView'
 import { hiitAudio, playWorkSound, playCountdownSound } from '../../utils/audioUtils'
 import { HIIT_CONFIG, calculateTotalTime } from '../../config/hiitConfig'
-import { saveHiitState, loadHiitState, clearHiitState } from '../../utils/localStorage'
+import { saveHiitState, loadHiitState, clearHiitState, incrementSessionCount } from '../../utils/localStorage'
 import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
 import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
 
@@ -151,7 +151,7 @@ function HiitTimerNew({
     setIsFinished(true)
     setShowConfetti(true)
     setCurrentSubtitle("Amazing workout! You crushed it!")
-
+    incrementSessionCount('hiit')
     clearHiitState()
   }
 

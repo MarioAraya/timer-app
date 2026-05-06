@@ -3,7 +3,8 @@ const STORAGE_KEYS = {
   HIIT_STATE:     'timerApp_hiitState',
   TABATA_STATE:   'timerApp_tabataState',
   POMODORO_STATE: 'timerApp_pomodoroState',
-  ACTIVE_TIMER:   'timerApp_activeTimer'
+  ACTIVE_TIMER:   'timerApp_activeTimer',
+  SESSIONS:       'timerApp_sessions',
 }
 
 const ONE_HOUR = 60 * 60 * 1000
@@ -91,6 +92,18 @@ export const clearTabataState = tabata.clear
 export const savePomodoroState  = pomodoro.save
 export const loadPomodoroState  = pomodoro.load
 export const clearPomodoroState = pomodoro.clear
+
+// ─── Session counts ───────────────────────────────────────────────────────────
+
+export function incrementSessionCount(timerKey) {
+  const counts = loadFromStorage(STORAGE_KEYS.SESSIONS) || {}
+  counts[timerKey] = (counts[timerKey] || 0) + 1
+  saveToStorage(STORAGE_KEYS.SESSIONS, counts)
+}
+
+export function loadSessionCounts() {
+  return loadFromStorage(STORAGE_KEYS.SESSIONS) || {}
+}
 
 // ─── Clear all ────────────────────────────────────────────────────────────────
 

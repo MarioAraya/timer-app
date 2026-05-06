@@ -1,87 +1,98 @@
-# ⏰ Timer App - Recupera el Control de Tu Tiempo
+# HIIT & Tabata Timer
 
-Una aplicación moderna de temporizadores diseñada para optimizar tu gestión del tiempo y mejorar tu productividad. Crea y personaliza tus propios timers para diferentes actividades: trabajo enfocado, entrenamientos de alta intensidad, ejercicios de respiración y más.
+PWA de entrenamiento con sincronización de audio MP3 a milisegundos. HIIT (12 rondas 40s/20s) y Tabata (8 rondas 20s/10s) como core; incluye Pomodoro y temporizadores de respiración.
 
-## 🚀 Características Principales
+## Timers
 
-- **Temporizadores Personalizables**: Crea timers básicos con duración y mensajes personalizados
-- **Protocolos de Entrenamiento**: HIIT y Tabata predefinidos para fitness
-- **Ejercicios de Respiración**: Timer 4-4-4-4 para meditación y relajación
-- **Modo Pantalla Completa**: Doble clic en cualquier timer para maximizarlo y enfocarte completamente
-- **Interfaz Intuitiva**: Diseño limpio y fácil de usar
-- **Responsive**: Funciona perfectamente en desktop y móvil
+| Timer | Protocolo | Música |
+|-------|-----------|--------|
+| HIIT | 12 rondas × 40s trabajo / 20s descanso | `hiit_next-level_40-20.mp3` |
+| Tabata | 8 rondas × 20s trabajo / 10s descanso | `tabata_rocky_20-10.mp3` |
+| Pomodoro | 25min trabajo / 5min pausa | — |
+| Box Breathing | 4-4-4-4 | — |
+| Calming Breath | 4-2-6 | — |
+| Relaxing Breath | 4-7-8 | — |
 
-## 💪 Tipos de Temporizadores
+## Features principales
 
-### 🍅 Timer Básico (Pomodoro)
-- Cuenta regresiva personalizable
-- Perfecto para técnica Pomodoro y sesiones de trabajo enfocado
-- Controles simples: Start, Pause, Reset
+- **Sincronización de audio precisa** — ticks MP3 alineados con fases trabajo/descanso
+- **Anti-pausa agresivo** — watchdog cada 300ms, auto-resume si el browser pausa
+- **Estado persistente** — pausa y retoma la sesión (expira tras 1 hora)
+- **Modo fullscreen** — doble-click para maximizar, click para pausar
+- **Modo offline** — Service Worker, funciona sin internet
+- **Dos modos de audio** — Música (MP3 sincronizado) o Beeps (Web Audio API)
+- **i18n** — Español (default) / Inglés
 
-### 🔥 HIIT Timer
-- 12 rondas de entrenamiento de alta intensidad
-- 40 segundos de trabajo + 20 segundos de descanso
-- Indicadores visuales de progreso y fases
-- Perfecto para cardio y quema de grasa
-
-### ⚡ Tabata Timer
-- 8 rondas del protocolo Tabata científicamente probado
-- 20 segundos de máximo esfuerzo + 10 segundos de recuperación
-- Ideal para mejorar capacidad anaeróbica
-
-### 🧘 Breathing Timer (4-4-4-4)
-- Ejercicio de respiración guiado
-- 4 fases: Inhalar - Mantener - Exhalar - Mantener
-- Animación visual para seguir el ritmo
-- Perfecto para reducir estrés y ansiedad
-
-## 🎯 Cómo Usar
-
-1. **Navega** entre los diferentes tipos de timers
-2. **Personaliza** duración y mensajes en los timers básicos
-3. **Doble clic** en cualquier timer para modo pantalla completa
-4. **Controla** tu sesión con botones intuitivos
-5. **Enfócate** sin distracciones en modo maximizado
-
-## 🛠️ Tecnologías
-
-- **Preact**: Framework ligero y eficiente
-- **Vite**: Build tool moderno y rápido
-- **CSS3**: Animaciones y estilos responsivos
-- **JavaScript ES6+**: Lógica moderna y limpia
-
-## 🚀 Desarrollo
+## Dev
 
 ```bash
-# Instalar dependencias
-npm install
-
-# Servidor de desarrollo
-npm run dev
-
-# Build para producción
+npm run dev        # http://localhost:5177
 npm run build
-
-# Vista previa del build
 npm run preview
+npm run test
+npm run test:watch
+
+# Backend (Go)
+cd backend && go run cmd/api/main.go
 ```
 
-## 📱 Características Avanzadas
+Test archivo específico:
+```bash
+npx vitest run src/utils/ticksEngine.test.js
+```
 
-- **Persistencia Visual**: Los estados se mantienen durante la sesión
-- **Animaciones Fluidas**: Transiciones suaves entre estados
-- **Controles Inteligentes**: Los botones se adaptan al contexto
-- **Feedback Visual**: Colores y animaciones indican el estado actual
-- **Modo Inmersivo**: Pantalla completa para máxima concentración
+## Stack
 
-## 🎨 Casos de Uso
+- **Preact** + Vite + SCSS
+- **Web Audio API** (beeps) + HTML5 Audio (MP3)
+- **Supabase** (auth + DB)
+- **Go/chi** (backend: presets, progress, rutinas sociales)
 
-- **Productividad**: Pomodoros para trabajo enfocado
-- **Fitness**: Entrenamientos HIIT y Tabata
-- **Bienestar**: Ejercicios de respiración y meditación
-- **Estudio**: Sesiones de concentración y descansos programados
-- **Cocina**: Temporizadores para recetas y horneado
+## Arquitectura clave
 
----
+```
+src/
+  app.jsx                          ← routing (currentView + activeTimer state)
+  components/
+    TimersHome.jsx                 ← grid de selección
+    hiit/HiitTimerNew.jsx          ← root HIIT
+    tabata/TabataTimerNew.jsx      ← root Tabata
+    BreathingTimer.jsx             ← base respiración
+  config/
+    hiitTicks.js / tabataTicks.js  ← timestamps MP3 absolutos (segundos)
+  utils/
+    ticksEngine.js                 ← buildConfigFromTicks() deriva duraciones
+    WorkoutAudioPlayer.js          ← playback + watchdog + drift correction
+    audioUtils.js                  ← 3 instancias WorkoutAudioPlayer + beeps
+    localStorage.js                ← persistencia con expiry 1h
+```
 
-**Recupera el control de tu tiempo. Optimiza tu productividad. Mejora tu bienestar.**
+**Importante:** Para cambiar duraciones de fases, editar los archivos `*Ticks.js`, no los configs directamente.
+
+## Audio sync — cómo funciona
+
+```
+hiitTicks.js (timestamps)
+  → ticksEngine.buildConfigFromTicks()
+  → hiitConfig.js (duraciones derivadas)
+  → WorkoutAudioPlayer (seek + watchdog 300ms)
+```
+
+## Agregar música propia
+
+1. Colocar MP3 en `public/`
+2. Editar `src/config/hiitTicks.js` con los timestamps de tus fases
+3. `ticksEngine.js` deriva la config automáticamente
+
+## Backend (Go)
+
+```
+backend/cmd/api/main.go
+backend/internal/
+  auth/        ← JWT middleware + Supabase
+  handlers/    ← presets, progress, routines, social
+```
+
+## Licencia
+
+MIT

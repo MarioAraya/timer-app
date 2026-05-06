@@ -1,0 +1,26 @@
+// HIIT Timer - Container styles only
+// Active view styles are in shared/WorkoutActiveView.scss
+
+$bg-dark: #18181b;
+$text-primary: #ffffff;
+
+.hiit-timer-new {
+  font-family: 'Lexend', sans-serif;
+  background: $bg-dark;
+  color: $text-primary;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+
+  .timer-view & {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    z-index: 100;
+  }
+}

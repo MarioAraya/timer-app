@@ -1,25 +1,25 @@
 import { useState, useEffect, useRef } from 'preact/hooks'
-import './HiitTimer.scss'
+import './TabataTimer.scss'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { formatTimeSeconds, calculateProgress, isClickOnButton } from '../utils/timerHelpers'
-import { playWorkSound, playCountdownSound, playHiitSong, stopHiitSong, pauseHiitSong, resumeHiitSong, HIIT_AUDIO_CONFIG, initializeAudioPlayer, isPlayerReady, isPlayerLoading, getAudioPosition, setAudioPosition, getAudioPlayer } from '../utils/audioUtils'
-import { HIIT_CONFIG, calculateTotalTime } from '../config/hiitConfig'
+import { playWorkSound, playCountdownSound, playTabataSong, stopTabataSong, pauseTabataSong, resumeTabataSong, TABATA_AUDIO_CONFIG, initializeTabataAudioPlayer, isTabataPlayerReady, isTabataPlayerLoading, getTabataAudioPosition, setTabataAudioPosition, getTabataAudioPlayer, shouldIgnoreTabataPause } from '../utils/audioUtils'
+import { TABATA_CONFIG, calculateTabataTotalTime } from '../config/tabataConfig'
 import Confetti from './Confetti'
-import { saveHiitState, loadHiitState, clearHiitState } from '../utils/localStorage'
+import { saveTabataState, loadTabataState, clearTabataState } from '../utils/localStorage'
 
-function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = false, showBackButton = true, onBackClick }) {
+function TabataTimer({ name = 'Tabata Protocol', autoMaximize = false, autoStart = false, showBackButton = true, onBackClick }) {
   // Try to restore saved state
-  const savedState = loadHiitState()
+  const savedState = loadTabataState()
 
   const [currentRound, setCurrentRound] = useState(savedState?.currentRound || 1)
-  const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft || HIIT_CONFIG.preparation.duration)
+  const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft || TABATA_CONFIG.preparation.duration)
   const [isWorkPhase, setIsWorkPhase] = useState(savedState?.isWorkPhase ?? true)
   const [isPreparationPhase, setIsPreparationPhase] = useState(savedState?.isPreparationPhase ?? true)
   const [isRunning, setIsRunning] = useState(false) // Always start paused on mount
   const [isFinished, setIsFinished] = useState(savedState?.isFinished || false)
   const [isMaximized, setIsMaximized] = useState(autoMaximize)
-  const [currentSubtitle, setCurrentSubtitle] = useState(savedState?.currentSubtitle || HIIT_CONFIG.preparation.subtitle)
-  const [musicMode, setMusicMode] = useState(savedState?.musicMode ?? true) // true = YouTube music, false = beeps only
+  const [currentSubtitle, setCurrentSubtitle] = useState(savedState?.currentSubtitle || TABATA_CONFIG.preparation.subtitle)
+  const [musicMode, setMusicMode] = useState(savedState?.musicMode ?? true) // true = music, false = beeps only
   const [playerStatus, setPlayerStatus] = useState('idle') // 'idle', 'loading', 'ready'
   const [showConfetti, setShowConfetti] = useState(false)
   const [stateRestored, setStateRestored] = useState(false)
@@ -29,8 +29,8 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
   const ignoreNextPause = useRef(false)
   const ignoreNextPlay = useRef(false)
 
-  const totalRounds = HIIT_CONFIG.rounds.length
-  const preparationTime = HIIT_CONFIG.preparation.duration
+  const totalRounds = TABATA_CONFIG.rounds.length
+  const preparationTime = TABATA_CONFIG.preparation.duration
 
   // Handle click anywhere to pause/resume (only in maximized mode)
   const handleContainerClick = (e) => {
@@ -51,14 +51,14 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
   useEffect(() => {
     if (musicMode && playerStatus === 'idle') {
       setPlayerStatus('loading')
-      initializeAudioPlayer().then((ready) => {
+      initializeTabataAudioPlayer().then((ready) => {
         setPlayerStatus(ready ? 'ready' : 'error')
 
         // Restore audio position if we have saved state
         if (ready && savedState && savedState.audioPosition && !stateRestored) {
-          setAudioPosition(savedState.audioPosition)
+          setTabataAudioPosition(savedState.audioPosition)
           setStateRestored(true)
-          console.log('🔄 Restored audio position:', savedState.audioPosition)
+          console.log('🔄 Restored Tabata audio position:', savedState.audioPosition)
         }
 
         // Don't auto-start - always show paused with saved state restored
@@ -68,7 +68,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
 
   // Update audio volume when volume state changes
   useEffect(() => {
-    const audioPlayer = getAudioPlayer()
+    const audioPlayer = getTabataAudioPlayer()
     if (audioPlayer) {
       audioPlayer.volume = volume
     }
@@ -83,6 +83,12 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
       if (ignoreNextPause.current) {
         console.log('🔇 Ignoring pause event (triggered by our code)')
         ignoreNextPause.current = false
+        return
+      }
+
+      // Ignore spurious pause events within first 2 seconds of playback
+      if (shouldIgnoreTabataPause()) {
+        console.log('🔇 Ignoring spurious pause event (within 2s of playback start)')
         return
       }
 
@@ -108,7 +114,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
       }
     }
 
-    const audioPlayer = getAudioPlayer()
+    const audioPlayer = getTabataAudioPlayer()
     if (audioPlayer) {
       audioPlayer.addEventListener('pause', handleAudioPause)
       audioPlayer.addEventListener('play', handleAudioPlay)
@@ -116,7 +122,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
       // Setup Media Session API for keyboard/system media controls
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
-          title: 'HIIT Workout',
+          title: 'Tabata Workout',
           artist: 'Timer App',
           album: 'Fitness',
         })
@@ -125,7 +131,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
           if (!isRunning && !isFinished && playerStatus === 'ready') {
             console.log('⌨️ Play from media controls')
             ignoreNextPlay.current = true
-            resumeHiitSong()
+            resumeTabataSong()
             setIsRunning(true)
           }
         })
@@ -134,7 +140,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
           if (isRunning) {
             console.log('⌨️ Pause from media controls')
             ignoreNextPause.current = true
-            pauseHiitSong()
+            pauseTabataSong()
             setIsRunning(false)
           }
         })
@@ -163,7 +169,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
     // Only save when NOT running (paused or finished)
     // This prevents saving every second while timer is running
     if (!isRunning && hasStarted()) {
-      const audioPosition = musicMode ? getAudioPosition() : null
+      const audioPosition = musicMode ? getTabataAudioPosition() : null
 
       const currentState = {
         currentRound,
@@ -177,27 +183,27 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
         audioPosition
       }
 
-      saveHiitState(currentState)
-      console.log('💾 Saved state (paused)')
+      saveTabataState(currentState)
+      console.log('💾 Saved Tabata state (paused)')
     }
   }, [isRunning, isFinished])
 
   // Save state and pause when component unmounts (switching timers)
   useEffect(() => {
     return () => {
-      console.log('🔄 Unmounting HIIT timer...')
+      console.log('🔄 Unmounting Tabata timer...')
 
       // First, pause the music if it's playing
       if (musicMode && isRunning) {
         console.log('⏸️ Pausing music before saving state')
-        pauseHiitSong()
+        pauseTabataSong()
 
         // Wait a bit for the pause to complete before getting position
         setTimeout(() => {
-          const audioPosition = musicMode ? getAudioPosition() : null
+          const audioPosition = musicMode ? getTabataAudioPosition() : null
 
           // Save final state AFTER music is paused
-          saveHiitState({
+          saveTabataState({
             currentRound,
             timeLeft,
             isWorkPhase,
@@ -208,12 +214,12 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
             musicMode,
             audioPosition
           })
-          console.log('💾 Saved HIIT state after pausing music, position:', audioPosition)
+          console.log('💾 Saved Tabata state after pausing music, position:', audioPosition)
         }, 100)
       } else {
         // No music playing, save immediately
-        const audioPosition = musicMode ? getAudioPosition() : null
-        saveHiitState({
+        const audioPosition = musicMode ? getTabataAudioPosition() : null
+        saveTabataState({
           currentRound,
           timeLeft,
           isWorkPhase,
@@ -224,14 +230,14 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
           musicMode,
           audioPosition
         })
-        console.log('💾 Saved HIIT state on unmount')
+        console.log('💾 Saved Tabata state on unmount')
       }
     }
   }, [musicMode, isRunning, currentRound, timeLeft, isWorkPhase, isPreparationPhase, isFinished, currentSubtitle])
 
   useEffect(() => {
     let interval = null
-    
+
     if (isRunning && !isFinished) {
       interval = setInterval(() => {
         setTimeLeft(time => {
@@ -241,17 +247,21 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
               // Preparation phase ending - start first work phase
               setIsPreparationPhase(false)
               setIsWorkPhase(true)
-              setCurrentSubtitle(HIIT_CONFIG.rounds[0].workSubtitle)
+              setCurrentSubtitle(TABATA_CONFIG.rounds[0].workSubtitle)
               if (!musicMode) playWorkSound()
-              return HIIT_CONFIG.rounds[0].work
+              return TABATA_CONFIG.rounds[0].work
             } else if (isWorkPhase) {
               // Work phase ending
-              const currentRoundConfig = HIIT_CONFIG.rounds[currentRound - 1]
+              const currentRoundConfig = TABATA_CONFIG.rounds[currentRound - 1]
               if (currentRound >= totalRounds) {
-                // Final work phase - go to final celebration rest
-                setIsWorkPhase(false)
-                setCurrentSubtitle("🎉 You just killed this worked out! Hit music! Number one, baby!")
-                return currentRoundConfig.rest
+                // Final work phase - workout complete (Tabata has no final rest)
+                setIsRunning(false)
+                setIsFinished(true)
+                setShowConfetti(true)
+                if (musicMode) {
+                  stopTabataSong()
+                }
+                return 0
               } else {
                 // Go to rest
                 setIsWorkPhase(false)
@@ -261,12 +271,12 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
             } else {
               // Rest phase ending
               if (currentRound >= totalRounds) {
-                // Final rest phase ending - workout complete
+                // This shouldn't happen in Tabata, but handle it
                 setIsRunning(false)
                 setIsFinished(true)
                 setShowConfetti(true)
                 if (musicMode) {
-                  stopHiitSong()
+                  stopTabataSong()
                 }
                 return 0
               } else {
@@ -274,20 +284,20 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
                 const nextRound = currentRound + 1
                 setCurrentRound(nextRound)
                 setIsWorkPhase(true)
-                setCurrentSubtitle(HIIT_CONFIG.rounds[nextRound - 1].workSubtitle)
+                setCurrentSubtitle(TABATA_CONFIG.rounds[nextRound - 1].workSubtitle)
                 if (!musicMode) playWorkSound()
-                return HIIT_CONFIG.rounds[nextRound - 1].work
+                return TABATA_CONFIG.rounds[nextRound - 1].work
               }
             }
           }
-          
+
           // Play countdown sounds during rest phase (but not in final rest)
-          if (!isPreparationPhase && !isWorkPhase && time <= 4 && time > 1 && currentRound < totalRounds) {
+          if (!isPreparationPhase && !isWorkPhase && time <= 4 && time > 1) {
             if (!musicMode) { // Only play beeps when not in music mode
               playCountdownSound(time - 1)
             }
           }
-          
+
           return time - 1
         })
       }, 1000)
@@ -312,10 +322,10 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
 
       if (isPreparationPhase && timeLeft === preparationTime) {
         // Starting fresh workout - play song
-        playHiitSong()
+        playTabataSong()
       } else {
         // Resuming - resume song
-        resumeHiitSong()
+        resumeTabataSong()
       }
     }
   }
@@ -325,7 +335,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
     if (musicMode) {
       // Set ignore flag BEFORE triggering audio pause
       ignoreNextPause.current = true
-      pauseHiitSong()
+      pauseTabataSong()
     }
   }
 
@@ -336,14 +346,14 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
     setIsWorkPhase(true)
     setIsPreparationPhase(true)
     setTimeLeft(preparationTime)
-    setCurrentSubtitle(HIIT_CONFIG.preparation.subtitle)
+    setCurrentSubtitle(TABATA_CONFIG.preparation.subtitle)
     setShowConfetti(false)
     if (musicMode) {
-      stopHiitSong()
+      stopTabataSong()
     }
     // Clear saved state
-    clearHiitState()
-    console.log('🗑️ Cleared saved HIIT state')
+    clearTabataState()
+    console.log('🗑️ Cleared saved Tabata state')
   }
 
   const handleSkip = () => {
@@ -351,15 +361,19 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
       // Skip preparation - start first work phase
       setIsPreparationPhase(false)
       setIsWorkPhase(true)
-      setCurrentSubtitle(HIIT_CONFIG.rounds[0].workSubtitle)
-      setTimeLeft(HIIT_CONFIG.rounds[0].work)
+      setCurrentSubtitle(TABATA_CONFIG.rounds[0].workSubtitle)
+      setTimeLeft(TABATA_CONFIG.rounds[0].work)
     } else if (isWorkPhase) {
-      const currentRoundConfig = HIIT_CONFIG.rounds[currentRound - 1]
+      const currentRoundConfig = TABATA_CONFIG.rounds[currentRound - 1]
       if (currentRound >= totalRounds) {
-        // Final work phase - go to final celebration rest
-        setIsWorkPhase(false)
-        setCurrentSubtitle("🎉 You just killed this worked out! Hit music! Number one, baby!")
-        setTimeLeft(currentRoundConfig.rest)
+        // Final work phase - complete workout
+        setIsFinished(true)
+        setIsRunning(false)
+        setTimeLeft(0)
+        setShowConfetti(true)
+        if (musicMode) {
+          stopTabataSong()
+        }
       } else {
         // Go to rest
         setIsWorkPhase(false)
@@ -375,27 +389,27 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
         setTimeLeft(0)
         setShowConfetti(true)
         if (musicMode) {
-          stopHiitSong()
+          stopTabataSong()
         }
       } else {
         // Next round
         const nextRound = currentRound + 1
         setCurrentRound(nextRound)
         setIsWorkPhase(true)
-        setCurrentSubtitle(HIIT_CONFIG.rounds[nextRound - 1].workSubtitle)
-        setTimeLeft(HIIT_CONFIG.rounds[nextRound - 1].work)
+        setCurrentSubtitle(TABATA_CONFIG.rounds[nextRound - 1].workSubtitle)
+        setTimeLeft(TABATA_CONFIG.rounds[nextRound - 1].work)
       }
     }
   }
 
   const getPhaseMessage = () => {
-    if (isFinished) return "🎉 Workout Complete!"
+    if (isFinished) return "⚡ TABATA COMPLETE!"
     if (!isRunning && isPreparationPhase && timeLeft === preparationTime) {
       // Never started - don't show message
       return ""
     }
     if (isPreparationPhase) return "🏃‍♂️ GET READY!"
-    return isWorkPhase ? "💪 WORK HARD!" : "😮‍💨 REST"
+    return isWorkPhase ? "🔥 MAXIMUM EFFORT!" : "⏸️ RECOVER"
   }
 
   const hasStarted = () => {
@@ -405,7 +419,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
 
   const getProgressPercentage = () => {
     if (isPreparationPhase) return 0
-    const totalPhases = totalRounds * 2 // work + rest phases for all 12 rounds (including final rest)
+    const totalPhases = totalRounds * 2 - 1 // work + rest phases, minus final rest
     const completedPhases = (currentRound - 1) * 2 + (isWorkPhase ? 0 : 1)
     return calculateProgress(completedPhases, totalPhases)
   }
@@ -417,7 +431,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
 
   return (
     <div
-      className={`hiit-timer ${isFinished ? 'finished' : ''} ${isWorkPhase || isPreparationPhase ? 'work-phase' : 'rest-phase'} ${isMaximized ? 'maximized' : ''}`}
+      className={`tabata-timer ${isFinished ? 'finished' : ''} ${isWorkPhase || isPreparationPhase ? 'work-phase' : 'rest-phase'} ${isMaximized ? 'maximized' : ''}`}
       onClick={handleContainerClick}
     >
       {/* Back button - visible in normal mode, auto-hide in fullscreen */}
@@ -427,17 +441,17 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
             e.stopPropagation()
             onBackClick()
           }}
-          className={`hiit-back-btn ${isMaximized ? (showBackButton ? 'visible' : 'hidden') : ''}`}
+          className={`tabata-back-btn ${isMaximized ? (showBackButton ? 'visible' : 'hidden') : ''}`}
         >
           ← Back
         </button>
       )}
 
-      <h3 className="hiit-name">{name}</h3>
+      <h3 className="tabata-name">{name}</h3>
 
       {/* Only show progress bar if workout has started */}
       {hasStarted() && (
-        <div className="hiit-progress">
+        <div className="tabata-progress">
           <div className="progress-bar">
             <div
               className="progress-fill"
@@ -451,34 +465,34 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
       )}
 
       {/* Central content with animations */}
-      <div className="hiit-central-content">
-        <div className="hiit-phase">
+      <div className="tabata-central-content">
+        <div className="tabata-phase">
           <div className={`phase-indicator ${isPreparationPhase ? 'work' : isWorkPhase ? 'work' : 'rest'}`}>
             {!hasStarted()
-              ? '40 sec work & 20 sec rest = 12 min Total workout!'
+              ? '20 sec work & 10 sec rest = 4 min Total workout!'
               : (isPreparationPhase ? 'PREP' : isWorkPhase ? 'WORK' : 'REST')}
           </div>
         </div>
 
-        <div className="hiit-display">
+        <div className="tabata-display">
           {!hasStarted()
-            ? 'HIIT Music'
+            ? 'Tabata Music'
             : (isRunning || isFinished || hasStarted() ? formatTimeSeconds(timeLeft) : '--:--')}
         </div>
 
-        <div className="hiit-message">
+        <div className="tabata-message">
           {getPhaseMessage()}
         </div>
 
         {/* Only show subtitle if workout has started */}
         {currentSubtitle && hasStarted() && (
-          <div className="hiit-subtitle">
+          <div className="tabata-subtitle">
             {currentSubtitle}
           </div>
         )}
       </div>
-      
-      <div className="hiit-controls">
+
+      <div className="tabata-controls">
         {!isRunning ? (
           <button
             onClick={(e) => {
@@ -535,7 +549,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
         )}
       </div>
 
-      <div className="hiit-music-toggle">
+      <div className="tabata-music-toggle">
         <label className="toggle-container">
           <input
             type="checkbox"
@@ -553,7 +567,7 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
 
       {/* Volume control - only show when music mode is enabled */}
       {musicMode && (
-        <div className="hiit-volume-control">
+        <div className="tabata-volume-control">
           <label className="volume-label">
             <span className="volume-icon">🔊</span>
             <input
@@ -569,11 +583,11 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
         </div>
       )}
 
-      <div className="hiit-stats">
+      <div className="tabata-stats">
         <div className="stat">
           <span className="stat-label">Song:</span>
           <span className="stat-value">
-            <a href={HIIT_AUDIO_CONFIG.url} target="_blank" rel="noopener noreferrer" className="song-link">
+            <a href={TABATA_AUDIO_CONFIG.url} target="_blank" rel="noopener noreferrer" className="song-link">
               🎵 Local MP3
             </a>
           </span>
@@ -584,16 +598,16 @@ function HiitTimer({ name = 'HIIT Workout', autoMaximize = false, autoStart = fa
         </div>
         <div className="stat">
           <span className="stat-label">Total:</span>
-          <span className="stat-value">{calculateTotalTime()}</span>
+          <span className="stat-value">{calculateTabataTotalTime()}</span>
         </div>
       </div>
 
-      <Confetti 
-        isActive={showConfetti} 
-        onComplete={() => setShowConfetti(false)} 
+      <Confetti
+        isActive={showConfetti}
+        onComplete={() => setShowConfetti(false)}
       />
     </div>
   )
 }
 
-export default HiitTimer
+export default TabataTimer

@@ -1,5 +1,11 @@
 import { render } from 'preact'
-import App from './App.jsx'
+import App from './app.jsx'
+import { LanguageProvider } from './context/LanguageContext'
 import './index.css'
 
-render(<App />, document.getElementById('app'))
+render(
+  <LanguageProvider>
+    <App />
+  </LanguageProvider>,
+  document.getElementById('app')
+)

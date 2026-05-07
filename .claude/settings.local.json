@@ -35,7 +35,10 @@
       "Bash(sed -n '38,42p' /Users/maaya/dev/timer-app/src/components/shared/WorkoutSetupView.jsx)",
       "Bash(sed -n '115,122p' /Users/maaya/dev/timer-app/src/components/shared/WorkoutSetupView.jsx)",
       "Bash(sed -n '102,106p' /Users/maaya/dev/timer-app/src/components/shared/WorkoutActiveView.jsx)",
-      "Bash(sed -n '184,220p' /Users/maaya/dev/timer-app/src/components/shared/WorkoutActiveView.jsx)"
+      "Bash(sed -n '184,220p' /Users/maaya/dev/timer-app/src/components/shared/WorkoutActiveView.jsx)",
+      "Bash(node -e \"require\\('canvas'\\)\")",
+      "Bash(rsvg-convert -w 1200 -h 630 /Users/maaya/dev/timer-app/public/og-image.svg -o /Users/maaya/dev/timer-app/public/og-image.png)",
+      "Bash(xargs cat -n)"
     ],
     "deny": []
   }

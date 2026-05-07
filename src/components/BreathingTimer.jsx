@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'preact/hooks'
 import { useDoubleClick } from '../hooks/useDoubleClick'
 import { isClickOnButton } from '../utils/timerHelpers'
+import { breathingAudio } from '../utils/audioUtils'
 import './BreathingTimer.scss'
 
 const SCALE_MIN = 0.65
 const SCALE_MAX = 1.35
 
-// For hold phases, find the scale of the last non-hold phase before this one
 function getHoldScale(phases, phaseIndex) {
   for (let i = phaseIndex - 1; i >= 0; i--) {
     if (phases[i].type === 'inhale') return SCALE_MAX
@@ -31,11 +31,38 @@ function BreathingTimer({
   const [isRunning, setIsRunning] = useState(false)
   const [cycleCount, setCycleCount] = useState(0)
   const [isMaximized, setIsMaximized] = useState(autoMaximize)
+  const [audioMode, setAudioMode] = useState(false)
+  const [audioVolume, setAudioVolume] = useState(0.4)
+  const [audioStatus, setAudioStatus] = useState('idle')
   const circleRef = useRef(null)
 
   useEffect(() => {
     if (autoStart && !isRunning) setIsRunning(true)
   }, [autoStart])
+
+  // Initialize lofi player when audio mode enabled
+  useEffect(() => {
+    if (!audioMode || audioStatus !== 'idle') return
+    setAudioStatus('loading')
+    breathingAudio.initialize().then(ready => {
+      setAudioStatus(ready ? 'ready' : 'error')
+    })
+  }, [audioMode])
+
+  // Sync audio playback with timer running state
+  useEffect(() => {
+    if (!audioMode || audioStatus !== 'ready') return
+    if (isRunning) {
+      breathingAudio.resume()
+    } else {
+      breathingAudio.pause()
+    }
+  }, [isRunning, audioMode, audioStatus])
+
+  // Stop audio on unmount
+  useEffect(() => {
+    return () => { breathingAudio.stop() }
+  }, [])
 
   // JS-driven circle scale animation
   useEffect(() => {
@@ -69,7 +96,6 @@ function BreathingTimer({
         })
       })
     } else {
-      // hold: freeze at whatever scale the previous phase ended on
       el.style.transition = 'none'
       el.style.transform = `scale(${getHoldScale(phases, currentPhase)})`
     }
@@ -114,6 +140,20 @@ function BreathingTimer({
     }
     setCurrentPhase(nextPhase)
     setTimeLeft(phases[nextPhase].duration)
+  }
+
+  const handleAudioToggle = (e) => {
+    e.stopPropagation()
+    const next = !audioMode
+    setAudioMode(next)
+    if (!next) breathingAudio.stop()
+  }
+
+  const handleVolumeChange = (e) => {
+    e.stopPropagation()
+    const v = parseFloat(e.target.value) / 100
+    setAudioVolume(v)
+    breathingAudio.setVolume(v)
   }
 
   const handleDoubleClick = useDoubleClick(() => setIsMaximized(!isMaximized))
@@ -187,6 +227,35 @@ function BreathingTimer({
         <button onClick={(e) => { e.stopPropagation(); handleReset() }} className="btn btn-reset">
           Reset
         </button>
+      </div>
+
+      <div className="breathing-audio-controls">
+        <button
+          onClick={handleAudioToggle}
+          className={`breathing-audio-toggle ${audioMode ? 'active' : ''}`}
+          title={audioMode ? 'Music on — click to disable' : 'Enable lofi music'}
+        >
+          <span className="audio-icon">{audioMode ? '🎵' : '🔇'}</span>
+          <span className="audio-label">
+            {audioStatus === 'loading' ? '...' : audioMode ? 'Lofi' : 'Mute'}
+          </span>
+        </button>
+
+        {audioMode && audioStatus === 'ready' && (
+          <div className="breathing-volume">
+            <span>🔊</span>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={audioVolume * 100}
+              onChange={handleVolumeChange}
+              onClick={(e) => e.stopPropagation()}
+              className="volume-slider"
+            />
+            <span className="volume-pct">{Math.round(audioVolume * 100)}%</span>
+          </div>
+        )}
       </div>
 
       <div className="breathing-pattern">

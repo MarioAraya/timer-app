@@ -75,17 +75,6 @@ function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOu
                 <p className="timer-card__description">{timer.description}</p>
               </div>
 
-              <div className="timer-card__footer">
-                {timer.sessions > 0 && (
-                  <div className="timer-card__stats">
-                    <span className="material-symbols-outlined">bar_chart</span>
-                    {timer.sessions.toLocaleString()} {t('home.sessions')}
-                  </div>
-                )}
-                <div className="timer-card__start">
-                  <span className="material-symbols-outlined">play_circle</span>
-                </div>
-              </div>
             </div>
           )
         })}

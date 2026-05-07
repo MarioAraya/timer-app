@@ -57,6 +57,20 @@ const en = {
     title: 'Pomodoro Timer',
     description: 'Focus for 25 minutes, then take a 5-minute break. Perfect for productivity and deep work sessions.',
     category: 'Productivity',
+    setup: {
+      title: 'Pomodoro',
+      subtitle: 'Customize your focus level',
+      workLabel: 'Pomodoro',
+      shortBreakLabel: 'Break',
+      longBreakLabel: 'Long Break',
+      presets: {
+        baby:     'Baby Steps',
+        popular:  'Popular',
+        medium:   'Medium',
+        extended: 'Extended',
+        custom:   'Custom',
+      },
+    },
   },
   boxBreathing: {
     name: 'Box Breathing',

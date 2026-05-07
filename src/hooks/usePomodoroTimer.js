@@ -12,15 +12,16 @@ export function usePomodoroTimer({
   savedState,
   musicMode,
   playerStatus,
-  audioFunctions
+  audioFunctions,
+  config = POMODORO_CONFIG
 }) {
   const [currentSession, setCurrentSession] = useState(savedState?.currentSession || 1)
-  const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft || POMODORO_CONFIG.workDuration)
+  const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft || config.workDuration)
   const [isWorkPhase, setIsWorkPhase] = useState(savedState?.isWorkPhase ?? true)
   const [isRunning, setIsRunning] = useState(false)
   const [isFinished, setIsFinished] = useState(savedState?.isFinished || false)
-  const [currentMessage, setCurrentMessage] = useState(savedState?.currentMessage || POMODORO_CONFIG.messages.preparation)
-  const [currentSubtitle, setCurrentSubtitle] = useState(savedState?.currentSubtitle || POMODORO_CONFIG.subtitles.preparation)
+  const [currentMessage, setCurrentMessage] = useState(savedState?.currentMessage || config.messages.preparation)
+  const [currentSubtitle, setCurrentSubtitle] = useState(savedState?.currentSubtitle || config.subtitles.preparation)
   const [showConfetti, setShowConfetti] = useState(false)
 
   // Timer countdown logic
@@ -44,14 +45,14 @@ export function usePomodoroTimer({
               }
 
               // Go to break
-              const breakDuration = getBreakDuration(currentSession)
+              const breakDuration = getBreakDuration(currentSession, config)
               setIsWorkPhase(false)
-              setCurrentMessage(getPhaseMessage(false, currentSession))
-              setCurrentSubtitle(getPhaseSubtitle(false, currentSession))
+              setCurrentMessage(getPhaseMessage(false, currentSession, config))
+              setCurrentSubtitle(getPhaseSubtitle(false, currentSession, config))
               return breakDuration
             } else {
               // Break phase ending
-              const isLongBreak = currentSession % POMODORO_CONFIG.sessionsBeforeLongBreak === 0
+              const isLongBreak = currentSession % config.sessionsBeforeLongBreak === 0
 
               if (isLongBreak) {
                 // After long break, show completion
@@ -68,17 +69,16 @@ export function usePomodoroTimer({
                 const nextSession = currentSession + 1
                 setCurrentSession(nextSession)
                 setIsWorkPhase(true)
-                setCurrentMessage(getPhaseMessage(true, nextSession))
-                setCurrentSubtitle(getPhaseSubtitle(true, nextSession))
+                setCurrentMessage(getPhaseMessage(true, nextSession, config))
+                setCurrentSubtitle(getPhaseSubtitle(true, nextSession, config))
 
-                // Start music if in music mode
-                if (musicMode && playerStatus === 'ready') {
+                if (musicMode && playerStatus !== 'error') {
                   audioFunctions.play()
                 } else {
                   playWorkSound()
                 }
 
-                return POMODORO_CONFIG.workDuration
+                return config.workDuration
               }
             }
           }
@@ -101,10 +101,10 @@ export function usePomodoroTimer({
   const hasStarted = () => {
     return !(
       isWorkPhase &&
-      timeLeft === POMODORO_CONFIG.workDuration &&
+      timeLeft === config.workDuration &&
       !isRunning &&
       currentSession === 1 &&
-      currentMessage === POMODORO_CONFIG.messages.preparation
+      currentMessage === config.messages.preparation
     )
   }
 

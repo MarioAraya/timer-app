@@ -57,6 +57,20 @@ const es = {
     title: 'Temporizador Pomodoro',
     description: 'Enfócate 25 minutos, luego toma un descanso de 5 minutos. Ideal para productividad y sesiones de trabajo profundo.',
     category: 'Productividad',
+    setup: {
+      title: 'Pomodoro',
+      subtitle: 'Personalizar nivel de concentración',
+      workLabel: 'Pomodoro',
+      shortBreakLabel: 'Descanso',
+      longBreakLabel: 'Descanso largo',
+      presets: {
+        baby:     'Paso de bebé',
+        popular:  'Popular',
+        medium:   'Medio',
+        extended: 'Extendido',
+        custom:   'Personalizado',
+      },
+    },
   },
   boxBreathing: {
     name: 'Respiración Cuadrada',

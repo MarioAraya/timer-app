@@ -27,7 +27,7 @@ function WorkoutActiveView({
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+    return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
   // Native fullscreen toggle with CSS fallback
@@ -94,6 +94,7 @@ function WorkoutActiveView({
   }, [isMaximized, onToggleFullscreen])
 
   const modeClass = isWorkPhase || isPreparationPhase ? 'work-mode' : 'rest-mode'
+  const hasEverStarted = isRunning || totalElapsed > 0
 
   return (
     <div
@@ -194,14 +195,16 @@ function WorkoutActiveView({
             <span className="btn-tooltip">{musicMode ? t('active.controls.musicOn') : t('active.controls.beepsOn')}</span>
           </button>
 
-          <button
-            data-testid="ctrl-reset"
-            className="control-button secondary"
-            onClick={onReset}
-          >
-            <span className="material-symbols-outlined">refresh</span>
-            <span className="btn-tooltip">{t('active.controls.reset')}</span>
-          </button>
+          {hasEverStarted && (
+            <button
+              data-testid="ctrl-reset"
+              className="control-button secondary"
+              onClick={onReset}
+            >
+              <span className="material-symbols-outlined">refresh</span>
+              <span className="btn-tooltip">{t('active.controls.reset')}</span>
+            </button>
+          )}
 
           {!isRunning ? (
             <button
@@ -220,14 +223,16 @@ function WorkoutActiveView({
             </button>
           )}
 
-          <button
-            className="control-button secondary"
-            onClick={onSkip}
-            disabled={isFinished}
-          >
-            <span className="material-symbols-outlined">skip_next</span>
-            <span className="btn-tooltip">{t('active.controls.skip')}</span>
-          </button>
+          {hasEverStarted && (
+            <button
+              className="control-button secondary"
+              onClick={onSkip}
+              disabled={isFinished}
+            >
+              <span className="material-symbols-outlined">skip_next</span>
+              <span className="btn-tooltip">{t('active.controls.skip')}</span>
+            </button>
+          )}
         </div>
       </footer>
 

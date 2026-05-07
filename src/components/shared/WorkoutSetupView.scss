@@ -661,8 +661,8 @@ $text-muted: rgba(255, 255, 255, 0.6);
     }
   }
 
-  // Small screens: compress layout so all 3 sliders are visible without scrolling
-  @media (max-height: 680px) {
+  // Compress layout so all 3 sliders are visible without scrolling
+  @media (max-height: 820px) {
     .setup-main {
       padding: 10px 16px;
     }

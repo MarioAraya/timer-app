@@ -3,15 +3,16 @@ import './PomodoroTimer.scss'
 import { usePomodoroTimer } from '../hooks/usePomodoroTimer'
 import { usePomodoroControls } from '../hooks/usePomodoroControls'
 import { pomodoroAudio } from '../utils/audioUtils'
-import { POMODORO_CONFIG, getBreakDuration, formatSessionInfo } from '../config/pomodoroConfig'
+import { POMODORO_CONFIG, POMODORO_PRESETS, getBreakDuration, formatSessionInfo } from '../config/pomodoroConfig'
 import Confetti from './Confetti'
 import CircularProgress from './shared/CircularProgress'
 import { savePomodoroState, loadPomodoroState, clearPomodoroState } from '../utils/localStorage'
+import PomodoroSetupView from './pomodoro/PomodoroSetupView'
 
 const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60)
   const s = Math.floor(seconds % 60)
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  return `${m}:${String(s).padStart(2, '0')}`
 }
 
 function PomodoroTimer({
@@ -23,6 +24,10 @@ function PomodoroTimer({
 }) {
   const savedState = loadPomodoroState()
   const containerRef = useRef(null)
+
+  const defaultPreset = POMODORO_PRESETS.find(p => p.id === 'popular')
+  const [pomodoroConfig, setPomodoroConfig] = useState(savedState?.config || defaultPreset)
+  const [showSetup, setShowSetup] = useState(true)
 
   const [isMaximized, setIsMaximized] = useState(autoMaximize)
   const [musicMode, setMusicMode] = useState(savedState?.musicMode ?? false)
@@ -43,7 +48,8 @@ function PomodoroTimer({
     savedState,
     musicMode,
     playerStatus,
-    audioFunctions: pomodoroAudio
+    audioFunctions: pomodoroAudio,
+    config: pomodoroConfig
   })
 
   const {
@@ -55,14 +61,14 @@ function PomodoroTimer({
   } = timerState
 
   // Progress calculations
-  const totalSessions = POMODORO_CONFIG.sessionsBeforeLongBreak
+  const totalSessions = pomodoroConfig.sessionsBeforeLongBreak
   const totalProgress = isFinished
     ? 100
     : ((currentSession - 1 + (isWorkPhase ? 0 : 0.5)) / totalSessions) * 100
 
   const phaseDuration = isWorkPhase
-    ? POMODORO_CONFIG.workDuration
-    : getBreakDuration(currentSession)
+    ? pomodoroConfig.workDuration
+    : getBreakDuration(currentSession, pomodoroConfig)
   const roundProgress = isFinished
     ? 100
     : ((phaseDuration - timeLeft) / phaseDuration) * 100
@@ -83,6 +89,14 @@ function PomodoroTimer({
       })
     }
   }, [musicMode, playerStatus])
+
+  // Start music immediately if timer already running when music becomes ready
+  useEffect(() => {
+    if (musicMode && playerStatus === 'ready' && isRunning && isWorkPhase) {
+      ignoreNextPlay.current = true
+      pomodoroAudio.resume()
+    }
+  }, [playerStatus])
 
   // Update audio volume
   useEffect(() => {
@@ -147,7 +161,7 @@ function PomodoroTimer({
   useEffect(() => {
     if (!stateRestored && savedState) return
     if (!isRunning && hasStarted()) {
-      savePomodoroState({ currentSession, timeLeft, isWorkPhase, isRunning, isFinished, currentMessage, currentSubtitle, musicMode, volume })
+      savePomodoroState({ currentSession, timeLeft, isWorkPhase, isRunning, isFinished, currentMessage, currentSubtitle, musicMode, volume, config: pomodoroConfig })
     }
   }, [isRunning, isFinished])
 
@@ -155,9 +169,9 @@ function PomodoroTimer({
   useEffect(() => {
     return () => {
       if (musicMode && isWorkPhase) pomodoroAudio.pause()
-      savePomodoroState({ currentSession, timeLeft, isWorkPhase, isRunning, isFinished, currentMessage, currentSubtitle, musicMode, volume })
+      savePomodoroState({ currentSession, timeLeft, isWorkPhase, isRunning, isFinished, currentMessage, currentSubtitle, musicMode, volume, config: pomodoroConfig })
     }
-  }, [currentSession, timeLeft, isWorkPhase, isRunning, isFinished, currentMessage, currentSubtitle, musicMode, volume])
+  }, [currentSession, timeLeft, isWorkPhase, isRunning, isFinished, currentMessage, currentSubtitle, musicMode, volume, pomodoroConfig])
 
   const { handleStart, handlePause, handleReset, handleSkip } = usePomodoroControls({
     musicMode, playerStatus, audioFunctions: pomodoroAudio,
@@ -165,7 +179,8 @@ function PomodoroTimer({
     ignoreNextPlay, ignoreNextPause,
     setIsRunning, setIsFinished, setCurrentSession, setIsWorkPhase,
     setTimeLeft, setCurrentMessage, setCurrentSubtitle, setShowConfetti,
-    storageFunctions
+    storageFunctions,
+    config: pomodoroConfig
   })
 
   // Native fullscreen toggle
@@ -220,6 +235,27 @@ function PomodoroTimer({
     ? 'Complete!'
     : `Session ${currentSession} of ${totalSessions}`
 
+  if (showSetup) {
+    return (
+      <PomodoroSetupView
+        onStart={(config) => {
+          clearPomodoroState()
+          setIsRunning(false)
+          setIsFinished(false)
+          setCurrentSession(1)
+          setIsWorkPhase(true)
+          setTimeLeft(config.workDuration)
+          setCurrentMessage(config.messages.preparation)
+          setCurrentSubtitle(config.subtitles.preparation)
+          setShowConfetti(false)
+          setPomodoroConfig(config)
+          setShowSetup(false)
+        }}
+        onBackClick={onBackClick}
+      />
+    )
+  }
+
   return (
     <div
       ref={containerRef}
@@ -259,7 +295,7 @@ function PomodoroTimer({
         <CircularProgress
           totalProgress={totalProgress}
           roundProgress={roundProgress}
-          timeDisplay={hasStarted() ? formatTime(timeLeft) : '25:00'}
+          timeDisplay={formatTime(timeLeft)}
           label="sec"
           onClick={isRunning ? handlePause : (!isFinished ? handleStart : undefined)}
           isRunning={isRunning}
@@ -289,17 +325,6 @@ function PomodoroTimer({
         </div>
 
         <div className="playback-controls">
-          <button
-            className="control-button secondary"
-            onClick={(e) => { e.stopPropagation(); setMusicMode(!musicMode) }}
-            title={musicMode ? 'Music on' : 'Music off'}
-          >
-            <span className="material-symbols-outlined">
-              {musicMode ? 'music_note' : 'volume_up'}
-            </span>
-            {playerStatus === 'loading' && <span className="loading-dot">●</span>}
-          </button>
-
           <button
             className="control-button secondary"
             onClick={(e) => { e.stopPropagation(); handleReset() }}
@@ -337,21 +362,66 @@ function PomodoroTimer({
           )}
         </div>
 
-        {musicMode && playerStatus === 'ready' && (
-          <div className="volume-row">
-            <span className="material-symbols-outlined vol-icon">volume_up</span>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={volume * 100}
-              onChange={(e) => { e.stopPropagation(); setVolume(parseFloat(e.target.value) / 100) }}
-              onClick={(e) => e.stopPropagation()}
-              className="volume-slider"
-            />
-            <span className="volume-value">{Math.round(volume * 100)}%</span>
+        {/* Audio player — always visible */}
+        <div className="audio-player-bar">
+          <div className="audio-top-row">
+            <button
+              className={`audio-mode-btn ${musicMode ? 'active' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation()
+                const next = !musicMode
+                setMusicMode(next)
+                // If switching music ON while timer running, call play() NOW within
+                // this user gesture to register browser autoplay activation
+                if (next && isRunning && isWorkPhase) {
+                  pomodoroAudio.play()
+                }
+              }}
+            >
+              <span className="material-symbols-outlined">
+                {musicMode ? 'music_note' : 'music_off'}
+              </span>
+              <span className="audio-mode-label">
+                {playerStatus === 'loading' ? 'Loading…' : musicMode ? 'Lofi Music' : 'Beeps'}
+              </span>
+            </button>
+
+            {musicMode && playerStatus === 'ready' && (
+              <div className="audio-track-controls">
+                <button
+                  className="track-btn"
+                  onClick={(e) => { e.stopPropagation(); pomodoroAudio.repeatTrack() }}
+                  title="Repeat track"
+                >
+                  <span className="material-symbols-outlined">replay</span>
+                </button>
+                <button
+                  className="track-btn"
+                  onClick={(e) => { e.stopPropagation(); pomodoroAudio.nextTrack() }}
+                  title="Next track"
+                >
+                  <span className="material-symbols-outlined">skip_next</span>
+                </button>
+              </div>
+            )}
           </div>
-        )}
+
+          {musicMode && playerStatus === 'ready' && (
+            <div className="volume-row">
+              <span className="material-symbols-outlined vol-icon">volume_up</span>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={volume * 100}
+                onChange={(e) => { e.stopPropagation(); setVolume(parseFloat(e.target.value) / 100) }}
+                onClick={(e) => e.stopPropagation()}
+                className="volume-slider"
+              />
+              <span className="volume-value">{Math.round(volume * 100)}%</span>
+            </div>
+          )}
+        </div>
       </footer>
 
       <div className="bg-glow top-left"></div>

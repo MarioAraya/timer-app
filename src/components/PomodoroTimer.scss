@@ -445,6 +445,82 @@ $text-dim:     rgba(255, 255, 255, 0.4);
     }
   }
 
+  .audio-player-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .audio-top-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .audio-track-controls {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .track-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(var(--accent-rgb), 0.15);
+    border: 1px solid rgba(var(--accent-rgb), 0.3);
+    color: rgb(var(--accent-rgb));
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(var(--accent-rgb), 0.3);
+    }
+
+    .material-symbols-outlined { font-size: 16px; }
+  }
+
+  .audio-mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    background: $bg-card;
+    border: 1px solid $bg-border;
+    border-radius: 20px;
+    color: $text-muted;
+    cursor: pointer;
+    font-family: 'Lexend', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    flex: 1;
+    justify-content: center;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: $text-primary;
+    }
+
+    &.active {
+      background: rgba(var(--accent-rgb), 0.15);
+      border-color: rgba(var(--accent-rgb), 0.4);
+      color: rgb(var(--accent-rgb));
+    }
+
+    .material-symbols-outlined {
+      font-size: 18px;
+    }
+  }
+
   .volume-row {
     display: flex;
     align-items: center;
@@ -455,6 +531,7 @@ $text-dim:     rgba(255, 255, 255, 0.4);
     border-radius: 20px;
     font-size: 12px;
     color: $text-muted;
+    width: 100%;
 
     .vol-icon { font-size: 16px; }
 

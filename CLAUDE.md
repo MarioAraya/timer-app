@@ -14,6 +14,8 @@ npm run build      # Production build
 npm run preview    # Preview production build
 npm run test       # Run Vitest tests once
 npm run test:watch # Run Vitest in watch mode
+npm run test:e2e   # Playwright e2e tests
+npm run test:e2e:ui # Playwright UI mode
 ```
 
 Run a single test file:
@@ -68,7 +70,7 @@ src/components/tabata/
 hiitTicks.js / tabataTicks.js   ← arrays of absolute MP3 timestamps (seconds)
 ticksEngine.js                  ← buildConfigFromTicks() derives durations from tick diffs
 hiitConfig.js / tabataConfig.js ← configs built from ticks, not hardcoded durations
-WorkoutAudioPlayer.js           ← manages MP3 playback, 300ms watchdog, drift correction
+WorkoutAudioPlayer.js           ← manages MP3 playback, 100ms watchdog (500ms threshold), drift correction
 ```
 
 Changing phase durations means updating the ticks files, not the config files directly.
@@ -77,7 +79,15 @@ Changing phase durations means updating the ticks files, not the config files di
 
 ### Audio Utilities (`src/utils/audioUtils.js`)
 
-Three `WorkoutAudioPlayer` instances: `hiitPlayer`, `tabataPlayer`, `pomodoroPlayer`. Each exposes identically-shaped wrapper functions with prefixed names (`playHiitSong`, `playTabataSong`, `playPomodoroSong`, etc.). The `visibilitychange` handler at the bottom of the file auto-resumes whichever player `shouldBePlaying` when the tab regains focus.
+Four player instances exported directly (not wrapped):
+- `hiitAudio`, `tabataAudio` — `WorkoutAudioPlayer` (single MP3 synced to ticks)
+- `pomodoroAudio`, `breathingAudio` — `LofiPlaylistPlayer` (9 lofi tracks from Supabase, advances on `ended`, supports `nextTrack()` / `repeatTrack()`)
+
+`LofiPlaylistPlayer` mirrors `WorkoutAudioPlayer`'s play/resume/watchdog flow exactly (100ms watchdog, 500ms auto-resume threshold, `shouldBePlaying` set after `await audio.play()`). When swapping tracks, `playerReady` is reset and `canplaythrough` re-triggers play if `shouldBePlaying` is still true. The `inTrackTransition` flag (1.5s) prevents the `pause` DOM event from `audio.load()` being misread as a user pause.
+
+The `visibilitychange` handler at the bottom of the file auto-resumes whichever player has `shouldBePlaying === true` when the tab regains focus.
+
+Beep mode uses Web Audio API (`playBeep` / `playWorkSound` / `playCountdownSound` / `playPrepSound`) — independent of the player instances.
 
 ### Breathing Timers
 
@@ -108,10 +118,6 @@ The circle animation is **JS-driven** (not CSS keyframes): `BreathingTimer.jsx` 
 Save/load/clear functions per timer type (HIIT, Tabata, Pomodoro). All `load*State` functions enforce a 1-hour expiry via a `timestamp` field — stale state is cleared and returns `null`. State is saved on pause and unmount, restored on mount.
 
 `app.jsx` also persists the user's **favorite timer** (`saveFavoriteTimer` / `loadFavoriteTimer`) and **last active timer** (`saveActiveTimer` / `loadActiveTimer`) to survive page reloads.
-
-### Auth
-
-`src/hooks/useAuth.js` + `src/components/auth/` integrate with Supabase. Auth is used in `app.jsx` to show/hide `AuthModal` and `UserMenu`.
 
 ### Backend (Go)
 

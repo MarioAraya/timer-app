@@ -45,18 +45,21 @@ export const LOFI_TRACKS = [
   `${SUPABASE_AUDIO}/pulsebox-lofi-smooth-522876.mp3`,
 ]
 
-// Cycles through all 9 lofi tracks sequentially, looping indefinitely
+// Cycles through all 9 lofi tracks sequentially, looping indefinitely.
+// Mirrors WorkoutAudioPlayer's play/resume/watchdog flow so HIIT-style
+// browser autoplay handling applies to pomodoro/breathing too.
 class LofiPlaylistPlayer {
   constructor(tracks, defaultVolume = 0.5) {
+    this.config = { name: 'Lofi', defaultVolume, startTime: 0 }
     this.tracks = tracks
-    this.defaultVolume = defaultVolume
     this.currentIndex = 0
     this.audio = null
     this.playerReady = false
     this.playerLoading = false
+    this.playbackStartTime = 0
     this.shouldBePlaying = false
     this.watchdog = null
-    this.playbackStartTime = 0
+    this.inTrackTransition = false
   }
 
   initialize() {
@@ -78,51 +81,58 @@ class LofiPlaylistPlayer {
       this.playerLoading = true
       this.audio = new Audio(this.tracks[this.currentIndex])
       this.audio.preload = 'auto'
-      this.audio.volume = this.defaultVolume
+      this.audio.volume = this.config.defaultVolume
+
       this.audio.setAttribute('playsinline', '')
       this.audio.setAttribute('webkit-playsinline', '')
       this.audio.setAttribute('disableRemotePlayback', '')
       this.audio.setAttribute('x-webkit-airplay', 'deny')
 
-      let initResolved = false
-      const resolveOnce = (val) => {
-        if (!initResolved) {
-          initResolved = true
-          this.playerLoading = false
-          this.playerReady = val
-          resolve(val)
+      this.audio.addEventListener('suspend', (e) => {
+        console.log(`🔇 ${this.config.name} audio suspend event`, e)
+        if (this.shouldBePlaying) {
+          setTimeout(() => {
+            if (this.audio.paused && this.shouldBePlaying) {
+              console.log('🔄 Auto-resuming after suspend')
+              this.audio.play().catch(err => console.error('Resume after suspend failed:', err))
+            }
+          }, 100)
         }
-      }
+      })
 
-      this.audio.addEventListener('canplaythrough', () => {
-        resolveOnce(true)
-        // After a track change, auto-play if we should be playing
-        if (initResolved && this.shouldBePlaying) {
-          this.audio.play().catch(() => {})
-          this.playbackStartTime = Date.now()
-          this._startWatchdog()
-        }
+      this.audio.addEventListener('stalled', (e) => {
+        console.log(`⚠️ ${this.config.name} audio stalled event`, e)
+      })
+
+      this.audio.addEventListener('waiting', (e) => {
+        console.log(`⏳ ${this.config.name} audio waiting event`, e)
       })
 
       this.audio.addEventListener('ended', () => {
+        console.log(`🏁 ${this.config.name} track ended, advancing`)
         this._nextTrack()
       })
 
-      this.audio.addEventListener('error', () => {
-        if (!initResolved) {
-          resolveOnce(false)
-        } else {
-          this._nextTrack()
+      this.audio.addEventListener('canplaythrough', () => {
+        this.playerReady = true
+        this.playerLoading = false
+        // After a track swap, auto-play if user intent is still active
+        if (this.shouldBePlaying && this.audio.paused) {
+          this.audio.play().catch(() => {})
+          this.playbackStartTime = Date.now()
+          this.startWatchdog()
         }
+        resolve(true)
       })
 
-      this.audio.addEventListener('suspend', () => {
-        if (this.shouldBePlaying && this.audio?.paused && !this.audio?.ended) {
-          setTimeout(() => {
-            if (this.shouldBePlaying && this.audio?.paused) {
-              this.audio.play().catch(() => {})
-            }
-          }, 100)
+      this.audio.addEventListener('error', (error) => {
+        console.error(`${this.config.name} audio loading error:`, error)
+        if (!this.playerReady) {
+          this.playerReady = false
+          this.playerLoading = false
+          resolve(false)
+        } else {
+          this._nextTrack()
         }
       })
 
@@ -130,30 +140,27 @@ class LofiPlaylistPlayer {
     })
   }
 
-  _nextTrack() {
-    this.currentIndex = (this.currentIndex + 1) % this.tracks.length
-    if (this.audio) {
-      this.audio.src = this.tracks[this.currentIndex]
-      this.audio.load()
-    }
-  }
-
-  _startWatchdog() {
+  startWatchdog() {
     if (this.watchdog) clearInterval(this.watchdog)
     this.watchdog = setInterval(() => {
       if (this.audio && this.playerReady && this.shouldBePlaying) {
-        if (this.audio.paused && !this.audio.ended) {
-          const t = Date.now() - this.playbackStartTime
-          if (t > 500) {
-            this.audio.play().catch(() => {})
+        if (this.audio.paused) {
+          if (this.audio.ended) {
+            // ended handler swaps track; keep watchdog running
+            return
+          }
+          const timeSinceStart = Date.now() - this.playbackStartTime
+          if (timeSinceStart > 500) {
+            console.log(`⚠️ ${this.config.name} auto-pause detected! Resuming... (${timeSinceStart}ms)`)
+            this.audio.play().catch(err => console.error('Auto-resume failed:', err))
             this.playbackStartTime = Date.now()
           }
         }
       }
-    }, 300)
+    }, 100)
   }
 
-  _stopWatchdog() {
+  stopWatchdog() {
     if (this.watchdog) {
       clearInterval(this.watchdog)
       this.watchdog = null
@@ -161,40 +168,87 @@ class LofiPlaylistPlayer {
     this.shouldBePlaying = false
   }
 
+  _nextTrack() {
+    // Flag prevents the 'pause' DOM event fired by audio.load() from
+    // being mistakenly treated as a user-initiated pause in PomodoroTimer
+    this.inTrackTransition = true
+    this.currentIndex = (this.currentIndex + 1) % this.tracks.length
+    if (this.audio) {
+      this.playerReady = false
+      this.audio.src = this.tracks[this.currentIndex]
+      this.audio.load()
+      setTimeout(() => { this.inTrackTransition = false }, 1500)
+    }
+  }
+
+  nextTrack() {
+    this._nextTrack()
+  }
+
+  repeatTrack() {
+    if (this.audio && this.playerReady) {
+      this.audio.currentTime = 0
+      if (this.shouldBePlaying) {
+        this.audio.play().catch(() => {})
+      }
+    }
+  }
+
   async play() {
-    if (!this.audio) await this.initialize()
+    if (!this.audio) {
+      await this.initialize()
+    }
+
     if (this.playerReady && this.audio) {
       try {
         this.audio.currentTime = 0
         await this.audio.play()
-        this.shouldBePlaying = true
         this.playbackStartTime = Date.now()
-        this._startWatchdog()
-      } catch (err) {
-        console.error('LofiPlaylist play error:', err)
+        this.shouldBePlaying = true
+        this.startWatchdog()
+        console.log(`🎵 Playing ${this.config.name} (watchdog enabled)`)
+      } catch (error) {
+        console.error(`Error playing ${this.config.name} audio:`, error)
+      }
+    }
+  }
+
+  stop() {
+    if (this.playerReady && this.audio) {
+      try {
+        this.stopWatchdog()
+        this.audio.pause()
+        this.audio.currentTime = 0
+        console.log(`⏹️ Stopping ${this.config.name}`)
+      } catch (error) {
+        console.error(`Error stopping ${this.config.name} audio:`, error)
       }
     }
   }
 
   pause() {
-    this._stopWatchdog()
-    this.audio?.pause()
+    if (this.playerReady && this.audio) {
+      try {
+        this.stopWatchdog()
+        this.audio.pause()
+        console.log(`⏸️ Pausing ${this.config.name}`)
+      } catch (error) {
+        console.error(`Error pausing ${this.config.name} audio:`, error)
+      }
+    }
   }
 
   resume() {
     if (this.playerReady && this.audio) {
-      this.audio.play().catch(() => {})
-      this.shouldBePlaying = true
-      this.playbackStartTime = Date.now()
-      this._startWatchdog()
-    }
-  }
-
-  stop() {
-    this._stopWatchdog()
-    if (this.audio) {
-      this.audio.pause()
-      this.audio.currentTime = 0
+      try {
+        this.audio.play()
+        this.playbackStartTime = Date.now()
+        this.shouldBePlaying = true
+        this.startWatchdog()
+        console.log(`▶️ Resuming ${this.config.name} (watchdog enabled)`)
+      } catch (error) {
+        console.error(`Error resuming ${this.config.name} audio:`, error)
+      }
     }
   }
 
@@ -208,7 +262,9 @@ class LofiPlaylistPlayer {
   isPlaying() { return this.audio ? !this.audio.paused : false }
 
   shouldIgnorePause() {
-    return (Date.now() - this.playbackStartTime) < 2000
+    if (this.inTrackTransition) return true
+    const timeSinceStart = Date.now() - this.playbackStartTime
+    return timeSinceStart < 2000
   }
 }
 

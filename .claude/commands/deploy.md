@@ -18,15 +18,18 @@ Deploy the app to the homelab via Drone CI pipeline.
    - Run `git branch --show-current`
    - If not on `release` or `main`, warn the user — the pipeline only triggers on those branches. Ask if they want to continue.
 
-4. **Push to remote:**
+4. **Push to both remotes:**
    ```bash
+   git push gitea HEAD
    git push origin HEAD
    ```
+   Push `gitea` first (triggers Drone CI). Push `origin` (GitHub) second — if it fails (e.g. no access), warn but don't abort.
 
 5. **Confirm and summarize:**
    - Show the commit SHA that was pushed
-   - Remind the user that Drone CI will now build and deploy automatically
-   - Suggest checking the Drone UI at http://192.168.0.103 (or wherever Drone runs) if the deploy doesn't appear within a few minutes
+   - Confirm which remotes succeeded
+   - Remind the user that Drone CI will now build and deploy automatically (triggered by the gitea push)
+   - Suggest checking the Drone UI at http://192.168.0.103 if the deploy doesn't appear within a few minutes
 
 ## Notes
 - The pipeline does: `npm run build` inside Docker → push image to local registry → SSH pull & `docker compose up -d --force-recreate frontend`

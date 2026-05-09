@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'preact/hooks'
+import { useState, useEffect, useRef } from 'preact/hooks'
 import { playWorkSound, playBeep, playCountdownSound } from '../utils/audioUtils'
 import { getBreakDuration, getPhaseMessage, getPhaseSubtitle } from '../config/pomodoroConfig'
 import { POMODORO_CONFIG } from '../config/pomodoroConfig'
@@ -24,79 +24,70 @@ export function usePomodoroTimer({
   const [currentSubtitle, setCurrentSubtitle] = useState(savedState?.currentSubtitle || config.subtitles.preparation)
   const [showConfetti, setShowConfetti] = useState(false)
 
-  // Timer countdown logic
+  // Timer countdown — rAF + wall-clock anchor (no drift, ~60fps updates)
+  const lastBeepRef = useRef(0)
   useEffect(() => {
-    let interval = null
+    if (!isRunning || isFinished) return
 
-    if (isRunning && !isFinished) {
-      interval = setInterval(() => {
-        setTimeLeft(time => {
-          if (time <= 1) {
-            // Phase transition logic
-            if (isWorkPhase) {
-              // Work phase ending - stop music
-              if (musicMode && playerStatus === 'ready') {
-                audioFunctions.stop()
-              }
+    const start = performance.now()
+    const startTime = timeLeft
+    lastBeepRef.current = 0
+    let rafId
 
-              // Play completion beep (only if not in music mode)
-              if (!musicMode) {
-                playBeep(1200, 300, 0.4)
-              }
+    const tick = () => {
+      const elapsed = (performance.now() - start) / 1000
+      const next = startTime - elapsed
 
-              // Go to break
-              const breakDuration = getBreakDuration(currentSession, config)
-              setIsWorkPhase(false)
-              setCurrentMessage(getPhaseMessage(false, currentSession, config))
-              setCurrentSubtitle(getPhaseSubtitle(false, currentSession, config))
-              return breakDuration
-            } else {
-              // Break phase ending
-              const isLongBreak = currentSession % config.sessionsBeforeLongBreak === 0
-
-              if (isLongBreak) {
-                // After long break, show completion
-                setIsRunning(false)
-                setIsFinished(true)
-                setShowConfetti(true)
-                playBeep(1500, 500, 0.5)
-                setCurrentMessage("🎉 Pomodoro Cycle Complete!")
-                setCurrentSubtitle(`Completed ${currentSession} sessions!`)
-                incrementSessionCount('pomodoro')
-                return 0
-              } else {
-                // After short break, start next work session
-                const nextSession = currentSession + 1
-                setCurrentSession(nextSession)
-                setIsWorkPhase(true)
-                setCurrentMessage(getPhaseMessage(true, nextSession, config))
-                setCurrentSubtitle(getPhaseSubtitle(true, nextSession, config))
-
-                if (musicMode && playerStatus !== 'error') {
-                  audioFunctions.play()
-                } else {
-                  playWorkSound()
-                }
-
-                return config.workDuration
-              }
-            }
+      if (next <= 0) {
+        if (isWorkPhase) {
+          if (musicMode && playerStatus === 'ready') audioFunctions.stop()
+          if (!musicMode) playBeep(1200, 300, 0.4)
+          const breakDuration = getBreakDuration(currentSession, config)
+          setIsWorkPhase(false)
+          setCurrentMessage(getPhaseMessage(false, currentSession, config))
+          setCurrentSubtitle(getPhaseSubtitle(false, currentSession, config))
+          setTimeLeft(breakDuration)
+        } else {
+          const isLongBreak = currentSession % config.sessionsBeforeLongBreak === 0
+          if (isLongBreak) {
+            setIsRunning(false)
+            setIsFinished(true)
+            setShowConfetti(true)
+            playBeep(1500, 500, 0.5)
+            setCurrentMessage("🎉 Pomodoro Cycle Complete!")
+            setCurrentSubtitle(`Completed ${currentSession} sessions!`)
+            incrementSessionCount('pomodoro')
+            setTimeLeft(0)
+          } else {
+            const nextSession = currentSession + 1
+            setCurrentSession(nextSession)
+            setIsWorkPhase(true)
+            setCurrentMessage(getPhaseMessage(true, nextSession, config))
+            setCurrentSubtitle(getPhaseSubtitle(true, nextSession, config))
+            if (musicMode && playerStatus !== 'error') audioFunctions.play()
+            else playWorkSound()
+            setTimeLeft(config.workDuration)
           }
+        }
+        return
+      }
 
-          // Play countdown sounds during last 3 seconds of work phase
-          if (!musicMode && isWorkPhase && time <= 4 && time > 1) {
-            playCountdownSound(time - 1)
-          }
+      // Countdown beeps last 3 seconds of work phase
+      if (!musicMode && isWorkPhase) {
+        const secondsLeft = Math.ceil(next)
+        if (secondsLeft <= 3 && secondsLeft >= 1 && lastBeepRef.current !== secondsLeft) {
+          lastBeepRef.current = secondsLeft
+          playCountdownSound(secondsLeft)
+        }
+      }
 
-          return time - 1
-        })
-      }, 1000)
+      setTimeLeft(Math.ceil(next)) // integer display, no float rendering
+      rafId = requestAnimationFrame(tick)
     }
 
-    return () => {
-      if (interval) clearInterval(interval)
-    }
-  }, [isRunning, isWorkPhase, currentSession, isFinished, musicMode, playerStatus])
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [isRunning, isFinished, isWorkPhase, currentSession, musicMode, playerStatus])
 
   const hasStarted = () => {
     return !(

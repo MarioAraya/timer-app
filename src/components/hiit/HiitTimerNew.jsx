@@ -75,43 +75,41 @@ function HiitTimerNew({
     setTotalElapsed(calculateElapsedTime(timerCtx))
   }, [currentRound, timeLeft, isWorkPhase, isPreparationPhase])
 
-  // Timer effect
-  useEffect(() => {
-    if (isRunning && !isFinished) {
-      timerRef.current = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 0.1) {
-            return handlePhaseComplete()
-          }
-          return prev - 0.1
-        })
-      }, 100)
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current)
-      }
-    }
-  }, [isRunning, isFinished, currentRound, isWorkPhase, isPreparationPhase])
-
-  // Countdown beeps effect (3-2-1 before every phase transition)
+  // Timer effect — rAF + wall-clock anchor (no drift, ~60fps updates)
   const lastBeepRef = useRef(0)
   useEffect(() => {
-    if (!musicMode && isRunning && !isFinished) {
-      const secondsLeft = Math.ceil(timeLeft)
-      const isFinalRest = !isPreparationPhase && !isWorkPhase && currentRound >= totalRounds
+    if (!isRunning || isFinished) return
 
-      if (!isFinalRest && secondsLeft <= 3 && secondsLeft >= 1 && lastBeepRef.current !== secondsLeft) {
-        lastBeepRef.current = secondsLeft
-        playCountdownSound(secondsLeft)
+    const start = performance.now()
+    const startTime = timeLeft
+    lastBeepRef.current = 0
+    let rafId
+
+    const tick = () => {
+      const elapsed = (performance.now() - start) / 1000
+      const next = startTime - elapsed
+
+      // Countdown beeps before every phase transition (in non-music mode)
+      if (!musicMode) {
+        const secondsLeft = Math.ceil(next)
+        const isFinalRest = !isPreparationPhase && !isWorkPhase && currentRound >= totalRounds
+        if (!isFinalRest && secondsLeft <= 3 && secondsLeft >= 1 && lastBeepRef.current !== secondsLeft) {
+          lastBeepRef.current = secondsLeft
+          playCountdownSound(secondsLeft)
+        }
       }
+
+      if (next <= 0) {
+        setTimeLeft(handlePhaseComplete())
+        return
+      }
+      setTimeLeft(next)
+      rafId = requestAnimationFrame(tick)
     }
 
-    if (!isRunning || timeLeft <= 0) {
-      lastBeepRef.current = 0
-    }
-  }, [timeLeft, isRunning, isFinished, isWorkPhase, isPreparationPhase, musicMode, currentRound, totalRounds])
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [isRunning, isFinished, currentRound, isWorkPhase, isPreparationPhase])
 
   // Handle phase completion - returns the new timeLeft value
   const handlePhaseComplete = () => {

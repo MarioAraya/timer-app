@@ -133,7 +133,7 @@ function PomodoroSetupView({ onStart, onBackClick }) {
       </main>
 
       <footer className="psetup-footer">
-        <button className="psetup-start-button" onClick={handleStart}>
+        <button className="psetup-start-button" onClick={handleStart} data-testid="pomodoro-setup-start">
           <span className="material-symbols-outlined">play_arrow</span>
           {t('setup.startButton')}
         </button>

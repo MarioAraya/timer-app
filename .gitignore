@@ -30,3 +30,5 @@ vertical-carousel/
 public/*.mp3
 dist/
 .vercel
+test-results/
+.claude/

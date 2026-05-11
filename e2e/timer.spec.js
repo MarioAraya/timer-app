@@ -193,6 +193,8 @@ test.describe('Tabata Timer', () => {
 const mockAudio = (page) =>
   page.addInitScript(() => {
     window.__audioPlayCalls = []
+    window.__audioPauseCalls = 0
+    window.__lastAudio = null
 
     class MockAudio extends EventTarget {
       constructor(src) {
@@ -204,6 +206,8 @@ const mockAudio = (page) =>
         this.loop = false
         this.preload = 'auto'
         this.readyState = 4
+        this.ended = false
+        window.__lastAudio = this
       }
 
       setAttribute() {}
@@ -216,6 +220,7 @@ const mockAudio = (page) =>
 
       pause() {
         this.paused = true
+        window.__audioPauseCalls++
         this.dispatchEvent(new Event('pause'))
       }
 
@@ -258,6 +263,71 @@ test.describe('Reproducción de MP3', () => {
 
     // Verificar que se llamó play() con la URL del MP3 de HIIT
     expect(playCalls.some((src) => src.includes('hiit'))).toBe(true)
+  })
+
+  test('Pomodoro: musicMode default ON → click play → MP3 lofi se reproduce', async ({ page }) => {
+    await mockAudio(page)
+    await page.goto('/')
+    await expect(timersHome(page)).toBeVisible()
+
+    await card(page, 'pomodoro').click()
+    // Pomodoro setup view (distinct from workout setup)
+    await page.getByTestId('pomodoro-setup-start').click()
+
+    // Music mode pill should be active by default (musicMode=true)
+    const modeBtn = page.getByTestId('pomodoro-music-mode')
+    await expect(modeBtn).toHaveClass(/active/)
+
+    // Standalone music play button visible without timer running
+    const playBtn = page.getByTestId('pomodoro-music-play')
+    await expect(playBtn).toBeVisible()
+    await playBtn.click()
+
+    await page.waitForFunction(
+      () => window.__audioPlayCalls.length > 0,
+      { timeout: 5000 }
+    )
+    const playCalls = await page.evaluate(() => window.__audioPlayCalls)
+    expect(playCalls.some((src) => src.includes('lofi') || src.includes('fassounds') || src.includes('mondamusic') || src.includes('pulsebox'))).toBe(true)
+  })
+
+  test('Pomodoro: música no se auto-pausa con el tick del timer', async ({ page }) => {
+    // Regression test for cleanup-pause-on-tick bug:
+    // useEffect with timeLeft as dep ran cleanup → pomodoroAudio.pause() every second.
+    await mockAudio(page)
+    await page.goto('/')
+    await expect(timersHome(page)).toBeVisible()
+
+    await card(page, 'pomodoro').click()
+    await page.getByTestId('pomodoro-setup-start').click()
+
+    await page.getByTestId('pomodoro-music-play').click()
+    await page.waitForFunction(() => window.__audioPlayCalls.length > 0, { timeout: 5000 })
+
+    // Reset pause counter after initial load (track-load may fire pause events)
+    await page.evaluate(() => { window.__audioPauseCalls = 0 })
+
+    // Start the pomodoro timer so timeLeft begins ticking every second
+    await page.locator('.control-button.primary').first().click()
+
+    // Wait > 3 ticks. Bug previously fired pause() ~once per tick.
+    await page.waitForTimeout(3500)
+
+    const pauseCalls = await page.evaluate(() => window.__audioPauseCalls)
+    const isPaused = await page.evaluate(() => window.__lastAudio?.paused)
+
+    // Healthy: 0 pause calls during ticks. Bug case: ≥3.
+    expect(pauseCalls).toBeLessThanOrEqual(1)
+    expect(isPaused).toBe(false)
+  })
+
+  test('Pomodoro: fullscreen icon inicia en estado "expand" (no maximizado)', async ({ page }) => {
+    await page.goto('/')
+    await card(page, 'pomodoro').click()
+    await page.getByTestId('pomodoro-setup-start').click()
+
+    const icon = page.getByTestId('pomodoro-fullscreen').locator('.material-symbols-outlined')
+    await expect(icon).toHaveText('fullscreen')
   })
 
   test('Tabata: config default → play → MP3 de Tabata se reproduce', async ({ page }) => {

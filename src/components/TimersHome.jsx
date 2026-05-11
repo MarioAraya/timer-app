@@ -3,6 +3,7 @@ import './TimersHome.scss'
 import UserMenu from './auth/UserMenu'
 import { useLang } from '../context/LanguageContext'
 import { loadSessionCounts } from '../utils/localStorage'
+import Credits from './shared/Credits'
 
 const TIMER_STATIC = [
   { id: 'hiit',           i18nKey: 'hiit',           sessionKey: 'hiit',          duration: '12 min', icon: 'local_fire_department', component: 'HiitTimer',          accentColor: '#00cc88' },
@@ -79,6 +80,9 @@ function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOu
           )
         })}
       </div>
+      <footer className="home-footer">
+        <Credits />
+      </footer>
     </div>
   )
 }

@@ -38,7 +38,8 @@
       "Bash(sed -n '184,220p' /Users/maaya/dev/timer-app/src/components/shared/WorkoutActiveView.jsx)",
       "Bash(node -e \"require\\('canvas'\\)\")",
       "Bash(rsvg-convert -w 1200 -h 630 /Users/maaya/dev/timer-app/public/og-image.svg -o /Users/maaya/dev/timer-app/public/og-image.png)",
-      "Bash(xargs cat -n)"
+      "Bash(xargs cat -n)",
+      "Bash(npx playwright *)"
     ],
     "deny": []
   }

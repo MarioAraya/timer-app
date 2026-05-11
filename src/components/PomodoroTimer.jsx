@@ -314,7 +314,11 @@ function PomodoroTimer({
           <span className="session-label">POMODORO</span>
           <h2 className="round-info">{sessionDisplay}</h2>
         </div>
-        <button className="fullscreen-button" onClick={handleFullscreen}>
+        <button
+          className="fullscreen-button"
+          onClick={handleFullscreen}
+          data-testid="pomodoro-fullscreen"
+        >
           <span className="material-symbols-outlined">
             {isMaximized ? 'fullscreen_exit' : 'fullscreen'}
           </span>
@@ -409,6 +413,7 @@ function PomodoroTimer({
           <div className="audio-top-row">
             <button
               className={`audio-mode-btn ${musicMode ? 'active' : ''}`}
+              data-testid="pomodoro-music-mode"
               onClick={(e) => {
                 e.stopPropagation()
                 const next = !musicMode
@@ -432,6 +437,7 @@ function PomodoroTimer({
               <div className="audio-track-controls">
                 <button
                   className="track-btn"
+                  data-testid="pomodoro-music-play"
                   onClick={handleMusicToggle}
                   disabled={playerStatus === 'loading'}
                   title={musicPlaying ? 'Pause music' : 'Play music'}
@@ -442,6 +448,7 @@ function PomodoroTimer({
                 </button>
                 <button
                   className="track-btn"
+                  data-testid="pomodoro-music-repeat"
                   onClick={(e) => { e.stopPropagation(); pomodoroAudio.repeatTrack() }}
                   disabled={playerStatus !== 'ready'}
                   title="Repeat track"
@@ -450,6 +457,7 @@ function PomodoroTimer({
                 </button>
                 <button
                   className="track-btn"
+                  data-testid="pomodoro-music-next"
                   onClick={(e) => { e.stopPropagation(); pomodoroAudio.nextTrack() }}
                   disabled={playerStatus !== 'ready'}
                   title="Next track"

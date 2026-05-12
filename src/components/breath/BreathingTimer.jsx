@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'preact/hooks'
-import { useDoubleClick } from '../hooks/useDoubleClick'
-import { isClickOnButton } from '../utils/timerHelpers'
-import { breathingAudio } from '../utils/audioUtils'
+import { useDoubleClick } from '../../hooks/useDoubleClick'
+import { isClickOnButton } from '../../utils/timerHelpers'
+import { breathingAudio } from '../../utils/audioUtils'
 import './BreathingTimer.scss'
 
 const SCALE_MIN = 0.65

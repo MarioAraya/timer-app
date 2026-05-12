@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useRef } from 'preact/hooks'
 import CircularProgress from './CircularProgress'
-import Confetti from '../Confetti'
+import Confetti from './Confetti'
 import { useLang } from '../../context/LanguageContext'
 import './WorkoutActiveView.scss'
 

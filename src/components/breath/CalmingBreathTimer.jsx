@@ -1,6 +1,6 @@
 import './CalmingBreathTimer.scss'
 import BreathingTimer from './BreathingTimer'
-import { incrementSessionCount } from '../utils/localStorage'
+import { incrementSessionCount } from '../../utils/localStorage'
 
 const CALMING_BREATHING_CONFIG = {
   phases: [

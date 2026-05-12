@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'preact/hooks'
 import './Breathing478Timer.scss'
-import { useDoubleClick } from '../hooks/useDoubleClick'
-import { isClickOnButton } from '../utils/timerHelpers'
+import { useDoubleClick } from '../../hooks/useDoubleClick'
+import { isClickOnButton } from '../../utils/timerHelpers'
 
 const BREATHING_CONFIG = {
   phases: [

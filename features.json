@@ -1,0 +1,49 @@
+{
+  "features": [
+    {
+      "id": "wim-hof-breathing",
+      "name": "Wim Hof Breathing",
+      "category": "breathing",
+      "status": "planned",
+      "priority": "medium",
+      "description": "Guided Wim Hof breathing timer synced to a narrated MP3 (4 rounds of 30-40 fast breaths + retention + recovery).",
+      "audio": {
+        "source": "dist/win_hof_4rounds.mp3",
+        "language": "en",
+        "syncStrategy": "ticks",
+        "ticksFile": "src/config/wimHofTicks.js"
+      },
+      "structure": {
+        "rounds": 4,
+        "phasesPerRound": ["breathe", "hold", "recovery"],
+        "breathReps": "30-40",
+        "recoveryHoldSeconds": 15
+      },
+      "components": {
+        "root": "src/components/breath/WimHofTimer.jsx",
+        "styles": "src/components/breath/WimHofTimer.scss",
+        "addToHome": "src/components/TimersHome.jsx",
+        "addToRoute": "src/app.jsx"
+      },
+      "i18n": {
+        "keysToAdd": [
+          "timer.wimHof.title",
+          "timer.wimHof.breathe",
+          "timer.wimHof.hold",
+          "timer.wimHof.recovery",
+          "timer.wimHof.roundN"
+        ],
+        "files": ["src/i18n/es.js", "src/i18n/en.js"]
+      },
+      "tasks": [
+        "Mark phase transitions in Audacity (see docs/WIM_HOF_AUDACITY.md)",
+        "Export labels.txt and convert to wimHofTicks.js",
+        "Build WimHofTimer.jsx reusing BreathingTimer base or workout pattern",
+        "Register in TimersHome + app.jsx routing",
+        "Add Spanish + English translations",
+        "Add E2E test: start, advance round, complete"
+      ],
+      "createdAt": "2026-05-12"
+    }
+  ]
+}

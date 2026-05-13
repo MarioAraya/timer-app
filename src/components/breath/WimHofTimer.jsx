@@ -3,7 +3,7 @@ import './WimHofTimer.scss'
 import { useLang } from '../../context/LanguageContext'
 import { incrementSessionCount } from '../../utils/localStorage'
 
-const MP3_URL = '/win_hof_4rounds.mp3'
+const MP3_URL = 'https://veqjsjzuaviqctplwkdb.supabase.co/storage/v1/object/public/audio/win_hof_4rounds.mp3'
 
 function formatTime(s) {
   if (!isFinite(s) || s < 0) s = 0

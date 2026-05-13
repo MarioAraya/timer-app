@@ -9,8 +9,8 @@
       "priority": "medium",
       "description": "Wim Hof breathing timer. v1 ships a no-coordination MP3 player (play/pause/reset + progress bar). v2 will sync visual phases to the narrated audio via ticks.",
       "audio": {
-        "source": "public/win_hof_4rounds.mp3",
-        "servedAt": "/win_hof_4rounds.mp3",
+        "source": "https://veqjsjzuaviqctplwkdb.supabase.co/storage/v1/object/public/audio/win_hof_4rounds.mp3",
+        "bucket": "supabase:audio/win_hof_4rounds.mp3",
         "language": "en",
         "syncStrategy": "ticks",
         "ticksFile": "src/config/wimHofTicks.js",

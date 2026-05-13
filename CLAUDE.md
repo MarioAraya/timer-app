@@ -28,6 +28,28 @@ Backend (Go):
 cd backend && go run cmd/api/main.go
 ```
 
+## Slash Commands (`.claude/commands/`)
+
+Project-scoped Claude Code commands. Invoke con `/<nombre>`.
+
+| Comando | Propósito |
+|---|---|
+| `/commit` | Analiza git state y crea commit |
+| `/commit-msg` | Sugiere mensaje commit (EN) sin commitear |
+| `/lint` | Lint frontend + backend con autofix |
+| `/test-hiit` | Corre vitest de HIIT |
+| `/deploy-preview` | Build prod + servidor preview local |
+| `/create-release-pr <version>` | Crea release PR `release/<v>` → `main` con changelog |
+| `/new-worktree <descripción>` | Crea worktree aislado + branch `feat\|fix\|exp/<slug>` en `../<repo>-<tipo>-<slug>` |
+| `/merge-worktree [path\|branch]` | Mergea branch del worktree, borra worktree + branch local (con confirmaciones) |
+
+Workflow worktrees típico:
+```
+/new-worktree quiero arreglar drift de audio en tabata
+# trabajar en ../timer-app-fix-audio-drift-tabata
+/merge-worktree fix/audio-drift-tabata
+```
+
 ## Architecture
 
 ### Frontend (Preact + Vite)
@@ -96,6 +118,7 @@ Shared base in `BreathingTimer.jsx` + `BreathingTimer.scss`. Three wrapper compo
 - `BoxBreathingTimer.jsx` — 4-4-4-4 (4 phases, uses `hold1` / `hold2` color classes)
 - `CalmingBreathTimer.jsx` — 4-2-6
 - `RelaxingBreathTimer.jsx` — 4-7-8
+- `WimHofTimer.jsx` — **does NOT use `BreathingTimer` base.** Standalone component that plays `public/win_hof_4rounds.mp3` via raw `HTMLAudioElement` with play/pause/reset, no phase coordination yet. Phase sync via ticks is planned (see `features.json` → `wim-hof-breathing.todo` and `docs/WIM_HOF_AUDACITY.md`).
 
 The circle animation is **JS-driven** (not CSS keyframes): `BreathingTimer.jsx` uses a `useRef` on the circle element and sets `el.style.transform` + `el.style.transition` via `requestAnimationFrame` on phase change. CSS `transform` on individual timer SCSS files is overridden by these inline styles.
 

@@ -31,4 +31,5 @@ public/*.mp3
 dist/
 .vercel
 test-results/
-.claude/
+.claude/settings.local.json
+.claude/worktrees/

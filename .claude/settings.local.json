@@ -39,7 +39,8 @@
       "Bash(node -e \"require\\('canvas'\\)\")",
       "Bash(rsvg-convert -w 1200 -h 630 /Users/maaya/dev/timer-app/public/og-image.svg -o /Users/maaya/dev/timer-app/public/og-image.png)",
       "Bash(xargs cat -n)",
-      "Bash(npx playwright *)"
+      "Bash(npx playwright *)",
+      "Bash(mkdir -p src/components/breath && git mv src/components/BreathingTimer.jsx src/components/breath/ && git mv src/components/BreathingTimer.scss src/components/breath/ && git mv src/components/Breathing426Timer.jsx src/components/breath/ && git mv src/components/Breathing426Timer.scss src/components/breath/ && git mv src/components/Breathing478Timer.jsx src/components/breath/ && git mv src/components/Breathing478Timer.scss src/components/breath/ && git mv src/components/BoxBreathingTimer.jsx src/components/breath/ && git mv src/components/BoxBreathingTimer.scss src/components/breath/ && git mv src/components/CalmingBreathTimer.jsx src/components/breath/ && git mv src/components/CalmingBreathTimer.scss src/components/breath/ && git mv src/components/RelaxingBreathTimer.jsx src/components/breath/ && git mv src/components/RelaxingBreathTimer.scss src/components/breath/ && git mv src/components/Confetti.jsx src/components/shared/ && git mv src/components/Confetti.scss src/components/shared/ && git mv src/components/RoundClock.tsx src/components/shared/)"
     ],
     "deny": []
   }

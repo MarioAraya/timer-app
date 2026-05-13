@@ -90,6 +90,14 @@ const en = {
     description: 'Inhale for 4, hold for 2, exhale for 6. Gentle breathing technique for daily stress relief.',
     category: 'Wellness',
   },
+  wimHof: {
+    name: 'Wim Hof',
+    title: 'Wim Hof Breathing',
+    description: '4 audio-guided rounds: 30-40 fast breaths + retention + recovery.',
+    category: 'Wellness',
+    subtitle: 'Audio-guided breathing (4 rounds)',
+    remaining: 'Remaining',
+  },
   auth: {
     signIn: 'Sign in',
     saveProgress: 'Save your progress and personalized routines',

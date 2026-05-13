@@ -4,14 +4,17 @@
       "id": "wim-hof-breathing",
       "name": "Wim Hof Breathing",
       "category": "breathing",
-      "status": "planned",
+      "status": "in-progress",
+      "phase": "v1-mp3-only",
       "priority": "medium",
-      "description": "Guided Wim Hof breathing timer synced to a narrated MP3 (4 rounds of 30-40 fast breaths + retention + recovery).",
+      "description": "Wim Hof breathing timer. v1 ships a no-coordination MP3 player (play/pause/reset + progress bar). v2 will sync visual phases to the narrated audio via ticks.",
       "audio": {
-        "source": "dist/win_hof_4rounds.mp3",
+        "source": "public/win_hof_4rounds.mp3",
+        "servedAt": "/win_hof_4rounds.mp3",
         "language": "en",
         "syncStrategy": "ticks",
-        "ticksFile": "src/config/wimHofTicks.js"
+        "ticksFile": "src/config/wimHofTicks.js",
+        "syncImplemented": false
       },
       "structure": {
         "rounds": 4,
@@ -26,24 +29,48 @@
         "addToRoute": "src/app.jsx"
       },
       "i18n": {
-        "keysToAdd": [
-          "timer.wimHof.title",
-          "timer.wimHof.breathe",
-          "timer.wimHof.hold",
-          "timer.wimHof.recovery",
-          "timer.wimHof.roundN"
+        "namespace": "wimHof",
+        "keysAdded": [
+          "wimHof.name",
+          "wimHof.title",
+          "wimHof.description",
+          "wimHof.category",
+          "wimHof.subtitle",
+          "wimHof.remaining"
+        ],
+        "keysPendingForV2": [
+          "wimHof.breathe",
+          "wimHof.hold",
+          "wimHof.recovery",
+          "wimHof.roundN"
         ],
         "files": ["src/i18n/es.js", "src/i18n/en.js"]
       },
-      "tasks": [
-        "Mark phase transitions in Audacity (see docs/WIM_HOF_AUDACITY.md)",
-        "Export labels.txt and convert to wimHofTicks.js",
-        "Build WimHofTimer.jsx reusing BreathingTimer base or workout pattern",
-        "Register in TimersHome + app.jsx routing",
-        "Add Spanish + English translations",
-        "Add E2E test: start, advance round, complete"
+      "done": [
+        "Copy MP3 from dist/ to public/win_hof_4rounds.mp3",
+        "Build minimal WimHofTimer.jsx (HTMLAudioElement, play/pause/reset, elapsed+remaining display, progress bar)",
+        "Create WimHofTimer.scss (dark teal gradient, maximized layout)",
+        "Register card in TimersHome.jsx (icon 'air', accent #4ecdc4, sessionKey 'wimHof')",
+        "Add case 'WimHofTimer' to app.jsx switch",
+        "Add ES + EN i18n keys (name/title/description/category/subtitle/remaining)",
+        "Increment session count on audio 'ended' event",
+        "Wire onFinish callback on audio end",
+        "Verify production build passes (npm run build)"
       ],
-      "createdAt": "2026-05-12"
+      "todo": [
+        "Mark phase transitions in Audacity (docs/WIM_HOF_AUDACITY.md) — produce scripts/wim_hof_labels.txt",
+        "Run scripts/labels-to-ticks.mjs → generate src/config/wimHofTicks.js",
+        "Create src/config/wimHofConfig.js via buildConfigFromTicks()",
+        "Refactor WimHofTimer.jsx to drive phase UI from wimHofConfig (breathe/hold/recovery + round counter)",
+        "Add phase-colored backgrounds + instruction text per phase",
+        "Optional: switch from raw Audio() to WorkoutAudioPlayer for watchdog/drift correction (matches HIIT/Tabata sync model)",
+        "Add localStorage persistence (save/load WimHof state with 1h expiry, mirror HIIT/Tabata pattern)",
+        "Add E2E test: start timer, MP3 plays, completes → onFinish fires",
+        "Add v2 i18n keys (wimHof.breathe / hold / recovery / roundN)",
+        "Consider uploading MP3 to Supabase audio bucket (consistent with HIIT/Tabata) instead of public/"
+      ],
+      "createdAt": "2026-05-12",
+      "updatedAt": "2026-05-13"
     }
   ]
 }

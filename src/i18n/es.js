@@ -90,6 +90,14 @@ const es = {
     description: 'Inhala 4, mantén 2, exhala 6. Técnica suave para alivio del estrés diario.',
     category: 'Bienestar',
   },
+  wimHof: {
+    name: 'Wim Hof',
+    title: 'Wim Hof Breathing',
+    description: '4 rondas guiadas en audio: 30-40 respiraciones rápidas + retención + recuperación.',
+    category: 'Bienestar',
+    subtitle: 'Respiración guiada por audio (4 rondas)',
+    remaining: 'Restante',
+  },
   auth: {
     signIn: 'Inicia sesión',
     saveProgress: 'Guarda tu progreso y rutinas personalizadas',

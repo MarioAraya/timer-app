@@ -12,6 +12,7 @@ const TIMER_STATIC = [
   { id: 'box-breathing',  i18nKey: 'boxBreathing',   sessionKey: 'boxBreathing',  duration: '5 min',  icon: 'self_improvement',      component: 'BoxBreathingTimer',  accentColor: '#4ecdc4' },
   { id: 'relaxing-breath',i18nKey: 'relaxingBreath', sessionKey: 'relaxingBreath',duration: '3 min',  icon: 'nights_stay',           component: 'RelaxingBreathTimer',accentColor: '#9b59b6' },
   { id: 'calming-breath', i18nKey: 'calmingBreath',  sessionKey: 'calmingBreath', duration: '4 min',  icon: 'spa',                   component: 'CalmingBreathTimer', accentColor: '#3498db' },
+  { id: 'wim-hof',        i18nKey: 'wimHof',         sessionKey: 'wimHof',        duration: '11 min', icon: 'air',                   component: 'WimHofTimer',        accentColor: '#4ecdc4' },
 ]
 
 function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOut }) {

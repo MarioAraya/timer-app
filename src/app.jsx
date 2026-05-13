@@ -7,6 +7,7 @@ import TabataTimer from './components/tabata/TabataTimerNew'
 import BoxBreathingTimer from './components/breath/BoxBreathingTimer'
 import RelaxingBreathTimer from './components/breath/RelaxingBreathTimer'
 import CalmingBreathTimer from './components/breath/CalmingBreathTimer'
+import WimHofTimer from './components/breath/WimHofTimer'
 import { saveActiveTimer, loadActiveTimer, clearActiveTimer, saveFavoriteTimer, loadFavoriteTimer } from './utils/localStorage'
 import { useAuth } from './hooks/useAuth'
 import AuthModal from './components/auth/AuthModal'
@@ -136,6 +137,8 @@ function App() {
         return <RelaxingBreathTimer {...commonProps} />
       case 'CalmingBreathTimer':
         return <CalmingBreathTimer {...commonProps} />
+      case 'WimHofTimer':
+        return <WimHofTimer {...commonProps} />
       default:
         return null
     }

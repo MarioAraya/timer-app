@@ -16,6 +16,7 @@ function WimHofTimer({ autoMaximize = true, showBackButton, onBackClick, onFinis
   const { t } = useLang()
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [hasStarted, setHasStarted] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const [duration, setDuration] = useState(0)
   const maximized = autoMaximize
@@ -29,6 +30,7 @@ function WimHofTimer({ autoMaximize = true, showBackButton, onBackClick, onFinis
     const onMeta = () => setDuration(audio.duration)
     const onEnd = () => {
       setIsPlaying(false)
+      setHasStarted(false)
       setElapsed(0)
       incrementSessionCount('wimHof')
       onFinish?.()
@@ -54,6 +56,7 @@ function WimHofTimer({ autoMaximize = true, showBackButton, onBackClick, onFinis
       try {
         await audio.play()
         setIsPlaying(true)
+        setHasStarted(true)
       } catch (e) {
         setIsPlaying(false)
       }
@@ -70,15 +73,26 @@ function WimHofTimer({ autoMaximize = true, showBackButton, onBackClick, onFinis
     audio.currentTime = 0
     setElapsed(0)
     setIsPlaying(false)
+    setHasStarted(false)
   }
+
+  const handleScreenClick = () => {
+    if (!hasStarted) return
+    togglePlay()
+  }
+
+  const stop = (e) => e.stopPropagation()
 
   const remaining = Math.max(0, duration - elapsed)
   const progress = duration > 0 ? (elapsed / duration) * 100 : 0
 
   return (
-    <div className={`wim-hof-timer ${maximized ? 'maximized' : ''}`}>
+    <div
+      className={`wim-hof-timer ${maximized ? 'maximized' : ''} ${hasStarted ? 'wh-clickable' : ''}`}
+      onClick={handleScreenClick}
+    >
       {showBackButton && (
-        <button className="wh-back" onClick={onBackClick} aria-label="Back">
+        <button className="wh-back" onClick={(e) => { stop(e); onBackClick?.() }} aria-label="Back">
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
       )}
@@ -100,13 +114,13 @@ function WimHofTimer({ autoMaximize = true, showBackButton, onBackClick, onFinis
         <p className="wh-remaining">{t('wimHof.remaining')}: {formatTime(remaining)}</p>
 
         <div className="wh-controls">
-          <button className="wh-btn wh-btn-primary" onClick={togglePlay}>
+          <button className="wh-btn wh-btn-primary" onClick={(e) => { stop(e); togglePlay() }}>
             <span className="material-symbols-outlined">
               {isPlaying ? 'pause' : 'play_arrow'}
             </span>
             {isPlaying ? t('active.controls.pause') : t('active.controls.start')}
           </button>
-          <button className="wh-btn wh-btn-secondary" onClick={reset}>
+          <button className="wh-btn wh-btn-secondary" onClick={(e) => { stop(e); reset() }}>
             <span className="material-symbols-outlined">restart_alt</span>
             {t('active.controls.reset')}
           </button>

@@ -100,6 +100,8 @@
     justify-content: center;
   }
 
+  &.wh-clickable { cursor: pointer; }
+
   .wh-btn {
     display: inline-flex;
     align-items: center;
@@ -112,11 +114,16 @@
     cursor: pointer;
     transition: transform 0.15s, background 0.2s;
     &:active { transform: scale(0.97); }
+    .material-symbols-outlined { font-size: 1.4rem; }
   }
 
   .wh-btn-primary {
     background: linear-gradient(90deg, #4ecdc4 0%, #44a08d 100%);
     color: #0f2027;
+    padding: 1.15rem 2.4rem;
+    font-size: 1.2rem;
+    box-shadow: 0 8px 24px rgba(78, 205, 196, 0.35);
+    .material-symbols-outlined { font-size: 1.8rem; }
   }
 
   .wh-btn-secondary {

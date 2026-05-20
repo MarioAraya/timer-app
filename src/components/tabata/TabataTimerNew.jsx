@@ -7,6 +7,7 @@ import { TABATA_CONFIG, calculateTabataTotalTime } from '../../config/tabataConf
 import { saveTabataState, loadTabataState, clearTabataState, incrementSessionCount } from '../../utils/localStorage'
 import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
 import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
+import { useLang } from '../../context/LanguageContext'
 
 /**
  * Tabata Timer Component - New Design
@@ -20,6 +21,7 @@ function TabataTimerNew({
   onBackClick,
   onFinish
 }) {
+  const { t } = useLang()
   // Load saved state
   const savedState = loadTabataState()
 
@@ -154,7 +156,7 @@ function TabataTimerNew({
     setIsRunning(false)
     setIsFinished(true)
     setShowConfetti(true)
-    setCurrentSubtitle("Tabata complete! You crushed it!")
+    setCurrentSubtitle(t('tabata.finishedSubtitle'))
     incrementSessionCount('tabata')
     clearTabataState()
   }

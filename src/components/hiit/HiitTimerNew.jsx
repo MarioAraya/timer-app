@@ -7,6 +7,7 @@ import { HIIT_CONFIG, calculateTotalTime } from '../../config/hiitConfig'
 import { saveHiitState, loadHiitState, clearHiitState, incrementSessionCount } from '../../utils/localStorage'
 import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
 import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
+import { useLang } from '../../context/LanguageContext'
 
 /**
  * HIIT Timer Component - New Design
@@ -20,6 +21,7 @@ function HiitTimerNew({
   onBackClick,
   onFinish
 }) {
+  const { t } = useLang()
   // Load saved state
   const savedState = loadHiitState()
 
@@ -148,7 +150,7 @@ function HiitTimerNew({
     setIsRunning(false)
     setIsFinished(true)
     setShowConfetti(true)
-    setCurrentSubtitle("Amazing workout! You crushed it!")
+    setCurrentSubtitle(t('hiit.finishedSubtitle'))
     incrementSessionCount('hiit')
     clearHiitState()
   }

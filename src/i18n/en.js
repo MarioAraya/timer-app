@@ -23,7 +23,9 @@ const en = {
       reset: 'Reset',
       start: 'Start',
       pause: 'Pause',
+      resume: 'Resume',
       skip: 'Skip',
+      loading: 'Loading...',
       musicOn: 'Music ON',
       beepsOn: 'Beeps ON',
     },
@@ -57,6 +59,15 @@ const en = {
     title: 'Pomodoro Timer',
     description: 'Focus for 25 minutes, then take a 5-minute break. Perfect for productivity and deep work sessions.',
     category: 'Productivity',
+    audio: {
+      lofi: 'Lofi Music',
+      beeps: 'Beeps',
+      loading: 'Loading…',
+      pauseMusic: 'Pause music',
+      playMusic: 'Play music',
+      repeatTrack: 'Repeat track',
+      nextTrack: 'Next track',
+    },
     setup: {
       title: 'Pomodoro',
       subtitle: 'Customize your focus level',
@@ -97,6 +108,7 @@ const en = {
     category: 'Wellness',
     subtitle: 'Audio-guided breathing (4 rounds)',
     remaining: 'Remaining',
+    credit: 'Wim Hof Method® by Wim Hof. For educational & wellness use only.',
   },
   auth: {
     signIn: 'Sign in',

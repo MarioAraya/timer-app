@@ -9,9 +9,11 @@
     "count": "cantidad de tests (real si done, estimado si backlog)"
   },
   "summary": {
-    "done": 333,
-    "backlog": 18,
-    "total": 351
+    "done": 14,
+    "backlog": 3,
+    "total": 17,
+    "tests_passing": 274,
+    "tests_e2e": 28
   },
   "tests": [
     {

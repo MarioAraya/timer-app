@@ -105,7 +105,7 @@ Four player instances exported directly (not wrapped):
 - `hiitAudio`, `tabataAudio` — `WorkoutAudioPlayer` (single MP3 synced to ticks)
 - `pomodoroAudio`, `breathingAudio` — `LofiPlaylistPlayer` (9 lofi tracks from Supabase, advances on `ended`, supports `nextTrack()` / `repeatTrack()`)
 
-`LofiPlaylistPlayer` mirrors `WorkoutAudioPlayer`'s play/resume/watchdog flow exactly (100ms watchdog, 500ms auto-resume threshold, `shouldBePlaying` set after `await audio.play()`). When swapping tracks, `playerReady` is reset and `canplaythrough` re-triggers play if `shouldBePlaying` is still true. The `inTrackTransition` flag (1.5s) prevents the `pause` DOM event from `audio.load()` being misread as a user pause.
+`LofiPlaylistPlayer` is exported from `audioUtils.js` (for testability) and mirrors `WorkoutAudioPlayer`'s play/resume/watchdog flow exactly (100ms watchdog, 500ms auto-resume threshold, `shouldBePlaying` set after `await audio.play()`). When swapping tracks, `playerReady` is reset and `canplaythrough` re-triggers play if `shouldBePlaying` is still true. The `inTrackTransition` flag (1.5s) prevents the `pause` DOM event from `audio.load()` being misread as a user pause.
 
 The `visibilitychange` handler at the bottom of the file auto-resumes whichever player has `shouldBePlaying === true` when the tab regains focus.
 

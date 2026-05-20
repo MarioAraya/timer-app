@@ -53,6 +53,16 @@ export default function Credits() {
                 HIIT MUSIC
               </a>.
             </p>
+
+            <h4>Wim Hof</h4>
+            <p>
+              Breathing method by{' '}
+              <a href="https://www.wimhofmethod.com" target="_blank" rel="noopener">
+                Wim Hof
+              </a>
+              {' '}(The Iceman). Audio guidance for educational and wellness purposes only.
+              Wim Hof Method® is a registered trademark of Wim Hof.
+            </p>
           </div>
         </div>
       </div>

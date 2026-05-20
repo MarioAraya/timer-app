@@ -1,0 +1,223 @@
+{
+  "_schema": {
+    "status": "backlog | in-progress | done | blocked",
+    "priority": "high | medium | low",
+    "type": "unit | component | integration | e2e",
+    "area": "timing | persistence | i18n | audio | ui | e2e",
+    "file": "ruta al archivo de test",
+    "covers": "módulos/funciones que testea",
+    "count": "cantidad de tests (real si done, estimado si backlog)"
+  },
+  "summary": {
+    "done": 333,
+    "backlog": 18,
+    "total": 351
+  },
+  "tests": [
+    {
+      "id": 1,
+      "title": "ticksEngine — buildConfigFromTicks",
+      "description": "Durations derivadas de diffs entre ticks. Casos: ticks válidos, ticks vacíos, un solo tick, ticks negativos, preparación, último round rest=0.",
+      "status": "done",
+      "priority": "high",
+      "type": "unit",
+      "area": "timing",
+      "file": "src/utils/ticksEngine.test.js",
+      "covers": "src/utils/ticksEngine.js",
+      "count": 47
+    },
+    {
+      "id": 2,
+      "title": "localStorage — save/load/clear/expiry",
+      "description": "Roundtrip de estado HIIT/Tabata/Pomodoro. Expiración 1h. clearAllTimerData. favoriteTimer/activeTimer.",
+      "status": "done",
+      "priority": "high",
+      "type": "unit",
+      "area": "persistence",
+      "file": "src/utils/localStorage.test.js",
+      "covers": "src/utils/localStorage.js",
+      "count": 37
+    },
+    {
+      "id": 3,
+      "title": "i18n — useLanguage + t()",
+      "description": "loadLanguage/saveLanguage, t() con dot notation, fallbacks, interpolación {n}, claves UI críticas en ES y EN.",
+      "status": "done",
+      "priority": "high",
+      "type": "unit",
+      "area": "i18n",
+      "file": "src/i18n/useLanguage.test.js",
+      "covers": "src/i18n/index.js, src/i18n/languageStorage.js",
+      "count": 27
+    },
+    {
+      "id": 4,
+      "title": "integration — HIIT/Tabata config + audio sync invariants",
+      "description": "Pausa/resume con localStorage, estados no se pisan, posición audio ≈ elapsed (tolerancia 0.5s HIIT / 0.1s Tabata), contrato shape de configs.",
+      "status": "done",
+      "priority": "high",
+      "type": "integration",
+      "area": "timing",
+      "file": "src/utils/integration.test.js",
+      "covers": "src/config/hiitConfig.js, src/config/tabataConfig.js, src/utils/localStorage.js",
+      "count": 30
+    },
+    {
+      "id": 5,
+      "title": "wimHofAudio — HTMLAudioElement crudo",
+      "description": "Play/pause/reset del audio Wim Hof. Estado correcto tras cada acción.",
+      "status": "done",
+      "priority": "medium",
+      "type": "unit",
+      "area": "audio",
+      "file": "src/config/wimHofAudio.test.js",
+      "covers": "src/components/WimHofTimer.jsx (audio logic)",
+      "count": 12
+    },
+    {
+      "id": 6,
+      "title": "E2E — HIIT/Tabata/Pomodoro golden paths + MP3 + navegación",
+      "description": "Home → setup → activo → pausar → resetear. MP3 HIIT/Tabata/Pomodoro reproducen. Navegación entre timers en misma sesión.",
+      "status": "done",
+      "priority": "high",
+      "type": "e2e",
+      "area": "e2e",
+      "file": "e2e/timer.spec.js",
+      "covers": "HiitTimerNew, TabataTimerNew, PomodoroTimer, TimersHome",
+      "count": 28
+    },
+    {
+      "id": 7,
+      "title": "timerHelpers — cálculos de progreso y elapsed",
+      "description": "calculateElapsedTime (prep, work, rest, multi-round), calculateTotalProgress (0→1), calculateRoundProgress (HIIT vs Tabata).",
+      "status": "done",
+      "priority": "high",
+      "type": "unit",
+      "area": "timing",
+      "file": "src/utils/timerHelpers.test.js",
+      "covers": "src/utils/timerHelpers.js",
+      "count": 29
+    },
+    {
+      "id": 8,
+      "title": "TimerControls — estados del botón principal + i18n",
+      "description": "Start (prep inicial), Resume (mid-workout), Pause (running), Finished (disabled), Loading (musicMode+loading). Tooltips Skip/Reset usan t(). Cambio de idioma refleja en botones.",
+      "status": "done",
+      "priority": "high",
+      "type": "component",
+      "area": "ui",
+      "file": "src/components/workout/TimerControls.test.jsx",
+      "covers": "src/components/workout/TimerControls.jsx",
+      "count": 17
+    },
+    {
+      "id": 9,
+      "title": "TimersHome — render i18n + toggle de idioma",
+      "description": "Todas las cards renderizan con textos en ES por defecto. Toggle ES→EN cambia title/description/category en el DOM. Wim Hof card visible.",
+      "status": "done",
+      "priority": "high",
+      "type": "component",
+      "area": "i18n",
+      "file": "src/components/TimersHome.test.jsx",
+      "covers": "src/components/TimersHome.jsx, src/i18n/es.js, src/i18n/en.js",
+      "count": 17
+    },
+    {
+      "id": 10,
+      "title": "E2E — toggle ES/EN cambia textos visibles en UI",
+      "description": "Click en botón de idioma → cards muestran textos en inglés. Segundo click → vuelve a español. Persiste al recargar.",
+      "status": "backlog",
+      "priority": "high",
+      "type": "e2e",
+      "area": "i18n",
+      "file": "e2e/i18n.spec.js",
+      "covers": "TimersHome, LanguageContext, languageStorage",
+      "count": 5
+    },
+    {
+      "id": 11,
+      "title": "E2E — state restore desde localStorage al recargar",
+      "description": "Pausar HIIT mid-workout → recargar → timer restaura en vista activa con el round/fase correctos. Expiración 1h: state > 1h → vuelve a setup.",
+      "status": "backlog",
+      "priority": "high",
+      "type": "e2e",
+      "area": "persistence",
+      "file": "e2e/persistence.spec.js",
+      "covers": "HiitTimerNew, TabataTimerNew, localStorage.js",
+      "count": 6
+    },
+    {
+      "id": 12,
+      "title": "BreathingTimer — ciclo de fases y animación JS",
+      "description": "Fases avanzan en orden correcto. JS setea el transform en el ref del círculo (no CSS keyframe). BoxBreathing: 4 fases. Calming: 3 fases. Relaxing: 3 fases.",
+      "status": "done",
+      "priority": "medium",
+      "type": "component",
+      "area": "ui",
+      "file": "src/components/breath/BreathingTimer.test.jsx",
+      "covers": "src/components/breath/BreathingTimer.jsx",
+      "count": 17
+    },
+    {
+      "id": 13,
+      "title": "PomodoroSetupView — presets + i18n + onStart callback",
+      "description": "5 presets renderizan en ES y EN. Popular seleccionado por defecto. Custom muestra sliders. onStart recibe config correcta. Claves audio pomodoro.audio.* en ambos idiomas.",
+      "status": "done",
+      "priority": "medium",
+      "type": "component",
+      "area": "ui",
+      "file": "src/components/pomodoro/PomodoroSetupView.test.jsx",
+      "covers": "src/components/pomodoro/PomodoroSetupView.jsx, src/i18n/es.js, src/i18n/en.js",
+      "count": 25
+    },
+    {
+      "id": 14,
+      "title": "audioUtils — WorkoutAudioPlayer shouldBePlaying + watchdog",
+      "description": "shouldBePlaying=true tras play(), false tras stop()/pause(). Watchdog limpiado con stopWatchdog(). shouldIgnorePause() true < 2s post-play.",
+      "status": "done",
+      "priority": "medium",
+      "type": "unit",
+      "area": "audio",
+      "file": "src/utils/audioUtils.test.js",
+      "covers": "src/utils/WorkoutAudioPlayer.js",
+      "count": 8
+    },
+    {
+      "id": 15,
+      "title": "audioUtils — LofiPlaylistPlayer track transition",
+      "description": "nextTrack() avanza índice, wraps, setea inTrackTransition=true, resetea playerReady. repeatTrack() no cambia index, resetea currentTime. ended event avanza automáticamente.",
+      "status": "done",
+      "priority": "medium",
+      "type": "unit",
+      "area": "audio",
+      "file": "src/utils/audioUtils.test.js",
+      "covers": "src/utils/audioUtils.js (LofiPlaylistPlayer)",
+      "count": 9
+    },
+    {
+      "id": 16,
+      "title": "E2E — Breathing timer: ciclo completo Box Breathing",
+      "description": "Home → Box Breathing → play → 4 fases se muestran en orden (inhale/hold/exhale/hold) → círculo anima. No crash tras volver al home.",
+      "status": "backlog",
+      "priority": "medium",
+      "type": "e2e",
+      "area": "e2e",
+      "file": "e2e/breathing.spec.js",
+      "covers": "BoxBreathingTimer, BreathingTimer, TimersHome",
+      "count": 4
+    },
+    {
+      "id": 17,
+      "title": "i18n — nuevas claves de controls y audio Pomodoro",
+      "description": "Verificar que active.controls.resume, active.controls.loading, pomodoro.audio.* existen en ES y EN. t() con esas claves no retorna la key como fallback.",
+      "status": "done",
+      "priority": "high",
+      "type": "unit",
+      "area": "i18n",
+      "file": "src/i18n/useLanguage.test.js",
+      "covers": "src/i18n/es.js, src/i18n/en.js",
+      "count": 14,
+      "note": "Agregado al archivo existente useLanguage.test.js"
+    }
+  ]
+}

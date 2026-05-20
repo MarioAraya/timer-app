@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useRef } from 'preact/hooks'
 import CircularProgress from './CircularProgress'
-import Confetti from '../Confetti'
+import Confetti from './Confetti'
 import { useLang } from '../../context/LanguageContext'
 import './WorkoutActiveView.scss'
 
@@ -27,7 +27,7 @@ function WorkoutActiveView({
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+    return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
   // Native fullscreen toggle with CSS fallback
@@ -93,7 +93,8 @@ function WorkoutActiveView({
     }
   }, [isMaximized, onToggleFullscreen])
 
-  const modeClass = isWorkPhase || isPreparationPhase ? 'work-mode' : 'rest-mode'
+  const modeClass = isPreparationPhase ? 'prep-mode' : isWorkPhase ? 'work-mode' : 'rest-mode'
+  const hasEverStarted = isRunning || totalElapsed > 0
 
   return (
     <div
@@ -119,7 +120,7 @@ function WorkoutActiveView({
         </div>
         <button className="fullscreen-button" onClick={handleFullscreen}>
           <span className="material-symbols-outlined">
-            {isMaximized ? 'fullscreen_exit' : 'fullscreen'}
+            {isMaximized ? 'close_fullscreen' : 'open_in_full'}
           </span>
         </button>
       </header>
@@ -198,6 +199,7 @@ function WorkoutActiveView({
             data-testid="ctrl-reset"
             className="control-button secondary"
             onClick={onReset}
+            disabled={!hasEverStarted}
           >
             <span className="material-symbols-outlined">refresh</span>
             <span className="btn-tooltip">{t('active.controls.reset')}</span>
@@ -223,10 +225,20 @@ function WorkoutActiveView({
           <button
             className="control-button secondary"
             onClick={onSkip}
-            disabled={isFinished}
+            disabled={isFinished || !hasEverStarted}
           >
             <span className="material-symbols-outlined">skip_next</span>
             <span className="btn-tooltip">{t('active.controls.skip')}</span>
+          </button>
+
+          <button
+            className="control-button secondary"
+            onClick={handleFullscreen}
+          >
+            <span className="material-symbols-outlined">
+              {isMaximized ? 'close_fullscreen' : 'open_in_full'}
+            </span>
+            <span className="btn-tooltip">Fullscreen</span>
           </button>
         </div>
       </footer>

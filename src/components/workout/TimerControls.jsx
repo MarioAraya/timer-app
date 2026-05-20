@@ -1,7 +1,5 @@
-/**
- * Timer Controls Component
- * Shows start/pause, skip, and reset buttons
- */
+import { useLang } from '../../context/LanguageContext'
+
 function TimerControls({
   isRunning,
   isFinished,
@@ -17,6 +15,7 @@ function TimerControls({
   handleSkip,
   handleReset
 }) {
+  const { t } = useLang()
   return (
     <div className="timer-controls">
       {!isRunning ? (
@@ -28,9 +27,9 @@ function TimerControls({
           className="btn btn-start"
           disabled={isFinished || (musicMode && playerStatus === 'loading')}
         >
-          {isFinished ? 'Finished' :
-           (musicMode && playerStatus === 'loading') ? 'Loading...' :
-           (isPreparationPhase && timeLeft === preparationTime ? 'Start' : 'Resume')}
+          {isFinished ? t('active.finished') :
+           (musicMode && playerStatus === 'loading') ? t('active.controls.loading') :
+           (isPreparationPhase && timeLeft === preparationTime ? t('active.controls.start') : t('active.controls.resume'))}
         </button>
       ) : (
         <button
@@ -40,7 +39,7 @@ function TimerControls({
           }}
           className="btn btn-pause"
         >
-          Pause
+          {t('active.controls.pause')}
         </button>
       )}
 
@@ -54,10 +53,10 @@ function TimerControls({
               }}
               className="btn btn-icon btn-skip"
               disabled={isFinished}
-              title="Skip Phase"
+              title={t('active.controls.skip')}
             >
               <span className="btn-icon-symbol">⏭️</span>
-              <span className="btn-tooltip">Skip Phase</span>
+              <span className="btn-tooltip">{t('active.controls.skip')}</span>
             </button>
           )}
 
@@ -67,10 +66,10 @@ function TimerControls({
               handleReset()
             }}
             className="btn btn-icon btn-reset"
-            title="Reset"
+            title={t('active.controls.reset')}
           >
             <span className="btn-icon-symbol">🔄</span>
-            <span className="btn-tooltip">Reset</span>
+            <span className="btn-tooltip">{t('active.controls.reset')}</span>
           </button>
         </>
       )}

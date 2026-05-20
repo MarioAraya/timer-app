@@ -317,3 +317,159 @@
     font-size: 0.82rem;
   }
 }
+
+// ─── Landscape mobile fix ─────────────────────────────────────────────────────
+// Phone in landscape: height ~360-500px — reuse the same two-column grid as
+// desktop but with a smaller circle so everything fits without scrolling.
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .breathing-timer-root.maximized {
+    display: grid !important;
+    grid-template-columns: auto 1fr !important;
+    grid-template-rows: auto auto 1fr auto auto !important;
+    grid-template-areas:
+      "anim name"
+      "anim cycle"
+      "anim phase"
+      "anim controls"
+      "anim pattern" !important;
+    align-items: center !important;
+    align-content: center !important;
+    column-gap: 2rem !important;
+    padding: 0.75rem 3rem !important;
+
+    // Scale override: individual SCSS sets scale(1.5/1.6) — undo it
+    .breathing-animation {
+      grid-area: anim !important;
+      transform: none !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .breathing-circle {
+      width: 110px !important;
+      height: 110px !important;
+    }
+
+    .breathing-timer-display { font-size: 2.25rem !important; }
+
+    .breathing-name {
+      grid-area: name !important;
+      text-align: left !important;
+      font-size: 1.1rem !important;
+      margin-bottom: 0 !important;
+    }
+
+    .breathing-cycle {
+      grid-area: cycle !important;
+      text-align: left !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .breathing-phase {
+      grid-area: phase !important;
+      text-align: left !important;
+      margin: 0 0 0.5rem !important;
+    }
+
+    .breathing-instruction { font-size: 1.4rem !important; }
+
+    .breathing-controls {
+      grid-area: controls !important;
+      justify-content: flex-start !important;
+      margin: 0 !important;
+    }
+
+    .breathing-pattern { grid-area: pattern !important; }
+
+    .breathing-audio-controls { display: none !important; }
+  }
+}
+
+// ─── Lofi audio controls ──────────────────────────────────────────────────────
+
+.breathing-audio-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.breathing-audio-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.9rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: white;
+  }
+
+  &.active {
+    background: rgba(99, 102, 241, 0.3);
+    border-color: rgba(99, 102, 241, 0.5);
+    color: white;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
+  }
+
+  .audio-icon { font-size: 0.9rem; }
+}
+
+.breathing-volume {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+
+  .volume-slider {
+    width: 100px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: rgba(99, 102, 241, 0.9);
+      cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: rgba(99, 102, 241, 0.9);
+      cursor: pointer;
+      border: none;
+    }
+  }
+
+  .volume-pct {
+    min-width: 32px;
+    font-family: monospace;
+    font-size: 0.75rem;
+  }
+}

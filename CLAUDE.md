@@ -14,6 +14,8 @@ npm run build      # Production build
 npm run preview    # Preview production build
 npm run test       # Run Vitest tests once
 npm run test:watch # Run Vitest in watch mode
+npm run test:e2e   # Playwright e2e tests
+npm run test:e2e:ui # Playwright UI mode
 ```
 
 Run a single test file:
@@ -24,6 +26,28 @@ npx vitest run src/utils/ticksEngine.test.js
 Backend (Go):
 ```bash
 cd backend && go run cmd/api/main.go
+```
+
+## Slash Commands (`.claude/commands/`)
+
+Project-scoped Claude Code commands. Invoke con `/<nombre>`.
+
+| Comando | Propósito |
+|---|---|
+| `/commit` | Analiza git state y crea commit |
+| `/commit-msg` | Sugiere mensaje commit (EN) sin commitear |
+| `/lint` | Lint frontend + backend con autofix |
+| `/test-hiit` | Corre vitest de HIIT |
+| `/deploy-preview` | Build prod + servidor preview local |
+| `/create-release-pr <version>` | Crea release PR `release/<v>` → `main` con changelog |
+| `/new-worktree <descripción>` | Crea worktree aislado + branch `feat\|fix\|exp/<slug>` en `../<repo>-<tipo>-<slug>` |
+| `/merge-worktree [path\|branch]` | Mergea branch del worktree, borra worktree + branch local (con confirmaciones) |
+
+Workflow worktrees típico:
+```
+/new-worktree quiero arreglar drift de audio en tabata
+# trabajar en ../timer-app-fix-audio-drift-tabata
+/merge-worktree fix/audio-drift-tabata
 ```
 
 ## Architecture
@@ -68,7 +92,7 @@ src/components/tabata/
 hiitTicks.js / tabataTicks.js   ← arrays of absolute MP3 timestamps (seconds)
 ticksEngine.js                  ← buildConfigFromTicks() derives durations from tick diffs
 hiitConfig.js / tabataConfig.js ← configs built from ticks, not hardcoded durations
-WorkoutAudioPlayer.js           ← manages MP3 playback, 300ms watchdog, drift correction
+WorkoutAudioPlayer.js           ← manages MP3 playback, 100ms watchdog (500ms threshold), drift correction
 ```
 
 Changing phase durations means updating the ticks files, not the config files directly.
@@ -77,7 +101,15 @@ Changing phase durations means updating the ticks files, not the config files di
 
 ### Audio Utilities (`src/utils/audioUtils.js`)
 
-Three `WorkoutAudioPlayer` instances: `hiitPlayer`, `tabataPlayer`, `pomodoroPlayer`. Each exposes identically-shaped wrapper functions with prefixed names (`playHiitSong`, `playTabataSong`, `playPomodoroSong`, etc.). The `visibilitychange` handler at the bottom of the file auto-resumes whichever player `shouldBePlaying` when the tab regains focus.
+Four player instances exported directly (not wrapped):
+- `hiitAudio`, `tabataAudio` — `WorkoutAudioPlayer` (single MP3 synced to ticks)
+- `pomodoroAudio`, `breathingAudio` — `LofiPlaylistPlayer` (9 lofi tracks from Supabase, advances on `ended`, supports `nextTrack()` / `repeatTrack()`)
+
+`LofiPlaylistPlayer` is exported from `audioUtils.js` (for testability) and mirrors `WorkoutAudioPlayer`'s play/resume/watchdog flow exactly (100ms watchdog, 500ms auto-resume threshold, `shouldBePlaying` set after `await audio.play()`). When swapping tracks, `playerReady` is reset and `canplaythrough` re-triggers play if `shouldBePlaying` is still true. The `inTrackTransition` flag (1.5s) prevents the `pause` DOM event from `audio.load()` being misread as a user pause.
+
+The `visibilitychange` handler at the bottom of the file auto-resumes whichever player has `shouldBePlaying === true` when the tab regains focus.
+
+Beep mode uses Web Audio API (`playBeep` / `playWorkSound` / `playCountdownSound` / `playPrepSound`) — independent of the player instances.
 
 ### Breathing Timers
 
@@ -86,6 +118,7 @@ Shared base in `BreathingTimer.jsx` + `BreathingTimer.scss`. Three wrapper compo
 - `BoxBreathingTimer.jsx` — 4-4-4-4 (4 phases, uses `hold1` / `hold2` color classes)
 - `CalmingBreathTimer.jsx` — 4-2-6
 - `RelaxingBreathTimer.jsx` — 4-7-8
+- `WimHofTimer.jsx` — **does NOT use `BreathingTimer` base.** Standalone component that plays `public/win_hof_4rounds.mp3` via raw `HTMLAudioElement` with play/pause/reset, no phase coordination yet. Phase sync via ticks is planned (see `features.json` → `wim-hof-breathing.todo` and `docs/WIM_HOF_AUDACITY.md`).
 
 The circle animation is **JS-driven** (not CSS keyframes): `BreathingTimer.jsx` uses a `useRef` on the circle element and sets `el.style.transform` + `el.style.transition` via `requestAnimationFrame` on phase change. CSS `transform` on individual timer SCSS files is overridden by these inline styles.
 
@@ -108,10 +141,6 @@ The circle animation is **JS-driven** (not CSS keyframes): `BreathingTimer.jsx` 
 Save/load/clear functions per timer type (HIIT, Tabata, Pomodoro). All `load*State` functions enforce a 1-hour expiry via a `timestamp` field — stale state is cleared and returns `null`. State is saved on pause and unmount, restored on mount.
 
 `app.jsx` also persists the user's **favorite timer** (`saveFavoriteTimer` / `loadFavoriteTimer`) and **last active timer** (`saveActiveTimer` / `loadActiveTimer`) to survive page reloads.
-
-### Auth
-
-`src/hooks/useAuth.js` + `src/components/auth/` integrate with Supabase. Auth is used in `app.jsx` to show/hide `AuthModal` and `UserMenu`.
 
 ### Backend (Go)
 

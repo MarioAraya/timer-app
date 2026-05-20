@@ -23,7 +23,9 @@ const en = {
       reset: 'Reset',
       start: 'Start',
       pause: 'Pause',
+      resume: 'Resume',
       skip: 'Skip',
+      loading: 'Loading...',
       musicOn: 'Music ON',
       beepsOn: 'Beeps ON',
     },
@@ -57,6 +59,29 @@ const en = {
     title: 'Pomodoro Timer',
     description: 'Focus for 25 minutes, then take a 5-minute break. Perfect for productivity and deep work sessions.',
     category: 'Productivity',
+    audio: {
+      lofi: 'Lofi Music',
+      beeps: 'Beeps',
+      loading: 'Loading…',
+      pauseMusic: 'Pause music',
+      playMusic: 'Play music',
+      repeatTrack: 'Repeat track',
+      nextTrack: 'Next track',
+    },
+    setup: {
+      title: 'Pomodoro',
+      subtitle: 'Customize your focus level',
+      workLabel: 'Pomodoro',
+      shortBreakLabel: 'Break',
+      longBreakLabel: 'Long Break',
+      presets: {
+        baby:     'Baby Steps',
+        popular:  'Popular',
+        medium:   'Medium',
+        extended: 'Extended',
+        custom:   'Custom',
+      },
+    },
   },
   boxBreathing: {
     name: 'Box Breathing',
@@ -76,6 +101,15 @@ const en = {
     description: 'Inhale for 4, hold for 2, exhale for 6. Gentle breathing technique for daily stress relief.',
     category: 'Wellness',
   },
+  wimHof: {
+    name: 'Wim Hof',
+    title: 'Wim Hof Breathing',
+    description: '4 audio-guided rounds: 30-40 fast breaths + retention + recovery.',
+    category: 'Wellness',
+    subtitle: 'Audio-guided breathing (4 rounds)',
+    remaining: 'Remaining',
+    credit: 'Wim Hof Method® by Wim Hof. For educational & wellness use only.',
+  },
   auth: {
     signIn: 'Sign in',
     saveProgress: 'Save your progress and personalized routines',
@@ -86,8 +120,13 @@ const en = {
     orUse: 'Or use',
     googleSignIn: 'Continue with Google',
   },
+  home: {
+    heading: 'WORKOUT TIMERS',
+    subtitle: 'Choose Your Timer',
+    sessions: 'sessions',
+  },
   language: {
-    toggle: 'ES',
+    toggle: 'EN',
   },
 }
 

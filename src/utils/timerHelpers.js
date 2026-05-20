@@ -3,7 +3,7 @@ export const formatTime = (seconds) => {
   const intSeconds = Math.floor(seconds)
   const minutes = Math.floor(intSeconds / 60)
   const remainingSeconds = intSeconds % 60
-  return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
 }
 
 // Formatear tiempo solo en segundos (para timers cortos)
@@ -59,6 +59,7 @@ export function calculateTotalProgress({ config, preparationTime, currentRound, 
   return Math.min(100, (elapsed / totalSeconds) * 100)
 }
 
+// Tracks only the current phase (work or rest separately) so the inner ring resets to 0 at each phase transition
 export function calculateRoundProgress({ config, preparationTime, currentRound, timeLeft, isWorkPhase, isPreparationPhase, isFinished }) {
   if (isFinished) return 100
   if (isPreparationPhase) {
@@ -66,9 +67,7 @@ export function calculateRoundProgress({ config, preparationTime, currentRound, 
   }
   const currentRoundConfig = config.rounds[currentRound - 1]
   if (!currentRoundConfig) return 0
-  const roundDuration = currentRoundConfig.work + currentRoundConfig.rest
-  const elapsedInRound = isWorkPhase
-    ? currentRoundConfig.work - timeLeft
-    : currentRoundConfig.work + (currentRoundConfig.rest - timeLeft)
-  return Math.min(100, (elapsedInRound / roundDuration) * 100)
+  const phaseDuration = isWorkPhase ? currentRoundConfig.work : currentRoundConfig.rest
+  const elapsed = phaseDuration - timeLeft
+  return Math.min(100, (elapsed / phaseDuration) * 100)
 }

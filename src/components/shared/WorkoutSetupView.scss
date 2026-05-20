@@ -660,4 +660,88 @@ $text-muted: rgba(255, 255, 255, 0.6);
       font-size: 22px;
     }
   }
+
+  // Compress layout so all 3 sliders are visible without scrolling
+  @media (max-height: 820px) {
+    .setup-main {
+      padding: 10px 16px;
+    }
+
+    .setup-preview {
+      margin-bottom: 10px;
+
+      .preview-ring {
+        width: 110px;
+        height: 110px;
+
+        .preview-ring-outer {
+          border-width: 7px;
+
+          &::after {
+            inset: -7px;
+            border-width: 7px;
+          }
+        }
+
+        .preview-ring-inner {
+          inset: 9px;
+          border-width: 7px;
+
+          &::after {
+            inset: -7px;
+            border-width: 7px;
+          }
+        }
+
+        .preview-content {
+          .preview-time {
+            font-size: 20px;
+            margin: 2px 0;
+          }
+
+          .preview-label {
+            font-size: 8px;
+          }
+
+          .preview-info {
+            font-size: 8px;
+          }
+        }
+      }
+    }
+
+    .interval-settings {
+      .settings-section-title {
+        margin: 0 0 8px 8px;
+      }
+    }
+
+    .interval-card {
+      padding: 8px 14px;
+      margin-bottom: 6px;
+
+      .card-header {
+        margin-bottom: 6px;
+
+        .card-label {
+          .label-title {
+            font-size: 14px;
+          }
+        }
+
+        .card-time {
+          font-size: 18px;
+        }
+      }
+
+      .slider-container {
+        height: 20px;
+      }
+    }
+
+    .quote-preview {
+      margin-top: 10px;
+      padding: 10px 12px;
+    }
+  }
 }

@@ -23,7 +23,9 @@ const es = {
       reset: 'Reiniciar',
       start: 'Iniciar',
       pause: 'Pausar',
+      resume: 'Reanudar',
       skip: 'Saltar',
+      loading: 'Cargando...',
       musicOn: 'Música',
       beepsOn: 'Pitidos',
     },
@@ -57,6 +59,29 @@ const es = {
     title: 'Temporizador Pomodoro',
     description: 'Enfócate 25 minutos, luego toma un descanso de 5 minutos. Ideal para productividad y sesiones de trabajo profundo.',
     category: 'Productividad',
+    audio: {
+      lofi: 'Música Lofi',
+      beeps: 'Pitidos',
+      loading: 'Cargando...',
+      pauseMusic: 'Pausar música',
+      playMusic: 'Reproducir música',
+      repeatTrack: 'Repetir pista',
+      nextTrack: 'Siguiente pista',
+    },
+    setup: {
+      title: 'Pomodoro',
+      subtitle: 'Personalizar nivel de concentración',
+      workLabel: 'Pomodoro',
+      shortBreakLabel: 'Descanso',
+      longBreakLabel: 'Descanso largo',
+      presets: {
+        baby:     'Paso de bebé',
+        popular:  'Popular',
+        medium:   'Medio',
+        extended: 'Extendido',
+        custom:   'Personalizado',
+      },
+    },
   },
   boxBreathing: {
     name: 'Respiración Cuadrada',
@@ -76,6 +101,15 @@ const es = {
     description: 'Inhala 4, mantén 2, exhala 6. Técnica suave para alivio del estrés diario.',
     category: 'Bienestar',
   },
+  wimHof: {
+    name: 'Wim Hof',
+    title: 'Wim Hof Breathing',
+    description: '4 rondas guiadas en audio: 30-40 respiraciones rápidas + retención + recuperación.',
+    category: 'Bienestar',
+    subtitle: 'Respiración guiada por audio (4 rondas)',
+    remaining: 'Restante',
+    credit: 'Método Wim Hof® de Wim Hof. Solo para uso educativo y de bienestar.',
+  },
   auth: {
     signIn: 'Inicia sesión',
     saveProgress: 'Guarda tu progreso y rutinas personalizadas',
@@ -86,8 +120,13 @@ const es = {
     orUse: 'O usa',
     googleSignIn: 'Continuar con Google',
   },
+  home: {
+    heading: 'WORKOUT TIMERS',
+    subtitle: 'Elige tu timer',
+    sessions: 'sesiones',
+  },
   language: {
-    toggle: 'EN',
+    toggle: 'ES',
   },
 }
 

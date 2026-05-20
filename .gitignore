@@ -29,3 +29,10 @@ vertical-carousel/
 # Large audio files (use external hosting or Git LFS)
 public/*.mp3
 dist/
+.vercel
+test-results/
+.claude/settings.local.json
+.claude/worktrees/
+
+# Test e2e
+e2e/screenshots

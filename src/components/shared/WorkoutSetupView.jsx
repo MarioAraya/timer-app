@@ -104,13 +104,6 @@ function WorkoutSetupView({ config, theme, onStart, onBackClick, totalTime }) {
           </div>
         </div>
 
-        <div className="quote-preview">
-          <div className="quote-badge">
-            <span className="badge-phase">{theme.quote.phase}</span>
-            <span className="badge-time">{theme.quote.time}</span>
-          </div>
-          <p className="quote-text">"{theme.quote.text}"</p>
-        </div>
       </main>
 
       <footer className="setup-footer">

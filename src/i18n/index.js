@@ -1,7 +1,7 @@
 import es from './es'
 import en from './en'
 
-export const DEFAULT_LANG = 'es'
+export const DEFAULT_LANG = 'en'
 export const VALID_LANGS = ['es', 'en']
 
 export const translations = { es, en }

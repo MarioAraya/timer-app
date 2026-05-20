@@ -23,7 +23,8 @@ export function usePomodoroControls({
   setCurrentMessage,
   setCurrentSubtitle,
   setShowConfetti,
-  storageFunctions
+  storageFunctions,
+  config = POMODORO_CONFIG
 }) {
   const handleStart = () => {
     setIsRunning(true)
@@ -34,13 +35,15 @@ export function usePomodoroControls({
       setCurrentSubtitle(getPhaseSubtitle(true, currentSession))
 
       // Play appropriate sound
-      if (musicMode && playerStatus === 'ready' && isWorkPhase) {
+      if (musicMode && isWorkPhase && playerStatus !== 'error') {
         ignoreNextPlay.current = true
         audioFunctions.play()
+        // Beep as immediate feedback if music not loaded yet
+        if (playerStatus !== 'ready') playWorkSound()
       } else {
         playWorkSound()
       }
-    } else if (isWorkPhase && musicMode && playerStatus === 'ready') {
+    } else if (isWorkPhase && musicMode && playerStatus !== 'error') {
       // Resuming work phase with music
       ignoreNextPlay.current = true
       audioFunctions.resume()
@@ -62,9 +65,9 @@ export function usePomodoroControls({
     setIsFinished(false)
     setCurrentSession(1)
     setIsWorkPhase(true)
-    setTimeLeft(POMODORO_CONFIG.workDuration)
-    setCurrentMessage(POMODORO_CONFIG.messages.preparation)
-    setCurrentSubtitle(POMODORO_CONFIG.subtitles.preparation)
+    setTimeLeft(config.workDuration)
+    setCurrentMessage(config.messages.preparation)
+    setCurrentSubtitle(config.subtitles.preparation)
     setShowConfetti(false)
 
     // Stop music if playing
@@ -78,20 +81,18 @@ export function usePomodoroControls({
 
   const handleSkip = () => {
     if (isWorkPhase) {
-      // Skip work - go to break
       if (musicMode && playerStatus === 'ready') {
         ignoreNextPause.current = true
         audioFunctions.stop()
       }
 
-      const breakDuration = getBreakDuration(currentSession)
+      const breakDuration = getBreakDuration(currentSession, config)
       setIsWorkPhase(false)
       setTimeLeft(breakDuration)
-      setCurrentMessage(getPhaseMessage(false, currentSession))
-      setCurrentSubtitle(getPhaseSubtitle(false, currentSession))
+      setCurrentMessage(getPhaseMessage(false, currentSession, config))
+      setCurrentSubtitle(getPhaseSubtitle(false, currentSession, config))
     } else {
-      // Skip break - go to next work session or finish
-      const isLongBreak = currentSession % POMODORO_CONFIG.sessionsBeforeLongBreak === 0
+      const isLongBreak = currentSession % config.sessionsBeforeLongBreak === 0
 
       if (isLongBreak) {
         // After long break, finish
@@ -106,13 +107,11 @@ export function usePomodoroControls({
         const nextSession = currentSession + 1
         setCurrentSession(nextSession)
         setIsWorkPhase(true)
-        setTimeLeft(POMODORO_CONFIG.workDuration)
-        setCurrentMessage(getPhaseMessage(true, nextSession))
-        setCurrentSubtitle(getPhaseSubtitle(true, nextSession))
+        setTimeLeft(config.workDuration)
+        setCurrentMessage(getPhaseMessage(true, nextSession, config))
+        setCurrentSubtitle(getPhaseSubtitle(true, nextSession, config))
 
-        // Start music if timer is running and in music mode
-        const isRunning = true // We're in running state if skipping
-        if (isRunning && musicMode && playerStatus === 'ready') {
+        if (musicMode && playerStatus !== 'error') {
           ignoreNextPlay.current = true
           audioFunctions.play()
         }

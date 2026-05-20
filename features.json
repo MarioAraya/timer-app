@@ -1,0 +1,165 @@
+{
+  "_schema": {
+    "status": "backlog | in-progress | done | blocked",
+    "priority": "high | medium | low",
+    "area": "infra | ui | audio | pwa | ci | ux",
+    "branch": "branch activa (opcional)",
+    "docs": "archivo de referencia (opcional)"
+  },
+  "features": [
+    {
+      "id": 17,
+      "title": "E2E tests en CI/CD homelab",
+      "description": "Playwright smoke tests corriendo en .103 (cicd) post-deploy, apuntando a app en .104:5177. Imagen en registry local.",
+      "status": "in-progress",
+      "priority": "high",
+      "area": "ci",
+      "branch": "e2e",
+      "docs": "docs/E2E_CICD.md"
+    },
+    {
+      "id": 18,
+      "title": "Wim Hof — phase sync via ticks",
+      "description": "WimHofTimer.jsx actualmente usa HTMLAudioElement crudo sin coordinación de fases. Conectar al sistema de ticks igual que HIIT/Tabata.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "audio",
+      "docs": "docs/WIM_HOF_AUDACITY.md"
+    },
+    {
+      "id": 1,
+      "title": "Generic MP3 player across all timers",
+      "description": "Allow playing lofi Pomodoro tracks inside HIIT/Tabata workout with Ticks, and vice versa. Player should be app-wide, not per-timer.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "audio"
+    },
+    {
+      "id": 2,
+      "title": "Pomodoro improvements",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "ui",
+      "items": [
+        "Default to lofi instead of ticking sound",
+        "Option to disable auto-advance between sessions",
+        "Copy features from pomodorotimer.com",
+        "Hide non-critical text at very small viewports, show only essentials",
+        "Fix repeat track button — currently restarts instead of looping",
+        "Rotate between track name and volume slider instead of showing slider always"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Fix circular progress rings — Pomodoro and Tabata",
+      "description": "Rings must advance in real time. Outer = total progress, inner = current phase.",
+      "status": "backlog",
+      "priority": "high",
+      "area": "ui"
+    },
+    {
+      "id": 4,
+      "title": "Breathing timer circles",
+      "description": "Redesign circles to match or improve on HIIT/Tabata circular progress style. Design reference: Lovable.",
+      "status": "backlog",
+      "priority": "low",
+      "area": "ui"
+    },
+    {
+      "id": 5,
+      "title": "PWA orientation lock — force portrait",
+      "description": "When installed on mobile and opened, app defaults to landscape. Should always be portrait, or show a rotate button when device is in landscape.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "pwa"
+    },
+    {
+      "id": 6,
+      "title": "Landscape layout broken on mobile",
+      "description": "In horizontal orientation all elements are centered and cramped with no layout distribution. Needs proper responsive layout — take Lovable horizontal design as reference.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "ux"
+    },
+    {
+      "id": 7,
+      "title": "Setup screen config icon does nothing",
+      "description": "The gear/config icon shown at the top of the setup screen is not interactive. Either wire it up or remove it.",
+      "status": "backlog",
+      "priority": "low",
+      "area": "ui"
+    },
+    {
+      "id": 8,
+      "title": "Mobile back gesture triggers instantly",
+      "description": "On mobile, swiping back returns immediately with the slightest gesture — the growing arrow icon doesn't appear. The native swipe-back is interfering; needs to be intercepted or the gesture threshold increased.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "ux"
+    },
+    {
+      "id": 9,
+      "title": "Back from timer goes to home instead of setup",
+      "description": "Pressing back from an active timer should return to that timer's setup/config screen, not to the home grid.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "ux"
+    },
+    {
+      "id": 10,
+      "title": "Back while timer is running should confirm",
+      "description": "If the timer is actively running, the back action should show a confirmation dialog before navigating away.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "ux"
+    },
+    {
+      "id": 11,
+      "title": "Audio continues after navigating back to home",
+      "description": "When playing HIIT/Tabata music mode and pressing back, audio does not stop and no alert is shown. Should: pause the timer, show a 'Now Playing' badge on the timer card in home, and allow resuming from the same position when re-entering the timer.",
+      "status": "backlog",
+      "priority": "high",
+      "area": "audio"
+    },
+    {
+      "id": 12,
+      "title": "Wim Hof — Spanish MP3 audio",
+      "description": "Add a Spanish-language MP3 guide for the Wim Hof breathing timer.",
+      "status": "done",
+      "priority": "low",
+      "area": "audio"
+    },
+    {
+      "id": 13,
+      "title": "Parental advisory — 14+ audio content warning",
+      "description": "Add a parental advisory notice for audio content rated for ages 14 and up.",
+      "status": "backlog",
+      "priority": "low",
+      "area": "ux"
+    },
+    {
+      "id": 14,
+      "title": "Wim Hof credits",
+      "description": "Add proper attribution/credits for Wim Hof audio and method.",
+      "status": "done",
+      "priority": "low",
+      "area": "ux"
+    },
+    {
+      "id": 15,
+      "title": "Auto language detection — Spanish for LATAM/Spain",
+      "description": "Default to Spanish (es) for users in Latin America and Spain; default to English (en) for all other regions. Use browser locale or Accept-Language header.",
+      "status": "done",
+      "priority": "medium",
+      "area": "ux"
+    },
+    {
+      "id": 16,
+      "title": "Fix breathing timer responsiveness in landscape",
+      "description": "Breathing timers are broken in horizontal/landscape orientation. Fix layout distribution.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "ux"
+    }
+  ]
+}

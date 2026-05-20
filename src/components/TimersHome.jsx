@@ -1,18 +1,23 @@
+import { useState } from 'preact/hooks'
 import './TimersHome.scss'
 import UserMenu from './auth/UserMenu'
 import { useLang } from '../context/LanguageContext'
+import { loadSessionCounts } from '../utils/localStorage'
+import Credits from './shared/Credits'
 
 const TIMER_STATIC = [
-  { id: 'hiit',           i18nKey: 'hiit',           duration: '12 min', sessions: 892,  icon: 'local_fire_department', component: 'HiitTimer',          accentColor: '#00cc88' },
-  { id: 'tabata',         i18nKey: 'tabata',         duration: '4 min',  sessions: 634,  icon: 'bolt',                  component: 'TabataTimer',        accentColor: '#ff6b35' },
-  { id: 'pomodoro',       i18nKey: 'pomodoro',       duration: '25 min', sessions: 1247, icon: 'timer',                 component: 'PomodoroTimer',      accentColor: '#ff6b6b' },
-  { id: 'box-breathing',  i18nKey: 'boxBreathing',   duration: '5 min',  sessions: 1156, icon: 'self_improvement',      component: 'BoxBreathingTimer',  accentColor: '#4ecdc4' },
-  { id: 'relaxing-breath',i18nKey: 'relaxingBreath', duration: '3 min',  sessions: 923,  icon: 'nights_stay',           component: 'RelaxingBreathTimer',accentColor: '#9b59b6' },
-  { id: 'calming-breath', i18nKey: 'calmingBreath',  duration: '4 min',  sessions: 756,  icon: 'spa',                   component: 'CalmingBreathTimer', accentColor: '#3498db' },
+  { id: 'hiit',           i18nKey: 'hiit',           sessionKey: 'hiit',          duration: '12 min', icon: 'local_fire_department', component: 'HiitTimer',          accentColor: '#00cc88' },
+  { id: 'tabata',         i18nKey: 'tabata',         sessionKey: 'tabata',        duration: '4 min',  icon: 'bolt',                  component: 'TabataTimer',        accentColor: '#ff6b35' },
+  { id: 'pomodoro',       i18nKey: 'pomodoro',       sessionKey: 'pomodoro',      duration: '25 min', icon: 'timer',                 component: 'PomodoroTimer',      accentColor: '#ff6b6b' },
+  { id: 'box-breathing',  i18nKey: 'boxBreathing',   sessionKey: 'boxBreathing',  duration: '5 min',  icon: 'self_improvement',      component: 'BoxBreathingTimer',  accentColor: '#4ecdc4' },
+  { id: 'relaxing-breath',i18nKey: 'relaxingBreath', sessionKey: 'relaxingBreath',duration: '3 min',  icon: 'nights_stay',           component: 'RelaxingBreathTimer',accentColor: '#9b59b6' },
+  { id: 'calming-breath', i18nKey: 'calmingBreath',  sessionKey: 'calmingBreath', duration: '4 min',  icon: 'spa',                   component: 'CalmingBreathTimer', accentColor: '#3498db' },
+  { id: 'wim-hof',        i18nKey: 'wimHof',         sessionKey: 'wimHof',        duration: '11 min', icon: 'air',                   component: 'WimHofTimer',        accentColor: '#4ecdc4' },
 ]
 
 function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOut }) {
   const { t, lang, setLang } = useLang()
+  const [sessionCounts] = useState(() => loadSessionCounts())
 
   const timers = TIMER_STATIC.map(s => ({
     ...s,
@@ -20,14 +25,15 @@ function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOu
     title:       t(`${s.i18nKey}.title`),
     description: t(`${s.i18nKey}.description`),
     category:    t(`${s.i18nKey}.category`),
+    sessions:    sessionCounts[s.sessionKey] || 0,
   }))
 
   return (
     <div className="timers-home">
       <header className="home-header">
         <div className="header-content">
-          <span className="header-label">WORKOUT TIMERS</span>
-          <h1 className="header-title">Choose Your Timer</h1>
+          <span className="header-label">{t('home.heading')}</span>
+          <h1 className="header-title">{t('home.subtitle')}</h1>
         </div>
         <div className="header-auth">
           <button
@@ -37,14 +43,7 @@ function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOu
           >
             {t('language.toggle')}
           </button>
-          {session ? (
-            <UserMenu session={session} onSignOut={onSignOut} />
-          ) : (
-            <button className="header-auth__login-btn" onClick={onAuthClick}>
-              <span className="material-symbols-outlined">account_circle</span>
-              {t('auth.signIn')}
-            </button>
-          )}
+          {session && <UserMenu session={session} onSignOut={onSignOut} />}
         </div>
       </header>
 
@@ -78,19 +77,13 @@ function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOu
                 <p className="timer-card__description">{timer.description}</p>
               </div>
 
-              <div className="timer-card__footer">
-                <div className="timer-card__stats">
-                  <span className="material-symbols-outlined">bar_chart</span>
-                  {timer.sessions.toLocaleString()} sessions
-                </div>
-                <div className="timer-card__start">
-                  <span className="material-symbols-outlined">play_circle</span>
-                </div>
-              </div>
             </div>
           )
         })}
       </div>
+      <footer className="home-footer">
+        <Credits />
+      </footer>
     </div>
   )
 }

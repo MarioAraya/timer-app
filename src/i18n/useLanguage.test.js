@@ -21,8 +21,8 @@ beforeEach(() => global.localStorage.clear())
 // ─────────────────────────────────────────────────────
 
 describe('constants', () => {
-  it('DEFAULT_LANG is es', () => {
-    expect(DEFAULT_LANG).toBe('es')
+  it('DEFAULT_LANG is en', () => {
+    expect(DEFAULT_LANG).toBe('en')
   })
 
   it('VALID_LANGS includes es and en', () => {
@@ -36,8 +36,8 @@ describe('constants', () => {
 // ─────────────────────────────────────────────────────
 
 describe('loadLanguage', () => {
-  it('returns es when localStorage is empty', () => {
-    expect(loadLanguage()).toBe('es')
+  it('returns en when localStorage is empty', () => {
+    expect(loadLanguage()).toBe('en')
   })
 
   it('returns saved lang when en was stored', () => {
@@ -45,14 +45,14 @@ describe('loadLanguage', () => {
     expect(loadLanguage()).toBe('en')
   })
 
-  it('returns es when stored value is invalid', () => {
+  it('returns en when stored value is invalid', () => {
     global.localStorage.setItem('timer-app-lang', 'fr')
-    expect(loadLanguage()).toBe('es')
+    expect(loadLanguage()).toBe('en')
   })
 
-  it('returns es when stored value is garbage', () => {
+  it('returns en when stored value is garbage', () => {
     global.localStorage.setItem('timer-app-lang', '???')
-    expect(loadLanguage()).toBe('es')
+    expect(loadLanguage()).toBe('en')
   })
 })
 
@@ -122,10 +122,10 @@ describe('t() fallbacks', () => {
     expect(() => t('es', '')).not.toThrow()
   })
 
-  it('no explota con lang inválido, usa es como fallback', () => {
+  it('no explota con lang inválido, usa en como fallback', () => {
     expect(() => t('fr', 'setup.startButton')).not.toThrow()
     const val = t('fr', 'setup.startButton')
-    expect(val).toBe(t('es', 'setup.startButton'))
+    expect(val).toBe(t('en', 'setup.startButton'))
   })
 
   it('profundidad 3+ niveles funciona si existe', () => {
@@ -153,4 +153,63 @@ describe('t() claves clave de UI', () => {
       expect(t('en', key)).not.toBe(key)
     })
   }
+})
+
+// ─────────────────────────────────────────────────────
+// Claves nuevas: controls resume/loading + pomodoro.audio
+// ─────────────────────────────────────────────────────
+
+describe('t() active.controls — claves nuevas', () => {
+  it('active.controls.resume existe en ES', () => {
+    const v = t('es', 'active.controls.resume')
+    expect(v).not.toBe('active.controls.resume')
+    expect(v.length).toBeGreaterThan(0)
+  })
+
+  it('active.controls.resume existe en EN', () => {
+    const v = t('en', 'active.controls.resume')
+    expect(v).not.toBe('active.controls.resume')
+    expect(v.length).toBeGreaterThan(0)
+  })
+
+  it('active.controls.loading existe en ES', () => {
+    const v = t('es', 'active.controls.loading')
+    expect(v).not.toBe('active.controls.loading')
+    expect(v.length).toBeGreaterThan(0)
+  })
+
+  it('active.controls.loading existe en EN', () => {
+    const v = t('en', 'active.controls.loading')
+    expect(v).not.toBe('active.controls.loading')
+    expect(v.length).toBeGreaterThan(0)
+  })
+
+  it('resume ES ≠ EN', () => {
+    expect(t('es', 'active.controls.resume')).not.toBe(t('en', 'active.controls.resume'))
+  })
+})
+
+describe('t() pomodoro.audio — claves nuevas', () => {
+  const audioKeys = [
+    'pomodoro.audio.lofi',
+    'pomodoro.audio.beeps',
+    'pomodoro.audio.loading',
+    'pomodoro.audio.pauseMusic',
+    'pomodoro.audio.playMusic',
+    'pomodoro.audio.repeatTrack',
+    'pomodoro.audio.nextTrack',
+  ]
+
+  for (const key of audioKeys) {
+    it(`'${key}' existe en ES y EN`, () => {
+      expect(t('es', key)).not.toBe(key)
+      expect(t('en', key)).not.toBe(key)
+      expect(t('es', key).length).toBeGreaterThan(0)
+      expect(t('en', key).length).toBeGreaterThan(0)
+    })
+  }
+
+  it('pomodoro.audio.lofi ES ≠ EN (nombres de idioma distintos)', () => {
+    expect(t('es', 'pomodoro.audio.lofi')).not.toBe(t('en', 'pomodoro.audio.lofi'))
+  })
 })

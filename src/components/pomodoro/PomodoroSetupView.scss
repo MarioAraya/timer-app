@@ -1,0 +1,343 @@
+$bg-dark: #18181b;
+$text-primary: #ffffff;
+$text-secondary: rgba(255, 255, 255, 0.4);
+$text-muted: rgba(255, 255, 255, 0.6);
+
+// Pomodoro accent: tomato red
+$accent: rgb(239, 68, 68);
+$accent-glow: rgba(239, 68, 68, 0.3);
+$accent-light: rgba(239, 68, 68, 0.1);
+$accent-border: rgba(239, 68, 68, 0.25);
+
+.pomodoro-setup-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
+  background: $bg-dark;
+  color: $text-primary;
+  font-family: 'Lexend', sans-serif;
+  padding-bottom: 120px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+// ── Header ──────────────────────────────────────────────────────────────────
+.psetup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  background: rgba(24, 24, 27, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+
+  .back-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: $text-primary;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.2s;
+    flex-shrink: 0;
+
+    &:hover { background: rgba(255, 255, 255, 0.1); }
+
+    .material-symbols-outlined { font-size: 22px; }
+  }
+
+  .psetup-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+    flex: 1;
+  }
+
+  .psetup-header-spacer {
+    width: 40px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Main ────────────────────────────────────────────────────────────────────
+.psetup-main {
+  flex: 1;
+  padding: 24px 20px 8px;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.psetup-subtitle {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 28px;
+  line-height: 1.3;
+  color: $text-primary;
+}
+
+// ── Preset list ─────────────────────────────────────────────────────────────
+.psetup-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.psetup-preset-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border: none;
+  background: transparent;
+  color: $text-primary;
+  cursor: pointer;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  transition: background 0.15s;
+  border-radius: 0;
+  width: 100%;
+  font-family: 'Lexend', sans-serif;
+
+  &:first-child { border-top: 1px solid rgba(255, 255, 255, 0.07); }
+
+  &:hover { background: rgba(255, 255, 255, 0.04); }
+
+  &.selected {
+    background: $accent-light;
+  }
+}
+
+// ── Radio button ─────────────────────────────────────────────────────────────
+.psetup-radio {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.2s;
+
+  &.checked {
+    border-color: $accent;
+    background: $accent-light;
+  }
+}
+
+.psetup-radio-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $accent;
+  box-shadow: 0 0 8px $accent-glow;
+}
+
+// ── Preset info ──────────────────────────────────────────────────────────────
+.psetup-preset-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.psetup-preset-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: $text-primary;
+}
+
+.psetup-preset-times {
+  font-size: 14px;
+  color: $text-secondary;
+  font-weight: 500;
+}
+
+// ── Custom sliders ───────────────────────────────────────────────────────────
+.psetup-custom-sliders {
+  margin-top: 8px;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid $accent-border;
+  border-radius: 16px;
+  box-shadow: 0 0 20px $accent-glow;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.psetup-slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.psetup-slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.psetup-slider-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: $text-primary;
+}
+
+.psetup-slider-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-secondary;
+  letter-spacing: 0.05em;
+}
+
+// Reuse slider styles from WorkoutSetupView pattern
+.slider-container {
+  position: relative;
+  height: 24px;
+  display: flex;
+  align-items: center;
+
+  .slider {
+    position: absolute;
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    z-index: 2;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid $accent;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid $accent;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      border: none;
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+
+  .slider-fill {
+    position: absolute;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 3px;
+    pointer-events: none;
+
+    &.primary {
+      background: $accent;
+      box-shadow: 0 0 10px $accent-glow;
+    }
+  }
+}
+
+// ── Footer ───────────────────────────────────────────────────────────────────
+.psetup-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: 24px 20px;
+  background: linear-gradient(to top, $bg-dark, $bg-dark 80%, transparent);
+
+  .psetup-start-button {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: $accent;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 20px;
+    font-family: 'Lexend', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 10px 30px $accent-glow;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px $accent-glow;
+    }
+
+    &:active { transform: scale(0.98); }
+
+    .material-symbols-outlined {
+      font-size: 24px;
+      font-variation-settings: 'FILL' 1;
+    }
+  }
+}
+
+// ── Responsive ───────────────────────────────────────────────────────────────
+@media (min-width: 768px) {
+  .psetup-header {
+    padding: 20px 48px;
+
+    .psetup-title { font-size: 20px; }
+    .back-button, .psetup-header-spacer { width: 48px; }
+  }
+
+  .psetup-main {
+    padding: 32px 48px 8px;
+    max-width: 640px;
+  }
+
+  .psetup-subtitle { font-size: 26px; margin-bottom: 32px; }
+
+  .psetup-preset-row { padding: 22px 4px; }
+  .psetup-preset-name { font-size: 19px; }
+  .psetup-preset-times { font-size: 15px; }
+
+  .psetup-footer {
+    padding: 28px 48px;
+
+    .psetup-start-button {
+      max-width: 640px;
+      padding: 22px 40px;
+      font-size: 18px;
+    }
+  }
+}

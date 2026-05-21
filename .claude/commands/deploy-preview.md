@@ -12,6 +12,9 @@ Pasos:
 4. Reportar tamaño del bundle: !`du -sh dist 2>/dev/null && ls -lh dist/assets/*.js dist/assets/*.css 2>/dev/null | head -20`
 5. Arrancar preview en background: `npm run preview`
 6. Reportar URL local (típicamente http://localhost:4173).
-7. Recordatorio: validar manualmente HIIT timer + sync MP3 antes de push a `main`/`release` (Drone autodespliega).
+7. Recordatorio: validar manualmente HIIT timer + sync MP3 antes de deploy.
+   - `git push origin main` → Vercel (frontend público)
+   - `git push gitea main` → Drone CI (homelab timers.lab)
+   - `/deploy` → pushea a ambos simultáneamente
 
 Si `$ARGUMENTS` = "ship": después de preview OK, sugerir comando `git push origin main` (no ejecutar sin confirmación).

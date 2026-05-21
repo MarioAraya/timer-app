@@ -93,14 +93,33 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .wh-audio-source {
+    margin: 0 0 0.5rem;
+    font-size: 0.65rem;
+    opacity: 0.45;
+    letter-spacing: 0.02em;
+  }
+
+  .wh-credit {
+    margin: 0;
+    font-size: 0.72rem;
+    opacity: 0.4;
+    line-height: 1.5;
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      &:hover { opacity: 1; }
+    }
+  }
+
   .wh-controls {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
   }
-
-  &.wh-clickable { cursor: pointer; }
 
   .wh-btn {
     display: inline-flex;
@@ -114,16 +133,11 @@
     cursor: pointer;
     transition: transform 0.15s, background 0.2s;
     &:active { transform: scale(0.97); }
-    .material-symbols-outlined { font-size: 1.4rem; }
   }
 
   .wh-btn-primary {
     background: linear-gradient(90deg, #4ecdc4 0%, #44a08d 100%);
     color: #0f2027;
-    padding: 1.15rem 2.4rem;
-    font-size: 1.2rem;
-    box-shadow: 0 8px 24px rgba(78, 205, 196, 0.35);
-    .material-symbols-outlined { font-size: 1.8rem; }
   }
 
   .wh-btn-secondary {
@@ -139,5 +153,28 @@
     .wh-title { font-size: 1.6rem; }
     .wh-time-display { font-size: 2.6rem; .wh-duration { font-size: 1.5rem; } }
     &.maximized { padding: 4rem 1.25rem 2rem; }
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .wim-hof-timer.maximized {
+    padding: 0.75rem 3rem;
+    align-items: center;
+
+    .wh-content {
+      flex-direction: row;
+      flex-wrap: wrap;
+      column-gap: 2rem;
+      row-gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wh-title { font-size: 1.3rem; }
+    .wh-subtitle { display: none; }
+    .wh-time-display { font-size: 2rem; }
+    .wh-progress { width: 200px; }
+    .wh-remaining { font-size: 0.8rem; }
+    .wh-credit { display: none; }
   }
 }

@@ -12,5 +12,8 @@ export default defineConfig({
         api: 'modern-compiler'
       }
     }
-  }
+  },
+  test: {
+    css: true,
+  },
 })

@@ -8,6 +8,7 @@ import Confetti from './shared/Confetti'
 import CircularProgress from './shared/CircularProgress'
 import { savePomodoroState, loadPomodoroState, clearPomodoroState } from '../utils/localStorage'
 import PomodoroSetupView from './pomodoro/PomodoroSetupView'
+import { useLang } from '../context/LanguageContext'
 
 const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60)
@@ -22,6 +23,7 @@ function PomodoroTimer({
   showBackButton = true,
   onBackClick
 }) {
+  const { t } = useLang()
   const savedState = loadPomodoroState()
   const containerRef = useRef(null)
 
@@ -374,7 +376,7 @@ function PomodoroTimer({
           <button
             className="control-button secondary"
             onClick={(e) => { e.stopPropagation(); handleReset() }}
-            title="Reset"
+            title={t('active.controls.reset')}
           >
             <span className="material-symbols-outlined">refresh</span>
           </button>
@@ -401,7 +403,7 @@ function PomodoroTimer({
               className="control-button secondary"
               onClick={(e) => { e.stopPropagation(); handleSkip() }}
               disabled={isFinished}
-              title="Skip phase"
+              title={t('active.controls.skip')}
             >
               <span className="material-symbols-outlined">skip_next</span>
             </button>
@@ -429,7 +431,7 @@ function PomodoroTimer({
                 {musicMode ? 'music_note' : 'music_off'}
               </span>
               <span className="audio-mode-label">
-                {playerStatus === 'loading' ? 'Loading…' : musicMode ? 'Lofi Music' : 'Beeps'}
+                {playerStatus === 'loading' ? t('pomodoro.audio.loading') : musicMode ? t('pomodoro.audio.lofi') : t('pomodoro.audio.beeps')}
               </span>
             </button>
 
@@ -440,7 +442,7 @@ function PomodoroTimer({
                   data-testid="pomodoro-music-play"
                   onClick={handleMusicToggle}
                   disabled={playerStatus === 'loading'}
-                  title={musicPlaying ? 'Pause music' : 'Play music'}
+                  title={musicPlaying ? t('pomodoro.audio.pauseMusic') : t('pomodoro.audio.playMusic')}
                 >
                   <span className="material-symbols-outlined">
                     {musicPlaying ? 'pause' : 'play_arrow'}
@@ -451,7 +453,7 @@ function PomodoroTimer({
                   data-testid="pomodoro-music-repeat"
                   onClick={(e) => { e.stopPropagation(); pomodoroAudio.repeatTrack() }}
                   disabled={playerStatus !== 'ready'}
-                  title="Repeat track"
+                  title={t('pomodoro.audio.repeatTrack')}
                 >
                   <span className="material-symbols-outlined">replay</span>
                 </button>
@@ -460,7 +462,7 @@ function PomodoroTimer({
                   data-testid="pomodoro-music-next"
                   onClick={(e) => { e.stopPropagation(); pomodoroAudio.nextTrack() }}
                   disabled={playerStatus !== 'ready'}
-                  title="Next track"
+                  title={t('pomodoro.audio.nextTrack')}
                 >
                   <span className="material-symbols-outlined">skip_next</span>
                 </button>

@@ -33,3 +33,6 @@ dist/
 test-results/
 .claude/settings.local.json
 .claude/worktrees/
+
+# Test e2e
+e2e/screenshots

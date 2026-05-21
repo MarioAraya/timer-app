@@ -20,6 +20,8 @@
   "devDependencies": {
     "@playwright/test": "^1.52.0",
     "@preact/preset-vite": "^2.8.1",
+    "@testing-library/preact": "^3.2.4",
+    "jsdom": "^29.1.1",
     "sass": "^1.89.2",
     "vite": "^5.0.8",
     "vitest": "^4.1.3"

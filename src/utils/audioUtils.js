@@ -48,7 +48,7 @@ export const LOFI_TRACKS = [
 // Cycles through all 9 lofi tracks sequentially, looping indefinitely.
 // Mirrors WorkoutAudioPlayer's play/resume/watchdog flow so HIIT-style
 // browser autoplay handling applies to pomodoro/breathing too.
-class LofiPlaylistPlayer {
+export class LofiPlaylistPlayer {
   constructor(tracks, defaultVolume = 0.5) {
     this.config = { name: 'Lofi', defaultVolume, startTime: 0 }
     this.tracks = tracks

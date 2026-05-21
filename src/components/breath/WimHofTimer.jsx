@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from 'preact/hooks'
 import './WimHofTimer.scss'
 import { useLang } from '../../context/LanguageContext'
 import { incrementSessionCount } from '../../utils/localStorage'
-
-const MP3_URL = 'https://veqjsjzuaviqctplwkdb.supabase.co/storage/v1/object/public/audio/win_hof_4rounds.mp3'
+import { getWimHofUrl } from '../../config/wimHofAudio'
 
 function formatTime(s) {
   if (!isFinite(s) || s < 0) s = 0
@@ -13,24 +12,39 @@ function formatTime(s) {
 }
 
 function WimHofTimer({ autoMaximize = true, showBackButton, onBackClick, onFinish }) {
-  const { t } = useLang()
+  const { lang, t } = useLang()
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [hasStarted, setHasStarted] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const [duration, setDuration] = useState(0)
+  const [audioSource, setAudioSource] = useState(null)
   const maximized = autoMaximize
 
+  const mp3Url = getWimHofUrl(lang)
+
   useEffect(() => {
-    const audio = new Audio(MP3_URL)
+    const prev = audioRef.current
+    if (prev) {
+      prev.pause()
+      prev.src = ''
+    }
+
+    const audio = new Audio(mp3Url)
     audio.preload = 'auto'
     audioRef.current = audio
+    setElapsed(0)
+    setIsPlaying(false)
+    setDuration(0)
+    setAudioSource(null)
+
+    if ('caches' in self) {
+      caches.match(mp3Url).then(hit => setAudioSource(hit ? 'cache' : 'network'))
+    }
 
     const onTime = () => setElapsed(audio.currentTime)
     const onMeta = () => setDuration(audio.duration)
     const onEnd = () => {
       setIsPlaying(false)
-      setHasStarted(false)
       setElapsed(0)
       incrementSessionCount('wimHof')
       onFinish?.()
@@ -47,7 +61,7 @@ function WimHofTimer({ autoMaximize = true, showBackButton, onBackClick, onFinis
       audio.removeEventListener('ended', onEnd)
       audioRef.current = null
     }
-  }, [])
+  }, [mp3Url])
 
   const togglePlay = async () => {
     const audio = audioRef.current
@@ -56,7 +70,6 @@ function WimHofTimer({ autoMaximize = true, showBackButton, onBackClick, onFinis
       try {
         await audio.play()
         setIsPlaying(true)
-        setHasStarted(true)
       } catch (e) {
         setIsPlaying(false)
       }
@@ -73,26 +86,15 @@ function WimHofTimer({ autoMaximize = true, showBackButton, onBackClick, onFinis
     audio.currentTime = 0
     setElapsed(0)
     setIsPlaying(false)
-    setHasStarted(false)
   }
-
-  const handleScreenClick = () => {
-    if (!hasStarted) return
-    togglePlay()
-  }
-
-  const stop = (e) => e.stopPropagation()
 
   const remaining = Math.max(0, duration - elapsed)
   const progress = duration > 0 ? (elapsed / duration) * 100 : 0
 
   return (
-    <div
-      className={`wim-hof-timer ${maximized ? 'maximized' : ''} ${hasStarted ? 'wh-clickable' : ''}`}
-      onClick={handleScreenClick}
-    >
+    <div className={`wim-hof-timer ${maximized ? 'maximized' : ''}`}>
       {showBackButton && (
-        <button className="wh-back" onClick={(e) => { stop(e); onBackClick?.() }} aria-label="Back">
+        <button className="wh-back" onClick={onBackClick} aria-label="Back">
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
       )}
@@ -114,17 +116,27 @@ function WimHofTimer({ autoMaximize = true, showBackButton, onBackClick, onFinis
         <p className="wh-remaining">{t('wimHof.remaining')}: {formatTime(remaining)}</p>
 
         <div className="wh-controls">
-          <button className="wh-btn wh-btn-primary" onClick={(e) => { stop(e); togglePlay() }}>
+          <button className="wh-btn wh-btn-primary" onClick={togglePlay}>
             <span className="material-symbols-outlined">
               {isPlaying ? 'pause' : 'play_arrow'}
             </span>
             {isPlaying ? t('active.controls.pause') : t('active.controls.start')}
           </button>
-          <button className="wh-btn wh-btn-secondary" onClick={(e) => { stop(e); reset() }}>
+          <button className="wh-btn wh-btn-secondary" onClick={reset}>
             <span className="material-symbols-outlined">restart_alt</span>
             {t('active.controls.reset')}
           </button>
         </div>
+
+        {audioSource && (
+          <p className="wh-audio-source">
+            {audioSource === 'cache' ? '⚡ caché' : '🌐 internet'}
+          </p>
+        )}
+
+        <p className="wh-credit">
+          {t('wimHof.credit')}
+        </p>
       </div>
     </div>
   )

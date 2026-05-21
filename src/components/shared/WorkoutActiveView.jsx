@@ -93,7 +93,7 @@ function WorkoutActiveView({
     }
   }, [isMaximized, onToggleFullscreen])
 
-  const modeClass = isWorkPhase || isPreparationPhase ? 'work-mode' : 'rest-mode'
+  const modeClass = isPreparationPhase ? 'prep-mode' : isWorkPhase ? 'work-mode' : 'rest-mode'
   const hasEverStarted = isRunning || totalElapsed > 0
 
   return (
@@ -120,7 +120,7 @@ function WorkoutActiveView({
         </div>
         <button className="fullscreen-button" onClick={handleFullscreen}>
           <span className="material-symbols-outlined">
-            {isMaximized ? 'fullscreen_exit' : 'fullscreen'}
+            {isMaximized ? 'close_fullscreen' : 'open_in_full'}
           </span>
         </button>
       </header>
@@ -195,16 +195,15 @@ function WorkoutActiveView({
             <span className="btn-tooltip">{musicMode ? t('active.controls.musicOn') : t('active.controls.beepsOn')}</span>
           </button>
 
-          {hasEverStarted && (
-            <button
-              data-testid="ctrl-reset"
-              className="control-button secondary"
-              onClick={onReset}
-            >
-              <span className="material-symbols-outlined">refresh</span>
-              <span className="btn-tooltip">{t('active.controls.reset')}</span>
-            </button>
-          )}
+          <button
+            data-testid="ctrl-reset"
+            className="control-button secondary"
+            onClick={onReset}
+            disabled={!hasEverStarted}
+          >
+            <span className="material-symbols-outlined">refresh</span>
+            <span className="btn-tooltip">{t('active.controls.reset')}</span>
+          </button>
 
           {!isRunning ? (
             <button
@@ -223,16 +222,24 @@ function WorkoutActiveView({
             </button>
           )}
 
-          {hasEverStarted && (
-            <button
-              className="control-button secondary"
-              onClick={onSkip}
-              disabled={isFinished}
-            >
-              <span className="material-symbols-outlined">skip_next</span>
-              <span className="btn-tooltip">{t('active.controls.skip')}</span>
-            </button>
-          )}
+          <button
+            className="control-button secondary"
+            onClick={onSkip}
+            disabled={isFinished || !hasEverStarted}
+          >
+            <span className="material-symbols-outlined">skip_next</span>
+            <span className="btn-tooltip">{t('active.controls.skip')}</span>
+          </button>
+
+          <button
+            className="control-button secondary"
+            onClick={handleFullscreen}
+          >
+            <span className="material-symbols-outlined">
+              {isMaximized ? 'close_fullscreen' : 'open_in_full'}
+            </span>
+            <span className="btn-tooltip">Fullscreen</span>
+          </button>
         </div>
       </footer>
 

@@ -154,3 +154,62 @@ describe('t() claves clave de UI', () => {
     })
   }
 })
+
+// ─────────────────────────────────────────────────────
+// Claves nuevas: controls resume/loading + pomodoro.audio
+// ─────────────────────────────────────────────────────
+
+describe('t() active.controls — claves nuevas', () => {
+  it('active.controls.resume existe en ES', () => {
+    const v = t('es', 'active.controls.resume')
+    expect(v).not.toBe('active.controls.resume')
+    expect(v.length).toBeGreaterThan(0)
+  })
+
+  it('active.controls.resume existe en EN', () => {
+    const v = t('en', 'active.controls.resume')
+    expect(v).not.toBe('active.controls.resume')
+    expect(v.length).toBeGreaterThan(0)
+  })
+
+  it('active.controls.loading existe en ES', () => {
+    const v = t('es', 'active.controls.loading')
+    expect(v).not.toBe('active.controls.loading')
+    expect(v.length).toBeGreaterThan(0)
+  })
+
+  it('active.controls.loading existe en EN', () => {
+    const v = t('en', 'active.controls.loading')
+    expect(v).not.toBe('active.controls.loading')
+    expect(v.length).toBeGreaterThan(0)
+  })
+
+  it('resume ES ≠ EN', () => {
+    expect(t('es', 'active.controls.resume')).not.toBe(t('en', 'active.controls.resume'))
+  })
+})
+
+describe('t() pomodoro.audio — claves nuevas', () => {
+  const audioKeys = [
+    'pomodoro.audio.lofi',
+    'pomodoro.audio.beeps',
+    'pomodoro.audio.loading',
+    'pomodoro.audio.pauseMusic',
+    'pomodoro.audio.playMusic',
+    'pomodoro.audio.repeatTrack',
+    'pomodoro.audio.nextTrack',
+  ]
+
+  for (const key of audioKeys) {
+    it(`'${key}' existe en ES y EN`, () => {
+      expect(t('es', key)).not.toBe(key)
+      expect(t('en', key)).not.toBe(key)
+      expect(t('es', key).length).toBeGreaterThan(0)
+      expect(t('en', key).length).toBeGreaterThan(0)
+    })
+  }
+
+  it('pomodoro.audio.lofi ES ≠ EN (nombres de idioma distintos)', () => {
+    expect(t('es', 'pomodoro.audio.lofi')).not.toBe(t('en', 'pomodoro.audio.lofi'))
+  })
+})

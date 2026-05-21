@@ -25,9 +25,9 @@
   100% { filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), 0.4)); }
 }
 
-$bg-dark: #18181b;
+$bg-dark: #0a0a0a;
 $bg-card: rgba(255, 255, 255, 0.05);
-$bg-card-border: rgba(255, 255, 255, 0.1);
+$bg-card-border: rgba(255, 255, 255, 0.08);
 $text-primary: #ffffff;
 $text-secondary: rgba(255, 255, 255, 0.4);
 $text-muted: rgba(255, 255, 255, 0.6);
@@ -47,25 +47,31 @@ $text-muted: rgba(255, 255, 255, 0.6);
   --rest-rgb: 78, 205, 196;
   --btn-text: #fff;
 
-  // HIIT green theme
+  // HIIT: green=work, amber=rest, blue=prep
   &.theme-hiit {
-    --accent-rgb: 0, 204, 136;
-    --rest-rgb: 255, 107, 157;
-    --btn-text: #18181b;
+    --accent-rgb: 27, 212, 127;   // work = green hsl(158 84% 52%)
+    --primary-rgb: 27, 212, 127;  // fixed border = always work green
+    --btn-text: #0a0a0a;
   }
+  &.theme-hiit.rest-mode  { --accent-rgb: 250, 167, 22;  --btn-text: #fff; }
+  &.theme-hiit.prep-mode  { --accent-rgb: 35, 147, 247;  --btn-text: #0a0a0a; }
 
-  // Tabata orange theme (explicit)
+  // Tabata orange/teal theme
   &.theme-tabata {
     --accent-rgb: 255, 107, 53;
     --rest-rgb: 78, 205, 196;
+    --primary-rgb: 255, 107, 53;
     --btn-text: #fff;
   }
+  &.theme-tabata.rest-mode { --accent-rgb: 78, 205, 196; }
 
   display: flex;
   flex-direction: column;
   height: 100vh;
   height: 100dvh; // dynamic viewport height for mobile Safari
   background: $bg-dark;
+  background-image: radial-gradient(ellipse at center top, rgba(var(--accent-rgb), 0.08) 0%, transparent 55%);
+  transition: background-image 0.6s ease;
   position: relative;
   overflow: hidden;
   font-family: 'Lexend', sans-serif;
@@ -95,21 +101,21 @@ $text-muted: rgba(255, 255, 255, 0.6);
     }
   }
 
-  // ── Work mode (default) ──
-  &.work-mode {
+  // ── Work / Prep / Rest modes — all use --accent-rgb (set per theme+mode) ──
+  &.work-mode, &.prep-mode {
     .progress-ring-fill.outer {
       stroke: rgb(var(--accent-rgb));
     }
 
     .progress-ring-fill.inner {
       stroke: rgb(var(--accent-rgb));
-      filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), 0.3));
+      filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), 0.4));
       animation: work-tick 2s ease-in-out infinite;
     }
 
     .set-progress .progress-fill {
       background: rgb(var(--accent-rgb));
-      box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.3);
+      box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.5);
     }
 
     .motivational-text .highlight {
@@ -122,66 +128,53 @@ $text-muted: rgba(255, 255, 255, 0.6);
     }
 
     .progress-time {
-      text-shadow: 0 0 15px rgba(var(--accent-rgb), 0.3);
+      text-shadow:
+        0 0 24px rgba(var(--accent-rgb), 0.6),
+        0 0 60px rgba(var(--accent-rgb), 0.25);
     }
   }
 
   // ── Rest mode ──
   &.rest-mode {
-    .stat-card.mode {
-      background: rgba(var(--rest-rgb), 0.1);
-      border-color: rgba(var(--rest-rgb), 0.2);
-
-      .stat-label {
-        color: rgba(var(--rest-rgb), 0.6);
-      }
-
-      .stat-value {
-        color: rgb(var(--rest-rgb));
-      }
-    }
-
     // Breathing container
     .circular-progress-container {
       animation: rest-breathe 2.8s ease-in-out infinite;
     }
 
     .progress-ring-fill.outer {
-      stroke: rgb(var(--rest-rgb));
+      stroke: rgb(var(--accent-rgb));
       animation: rest-glow-outer 2.8s ease-in-out infinite;
     }
 
     .progress-ring-fill.inner {
-      stroke: rgb(var(--rest-rgb));
+      stroke: rgb(var(--accent-rgb));
+      filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), 0.4));
       animation: rest-glow-inner 2.8s ease-in-out infinite;
     }
 
     .set-progress .progress-fill {
-      background: rgb(var(--rest-rgb));
-      box-shadow: 0 0 10px rgba(var(--rest-rgb), 0.3);
+      background: rgb(var(--accent-rgb));
+      box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.5);
     }
 
     .motivational-text .highlight {
-      color: rgb(var(--rest-rgb));
+      color: rgb(var(--accent-rgb));
     }
 
     .exercise-name {
-      color: rgb(var(--rest-rgb));
-      text-shadow: 0 0 30px rgba(var(--rest-rgb), 0.3);
+      color: rgb(var(--accent-rgb));
+      text-shadow: 0 0 30px rgba(var(--accent-rgb), 0.3);
     }
 
     .progress-time {
-      text-shadow: 0 0 15px rgba(var(--rest-rgb), 0.3);
+      text-shadow:
+        0 0 24px rgba(var(--accent-rgb), 0.6),
+        0 0 60px rgba(var(--accent-rgb), 0.25);
     }
 
     .bg-glow {
-      &.top-left {
-        background: rgba(var(--rest-rgb), 0.05);
-      }
-
-      &.bottom-right {
-        background: rgba(var(--rest-rgb), 0.1);
-      }
+      &.top-left { background: rgba(var(--accent-rgb), 0.05); }
+      &.bottom-right { background: rgba(var(--accent-rgb), 0.1); }
     }
   }
 
@@ -306,11 +299,11 @@ $text-muted: rgba(255, 255, 255, 0.6);
       }
 
       &.mode {
-        background: rgba(var(--accent-rgb), 0.1);
-        border: 1px solid rgba(var(--accent-rgb), 0.2);
+        background: rgba(var(--primary-rgb), 0.07);
+        border: 1px solid rgba(var(--primary-rgb), 0.35);
 
         .stat-label {
-          color: rgba(var(--accent-rgb), 0.6);
+          color: rgba(var(--primary-rgb), 0.5);
         }
 
         .stat-value {
@@ -354,9 +347,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
     }
 
     .progress-ring-fill {
-      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-                  stroke 0.4s ease,
-                  opacity 0.4s ease;
+      /* stroke-dashoffset transition is handled inline in CircularProgress.jsx */
 
       &.outer {
         stroke: rgb(var(--accent-rgb));
@@ -528,9 +519,14 @@ $text-muted: rgba(255, 255, 255, 0.6);
           border: 1px solid $bg-card-border;
           color: $text-muted;
 
-          &:hover {
+          &:hover:not(:disabled) {
             background: rgba(255, 255, 255, 0.1);
             color: $text-primary;
+          }
+
+          &:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
           }
 
           .material-symbols-outlined {

@@ -1,0 +1,57 @@
+{
+  "name": "timer-app (isolated + Claude Code)",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  // Go 1.21 (matches backend/go.mod) installed via official feature.
+  "features": {
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.21"
+    }
+  },
+
+  // Required so init-firewall.sh can program iptables/ipset INSIDE the
+  // container only. It cannot touch the host's networking.
+  "runArgs": [
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW"
+  ],
+
+  "forwardPorts": [5555, 8080],
+  "portsAttributes": {
+    "5555": { "label": "Vite dev server" },
+    "8080": { "label": "Go API" }
+  },
+
+  // Named volumes (NOT host binds): the Claude login token and shell
+  // history survive rebuilds but stay isolated from your real machine.
+  "mounts": [
+    "source=timerapp-claude-config,target=/home/node/.claude,type=volume",
+    "source=timerapp-bashhistory,target=/commandhistory,type=volume"
+  ],
+
+  "containerEnv": {
+    "PLAYWRIGHT_BROWSERS_PATH": "/home/node/.cache/ms-playwright",
+    "HISTFILE": "/commandhistory/.bash_history"
+  },
+
+  "remoteUser": "node",
+
+  // Runs once after the container is created (network still open here).
+  "postCreateCommand": "sudo chown -R node:node /home/node/.claude /commandhistory && npm ci && npx playwright install chromium && (cd backend && go mod download)",
+
+  // Runs on every start, AFTER postCreate: locks down outbound network.
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "ms-playwright.playwright",
+        "syler.sass-indented",
+        "vitest.explorer"
+      ]
+    }
+  }
+}

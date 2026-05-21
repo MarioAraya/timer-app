@@ -23,7 +23,9 @@ const es = {
       reset: 'Reiniciar',
       start: 'Iniciar',
       pause: 'Pausar',
+      resume: 'Reanudar',
       skip: 'Saltar',
+      loading: 'Cargando...',
       musicOn: 'Música',
       beepsOn: 'Pitidos',
     },
@@ -57,6 +59,15 @@ const es = {
     title: 'Temporizador Pomodoro',
     description: 'Enfócate 25 minutos, luego toma un descanso de 5 minutos. Ideal para productividad y sesiones de trabajo profundo.',
     category: 'Productividad',
+    audio: {
+      lofi: 'Música Lofi',
+      beeps: 'Pitidos',
+      loading: 'Cargando...',
+      pauseMusic: 'Pausar música',
+      playMusic: 'Reproducir música',
+      repeatTrack: 'Repetir pista',
+      nextTrack: 'Siguiente pista',
+    },
     setup: {
       title: 'Pomodoro',
       subtitle: 'Personalizar nivel de concentración',
@@ -97,6 +108,7 @@ const es = {
     category: 'Bienestar',
     subtitle: 'Respiración guiada por audio (4 rondas)',
     remaining: 'Restante',
+    credit: 'Método Wim Hof® de Wim Hof. Solo para uso educativo y de bienestar.',
   },
   auth: {
     signIn: 'Inicia sesión',

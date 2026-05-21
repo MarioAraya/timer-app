@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timer-app-v2';
+const CACHE_NAME = 'timer-app-v3';
 
 // Pre-cache only the app shell (guaranteed to exist)
 const PRECACHE_URLS = [
@@ -8,6 +8,8 @@ const PRECACHE_URLS = [
 
 // Audio files to cache on first use
 const AUDIO_EXTENSIONS = ['.mp3', '.wav', '.ogg'];
+
+const SUPABASE_AUDIO_ORIGIN = 'https://veqjsjzuaviqctplwkdb.supabase.co';
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -32,13 +34,16 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Only handle same-origin requests
-  if (url.origin !== location.origin) return;
-
   // Skip non-GET requests
   if (event.request.method !== 'GET') return;
 
-  const isAudio = AUDIO_EXTENSIONS.some(ext => url.pathname.endsWith(ext));
+  const isSupabaseAudio = url.origin === SUPABASE_AUDIO_ORIGIN &&
+    AUDIO_EXTENSIONS.some(ext => url.pathname.endsWith(ext));
+
+  // Only handle same-origin requests (except Supabase audio)
+  if (url.origin !== location.origin && !isSupabaseAudio) return;
+
+  const isAudio = isSupabaseAudio || AUDIO_EXTENSIONS.some(ext => url.pathname.endsWith(ext));
 
   // Skip range requests (audio seeking) — let the browser handle them directly
   if (event.request.headers.get('range')) return;

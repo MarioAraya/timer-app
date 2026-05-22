@@ -2,11 +2,8 @@
 description: Push a origin (Vercel) + gitea (Drone CI homelab) simultáneamente
 allowed-tools: Bash(git:*), Bash(gh:*)
 ---
-<<<<<<< HEAD
-=======
 
 Deploy the app to the homelab via Drone CI pipeline.
->>>>>>> 5097615 (docs: add deployment architecture docs and /deploy slash command)
 
 Deploy completo: pushea a `origin` (GitHub → Vercel) y `gitea` (Gitea → Drone CI → homelab).
 
@@ -20,13 +17,6 @@ Pasos:
    - `origin` → Vercel (ver en https://vercel.com/dashboard)
    - `gitea` → Drone CI (ver en dashboard homelab)
 
-<<<<<<< HEAD
-Si `$ARGUMENTS` = "origin": solo pushear a origin (solo Vercel).
-Si `$ARGUMENTS` = "gitea": solo pushear a gitea (solo Drone).
-Si `$ARGUMENTS` = "all" o vacío: pushear a ambos.
-
-No force-push. No --no-verify.
-=======
 1. Run `git status --short`. Si hay cambios sin commit:
    - If argument includes `--add` or `-a`, stage everything with `git add -A` then commit
    - Otherwise, tell the user what's uncommitted and ask if they want to commit before deploying, then stop
@@ -60,4 +50,3 @@ No force-push. No --no-verify.
 - No force-push. No --no-verify.
 
 Argument passed to this command: $ARGUMENTS
->>>>>>> 5097615 (docs: add deployment architecture docs and /deploy slash command)

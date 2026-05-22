@@ -29,6 +29,11 @@ const en = {
       musicOn: 'Music ON',
       beepsOn: 'Beeps ON',
     },
+    exitConfirm: {
+      message: 'Timer is running. Leave?',
+      cancel: 'Cancel',
+      leave: 'Leave',
+    },
   },
   hiit: {
     name: 'HIIT',
@@ -41,6 +46,7 @@ const en = {
     quoteText: 'Deep breaths. Get ready for the next round.',
     finishedTitle: 'HIIT Finished!',
     finishedSubtitle: "You've just killed this workout!",
+    exercises: ['Skipping', 'Jumping Jacks', 'Leg Coordination', 'Boxing 1-2!'],
   },
   tabata: {
     name: 'Tabata',

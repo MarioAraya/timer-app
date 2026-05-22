@@ -19,7 +19,8 @@ function TabataTimerNew({
   autoStart = false,
   showBackButton = true,
   onBackClick,
-  onFinish
+  onFinish,
+  onRunningChange,
 }) {
   const { t } = useLang()
   // Load saved state
@@ -69,6 +70,10 @@ function TabataTimerNew({
       isFinished, currentSubtitle, musicMode, volume, hasStarted: true
     })
   })
+
+  useEffect(() => {
+    onRunningChange?.(isRunning)
+  }, [isRunning])
 
   // Update elapsed time
   useEffect(() => {

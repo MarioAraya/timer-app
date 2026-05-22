@@ -1,6 +1,5 @@
 import WorkoutActiveView from '../shared/WorkoutActiveView'
-
-const EXERCISES = ['Skipping', 'Jumping Jacks', 'Coordinacion piernas', 'Boxeo 1-2!']
+import { useLang } from '../../context/LanguageContext'
 
 function HiitActiveView({
   currentRound, totalRounds, timeLeft, totalElapsed,
@@ -11,6 +10,9 @@ function HiitActiveView({
   onToggleFullscreen, isMaximized,
   musicMode, onToggleMusicMode,
 }) {
+  const { t } = useLang()
+  const exercises = t('hiit.exercises')
+
   const getPhaseLabel = () => {
     if (isFinished) return 'COMPLETE'
     if (isPreparationPhase) return 'PREP'
@@ -19,7 +21,7 @@ function HiitActiveView({
 
   const getExerciseName = () => {
     if (isFinished || isPreparationPhase) return null
-    return EXERCISES[(currentRound - 1) % EXERCISES.length]
+    return Array.isArray(exercises) ? exercises[(currentRound - 1) % exercises.length] : exercises
   }
 
   const getMotivation = () => {

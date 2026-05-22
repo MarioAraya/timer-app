@@ -29,6 +29,11 @@ const es = {
       musicOn: 'Música',
       beepsOn: 'Pitidos',
     },
+    exitConfirm: {
+      message: 'El temporizador está en marcha. ¿Salir?',
+      cancel: 'Cancelar',
+      leave: 'Salir',
+    },
   },
   hiit: {
     name: 'HIIT',
@@ -41,6 +46,7 @@ const es = {
     quoteText: 'Respira hondo. Prepárate para la siguiente ronda.',
     finishedTitle: '¡HIIT Completado!',
     finishedSubtitle: '¡Lo lograste! Excelente entrenamiento.',
+    exercises: ['Skipping', 'Saltos de Tijera', 'Coordinación piernas', '¡Boxeo 1-2!'],
   },
   tabata: {
     name: 'Tabata',

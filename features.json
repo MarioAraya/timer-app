@@ -67,9 +67,9 @@
     },
     {
       "id": 5,
-      "title": "PWA orientation lock — force portrait",
-      "description": "When installed on mobile and opened, app defaults to landscape. Should always be portrait, or show a rotate button when device is in landscape.",
-      "status": "backlog",
+      "title": "PWA orientation — let device decide",
+      "description": "manifest.json previously forced landscape. Changed to orientation:any + display:standalone so the device decides. Fixed in manifest.json (commit 773f602).",
+      "status": "done",
       "priority": "medium",
       "area": "pwa"
     },
@@ -91,24 +91,16 @@
     },
     {
       "id": 8,
-      "title": "Mobile back gesture triggers instantly",
-      "description": "On mobile, swiping back returns immediately with the slightest gesture — the growing arrow icon doesn't appear. The native swipe-back is interfering; needs to be intercepted or the gesture threshold increased.",
-      "status": "backlog",
-      "priority": "medium",
+      "title": "Confirm before leaving when timer is running (swipe + back button)",
+      "description": "Fuses #8, #10, #24. When HIIT or Tabata timer is running: (1) swipe-left/right gesture shows confirmation dialog instead of navigating immediately, (2) browser back button / popstate also confirms, (3) onBackClick button confirms. Swipe threshold increased 50→80px to reduce false triggers.",
+      "status": "done",
+      "priority": "high",
       "area": "ux"
     },
     {
       "id": 9,
       "title": "Back from timer goes to home instead of setup",
       "description": "Pressing back from an active timer should return to that timer's setup/config screen, not to the home grid.",
-      "status": "backlog",
-      "priority": "medium",
-      "area": "ux"
-    },
-    {
-      "id": 10,
-      "title": "Back while timer is running should confirm",
-      "description": "If the timer is actively running, the back action should show a confirmation dialog before navigating away.",
       "status": "backlog",
       "priority": "medium",
       "area": "ux"
@@ -157,6 +149,62 @@
       "id": 16,
       "title": "Fix breathing timer responsiveness in landscape",
       "description": "Breathing timers are broken in horizontal/landscape orientation. Fix layout distribution.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "ux"
+    },
+    {
+      "id": 19,
+      "title": "i18n: 'boxeo 1-2' not translated in English",
+      "description": "The text 'boxeo 1-2' (boxing combo cue) is not translated when app language is English. Find the key and add EN translation.",
+      "status": "done",
+      "priority": "medium",
+      "area": "ui"
+    },
+    {
+      "id": 20,
+      "title": "Auto-hide floating button labels (e.g. 'Beeps on')",
+      "description": "Button labels above controls (like 'Beeps on') remain visible permanently. Should auto-hide after a few seconds of inactivity, similar to video player controls.",
+      "status": "backlog",
+      "priority": "low",
+      "area": "ux"
+    },
+    {
+      "id": 21,
+      "title": "HIIT active view — fix vertical distribution",
+      "description": "Vertical layout in HIIT active view is not well distributed. Elements are cramped or misaligned. Needs proper spacing and proportional vertical distribution.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "ui"
+    },
+    {
+      "id": 22,
+      "title": "Confetti — animate from screen center",
+      "description": "Confetti on workout completion currently does not emit from the center of the screen. Should burst from center outward.",
+      "status": "backlog",
+      "priority": "low",
+      "area": "ui"
+    },
+    {
+      "id": 23,
+      "title": "HIIT circular progress — inner and outer rings must animate clockwise",
+      "description": "Inner and outer circular progress rings in HIIT active view are completely static. Must animate clockwise as time progresses. Copy animation approach from reference project.",
+      "status": "backlog",
+      "priority": "high",
+      "area": "ui"
+    },
+    {
+      "id": 25,
+      "title": "HIIT/Tabata: completed state resets on re-entry",
+      "description": "After finishing a workout, navigating back to home and re-entering the timer shows 'Complete' instead of resetting to the start state. User must manually press Reset to begin again. On re-entry from home, state should auto-reset to initial.",
+      "status": "backlog",
+      "priority": "high",
+      "area": "ux"
+    },
+    {
+      "id": 26,
+      "title": "Breathing timers — stacked carousel/spinner navigation",
+      "description": "Box, Calming, Relaxing, and Wim Hof breathing timers are accessed from separate cards on the home grid. Stack them into a single entry with a vertical spinner or carousel to swipe between them, reducing clutter on the home screen.",
       "status": "backlog",
       "priority": "medium",
       "area": "ux"

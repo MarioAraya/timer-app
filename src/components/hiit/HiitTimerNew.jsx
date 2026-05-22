@@ -19,7 +19,8 @@ function HiitTimerNew({
   autoStart = false,
   showBackButton = true,
   onBackClick,
-  onFinish
+  onFinish,
+  onRunningChange,
 }) {
   const { t } = useLang()
   // Load saved state
@@ -71,6 +72,10 @@ function HiitTimerNew({
       isFinished, currentSubtitle, musicMode, volume, hasStarted: true
     })
   })
+
+  useEffect(() => {
+    onRunningChange?.(isRunning)
+  }, [isRunning])
 
   // Update elapsed time
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'preact/hooks'
+import { useState, useEffect, useRef } from 'preact/hooks'
 import './App.css'
 import TimersHome from './components/TimersHome'
 import PomodoroTimer from './components/PomodoroTimer'
@@ -11,10 +11,14 @@ import WimHofTimer from './components/breath/WimHofTimer'
 import { saveActiveTimer, loadActiveTimer, clearActiveTimer, saveFavoriteTimer, loadFavoriteTimer } from './utils/localStorage'
 import { useAuth } from './hooks/useAuth'
 import AuthModal from './components/auth/AuthModal'
+import { useLang } from './context/LanguageContext'
 
 function App() {
   const { session, loading: authLoading, signInWithGoogle, signInWithMagicLink, signOut } = useAuth()
+  const { t } = useLang()
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showExitConfirm, setShowExitConfirm] = useState(false)
+  const timerIsRunningRef = useRef(false)
 
   // Try to restore active timer on mount
   const savedActiveTimer = loadActiveTimer()
@@ -68,10 +72,23 @@ function App() {
     window.history.pushState({ view: 'timer' }, '')
   }
 
-  const handleBackToCarousel = () => {
+  const doBackToCarousel = () => {
+    timerIsRunningRef.current = false
     setActiveTimer(null)
     clearActiveTimer()
     setCurrentView('carousel')
+  }
+
+  const handleBackToCarousel = () => {
+    if (timerIsRunningRef.current) {
+      setShowExitConfirm(true)
+      return
+    }
+    doBackToCarousel()
+  }
+
+  const handleRunningChange = (running) => {
+    timerIsRunningRef.current = running
   }
 
   const handleTimerFinish = () => {
@@ -102,10 +119,8 @@ function App() {
   const handleTouchEnd = () => {
     if (currentView === 'timer' && touchStart && touchEnd) {
       const distance = touchStart - touchEnd
-      const isLeftSwipe = distance > 50
-      const isRightSwipe = distance < -50
+      const isRightSwipe = distance < -80
 
-      // Right swipe (two-finger swipe gesture mimicked)
       if (isRightSwipe) {
         handleBackToCarousel()
       }
@@ -128,9 +143,9 @@ function App() {
       case 'PomodoroTimer':
         return <PomodoroTimer {...commonProps} />
       case 'HiitTimer':
-        return <HiitTimer {...commonProps} />
+        return <HiitTimer {...commonProps} onRunningChange={handleRunningChange} />
       case 'TabataTimer':
-        return <TabataTimer {...commonProps} />
+        return <TabataTimer {...commonProps} onRunningChange={handleRunningChange} />
       case 'BoxBreathingTimer':
         return <BoxBreathingTimer {...commonProps} />
       case 'RelaxingBreathTimer':
@@ -175,6 +190,22 @@ function App() {
           </div>
         )}
       </main>
+
+      {showExitConfirm && (
+        <div className="exit-confirm-overlay" onClick={() => setShowExitConfirm(false)}>
+          <div className="exit-confirm-dialog" onClick={e => e.stopPropagation()}>
+            <p>{t('active.exitConfirm.message')}</p>
+            <div className="exit-confirm-actions">
+              <button className="exit-confirm-cancel" onClick={() => setShowExitConfirm(false)}>
+                {t('active.exitConfirm.cancel')}
+              </button>
+              <button className="exit-confirm-leave" onClick={() => { setShowExitConfirm(false); doBackToCarousel() }}>
+                {t('active.exitConfirm.leave')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showAuthModal && !session && (
         <AuthModal

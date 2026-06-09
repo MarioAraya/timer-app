@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'preact/hooks'
 import './HiitTimer.scss'
 import HiitSetupView from './HiitSetupView'
 import HiitActiveView from './HiitActiveView'
-import { hiitAudio, playWorkSound, playCountdownSound } from '../../utils/audioUtils'
+import { hiitAudio, playWorkSound, playCountdownSound, playCheerSound } from '../../utils/audioUtils'
 import { HIIT_CONFIG, calculateTotalTime } from '../../config/hiitConfig'
 import { saveHiitState, loadHiitState, clearHiitState, incrementSessionCount } from '../../utils/localStorage'
 import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
@@ -128,6 +128,11 @@ function HiitTimerNew({
       if (!musicMode) playWorkSound()
       return HIIT_CONFIG.rounds[0].work
     } else if (isWorkPhase) {
+      // Last round: finish immediately after work, skip rest
+      if (currentRound >= totalRounds) {
+        handleWorkoutComplete()
+        return 0
+      }
       // Move to rest phase
       setIsWorkPhase(false)
       setCurrentSubtitle(HIIT_CONFIG.rounds[currentRound - 1].restSubtitle)
@@ -158,6 +163,7 @@ function HiitTimerNew({
     setCurrentSubtitle(t('hiit.finishedSubtitle'))
     incrementSessionCount('hiit')
     clearHiitState()
+    playCheerSound()
   }
 
   const handleReset = () => {

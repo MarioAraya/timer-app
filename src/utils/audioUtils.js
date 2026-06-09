@@ -300,6 +300,30 @@ export const playWorkSound      = () => playBeep(1000, 200, 0.4)
 export const playCountdownSound = (count) => playBeep({ 3: 600, 2: 700, 1: 800 }[count] ?? 500, 300, 0.35)
 export const playPrepSound      = () => playBeep(500, 100, 0.25)
 
+export const playCheerSound = () => {
+  const ctx = initAudioContext()
+  if (!ctx) return
+  if (ctx.state === 'suspended') ctx.resume()
+
+  // Ascending fanfare: C5-E5-G5-C6-E6
+  const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51]
+  notes.forEach((freq, i) => {
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.type = 'sine'
+    osc.frequency.value = freq
+
+    const t = ctx.currentTime + i * 0.11
+    gain.gain.setValueAtTime(0, t)
+    gain.gain.linearRampToValueAtTime(0.28, t + 0.02)
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.22)
+    osc.start(t)
+    osc.stop(t + 0.25)
+  })
+}
+
 // ─── Auto-resume when tab regains focus ──────────────────────────────────────
 
 if (typeof document !== 'undefined') {

@@ -3,32 +3,36 @@ import './Confetti.scss'
 
 const COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff']
 
-const createParticles = (count = 100) => {
+const createParticles = (count = 140, origin) => {
+  const ox = origin?.x ?? window.innerWidth / 2
+  const oy = origin?.y ?? window.innerHeight / 2
   const particles = []
   for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2
+    const speed = Math.random() * 14 + 5
     particles.push({
       id: Math.random(),
-      x: Math.random() * window.innerWidth,
-      y: -10,
-      vx: (Math.random() - 0.5) * 10,
-      vy: Math.random() * 5 + 2,
+      x: ox,
+      y: oy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 6, // upward bias so burst opens upward
       rotation: Math.random() * 360,
-      rotationSpeed: (Math.random() - 0.5) * 10,
+      rotationSpeed: (Math.random() - 0.5) * 14,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      size: Math.random() * 8 + 4,
-      gravity: 0.2,
+      size: Math.random() * 10 + 5,
+      gravity: 0.3,
       life: 1
     })
   }
   return particles
 }
 
-function Confetti({ isActive, onComplete }) {
+function Confetti({ isActive, onComplete, origin }) {
   const [particles, setParticles] = useState([])
 
   useEffect(() => {
     if (isActive) {
-      setParticles(createParticles())
+      setParticles(createParticles(140, origin))
 
       const intervalId = setInterval(() => {
         setParticles(prevParticles => {
@@ -38,11 +42,10 @@ function Confetti({ isActive, onComplete }) {
             y: p.y + p.vy,
             vy: p.vy + p.gravity,
             rotation: p.rotation + p.rotationSpeed,
-            life: p.life - 0.008
+            life: p.life - 0.007
           })).filter(p => p.y < window.innerHeight + 50 && p.life > 0)
 
-          // Loop: spawn new batch when current one is exhausted
-          return updated.length === 0 ? createParticles() : updated
+          return updated.length === 0 ? createParticles(140, origin) : updated
         })
       }, 16)
 

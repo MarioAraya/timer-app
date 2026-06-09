@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'preact/hooks'
+import { useEffect, useCallback, useRef, useState } from 'preact/hooks'
 import CircularProgress from './CircularProgress'
 import Confetti from './Confetti'
 import { useLang } from '../../context/LanguageContext'
@@ -23,6 +23,15 @@ function WorkoutActiveView({
 }) {
   const { t } = useLang()
   const containerRef = useRef(null)
+  const circleWrapRef = useRef(null)
+  const [confettiOrigin, setConfettiOrigin] = useState(null)
+
+  useEffect(() => {
+    if (showConfetti && circleWrapRef.current) {
+      const rect = circleWrapRef.current.getBoundingClientRect()
+      setConfettiOrigin({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 })
+    }
+  }, [showConfetti])
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
@@ -139,6 +148,7 @@ function WorkoutActiveView({
         </div>
 
         {/* Circular Progress */}
+        <div ref={circleWrapRef}>
         <CircularProgress
           totalProgress={totalProgress}
           roundProgress={roundProgress}
@@ -148,6 +158,7 @@ function WorkoutActiveView({
           isRunning={isRunning}
           isFinished={isFinished}
         />
+        </div>
 
         {/* Set Progress Bar */}
         <div className="set-progress">
@@ -250,6 +261,7 @@ function WorkoutActiveView({
       <Confetti
         isActive={showConfetti}
         onComplete={() => setShowConfetti(false)}
+        origin={confettiOrigin}
       />
     </div>
   )

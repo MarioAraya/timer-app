@@ -106,6 +106,33 @@ const es = {
     title: 'Respiración Calmante',
     description: 'Inhala 4, mantén 2, exhala 6. Técnica suave para alivio del estrés diario.',
     category: 'Bienestar',
+    phases: {
+      inhale: {
+        instruction: 'Inhala',
+        guidances: [
+          'Inhala lento por la nariz',
+          'Llena tus pulmones completamente',
+          'Aspira calma, profundo y lento',
+        ],
+      },
+      hold: {
+        instruction: 'Mantén',
+        guidances: [
+          'Nota la quietud',
+          'Deja que el aliento repose',
+          'Siente la pausa',
+        ],
+      },
+      exhale: {
+        instruction: 'Exhala por la boca',
+        guidances: [
+          'Baja los hombros al exhalar',
+          'Piensa en algo por lo que estés agradecido',
+          'Suelta lo que te pesa',
+          'Relaja la mandíbula y déjate ir',
+        ],
+      },
+    },
   },
   wimHof: {
     name: 'Wim Hof',

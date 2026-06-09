@@ -1,3 +1,24 @@
+---
+# Pipeline 1: unit tests — corre en TODAS las branches
+# Reporta status a Gitea → permite branch protection en main
+kind: pipeline
+type: docker
+name: test
+
+trigger:
+  event:
+    - push
+    - pull_request
+
+steps:
+  - name: unit-tests
+    image: node:22-alpine
+    commands:
+      - npm ci --prefer-offline
+      - npm test
+
+---
+# Pipeline 2: build + deploy + e2e smoke — solo en main y release
 kind: pipeline
 type: docker
 name: deploy-timer-app
@@ -41,3 +62,14 @@ steps:
             --label "traefik.http.services.timers.loadbalancer.server.port=80"
             -v /home/maaya/audio:/usr/share/nginx/html/audio
             192.168.0.103:5000/maaya/timer-app:latest
+    depends_on:
+      - build-and-push
+
+  - name: e2e-smoke
+    image: 192.168.0.103:5000/maaya/playwright-e2e:latest
+    pull: if-not-exists
+    environment:
+      BASE_URL: http://192.168.0.104:5177
+      CI: "true"
+    depends_on:
+      - deploy

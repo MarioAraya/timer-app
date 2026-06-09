@@ -167,6 +167,52 @@ describe('BreathingTimer — countdown avanza fases', () => {
 })
 
 // ─────────────────────────────────────────────────────
+// Guidance text — rotación por ciclo
+// ─────────────────────────────────────────────────────
+
+const GUIDED_PHASES = [
+  { name: 'Inhale', duration: 2, instruction: 'Breathe In', color: 'inhale', type: 'inhale',
+    guidances: ['Breathe slowly', 'Fill lungs fully', 'Deep breath'] },
+  { name: 'Exhale', duration: 2, instruction: 'Breathe Out', color: 'exhale', type: 'exhale',
+    guidances: ['Drop shoulders', 'Think of gratitude', 'Let it go'] },
+]
+
+describe('BreathingTimer — guidance text', () => {
+  it('muestra guidance del ciclo 0 en la primera fase', () => {
+    renderBreathing(GUIDED_PHASES)
+    expect(screen.getByText('Breathe slowly')).toBeTruthy()
+  })
+
+  it('no renderiza .breathing-guidance si la fase no tiene guidances', () => {
+    renderBreathing(SIMPLE_PHASES)
+    expect(document.querySelector('.breathing-guidance')).toBeNull()
+  })
+
+  it('guidance cambia al avanzar al siguiente ciclo', () => {
+    renderBreathing(GUIDED_PHASES)
+    expect(screen.getByText('Breathe slowly')).toBeTruthy()
+    // 2 skips = 1 ciclo completo (Inhale→Exhale→Inhale) → cycleCount=1
+    fireEvent.click(screen.getByText('Skip Phase'))
+    fireEvent.click(screen.getByText('Skip Phase'))
+    expect(screen.getByText('Fill lungs fully')).toBeTruthy()
+  })
+
+  it('guidance cicla modulo guidances.length (ciclo 3 = índice 0)', () => {
+    renderBreathing(GUIDED_PHASES) // 3 guidances
+    for (let i = 0; i < 6; i++) {       // 6 skips = 3 ciclos completos
+      fireEvent.click(screen.getByText('Skip Phase'))
+    }
+    expect(screen.getByText('Breathe slowly')).toBeTruthy()
+  })
+
+  it('guidance de exhale se muestra al hacer skip a exhale', () => {
+    renderBreathing(GUIDED_PHASES)
+    fireEvent.click(screen.getByText('Skip Phase')) // Inhale → Exhale
+    expect(screen.getByText('Drop shoulders')).toBeTruthy()
+  })
+})
+
+// ─────────────────────────────────────────────────────
 // JS-driven animation — circleRef recibe transform
 // ─────────────────────────────────────────────────────
 

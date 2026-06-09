@@ -207,6 +207,11 @@ function BreathingTimer({
         <div className="breathing-instruction">
           {currentPhaseConfig.instruction}
         </div>
+        {currentPhaseConfig.guidances?.length > 0 && (
+          <div className="breathing-guidance">
+            {currentPhaseConfig.guidances[cycleCount % currentPhaseConfig.guidances.length]}
+          </div>
+        )}
       </div>
 
       <div className="breathing-controls">

@@ -140,6 +140,18 @@
   line-height: 1.2;
 }
 
+.breathing-guidance {
+  margin-top: 0.55rem;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  max-width: 26ch;
+  margin-inline: auto;
+}
+
 .breathing-controls {
   display: flex;
   gap: 0.5rem;

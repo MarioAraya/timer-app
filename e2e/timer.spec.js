@@ -359,6 +359,70 @@ test.describe('Reproducción de MP3', () => {
 // Navegación entre timers
 // ─────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────
+// Calming Breath Timer (4-2-6)
+// ─────────────────────────────────────────────────────
+
+test.describe('Calming Breath Timer (4-2-6)', () => {
+  test('card visible en home', async ({ page }) => {
+    await expect(card(page, 'calming-breath')).toBeVisible()
+  })
+
+  test('click en card abre el timer', async ({ page }) => {
+    await card(page, 'calming-breath').click()
+    await expect(page.locator('.calming-breath-timer')).toBeVisible()
+    await expect(timersHome(page)).not.toBeVisible()
+  })
+
+  test('botón Start visible en estado inicial', async ({ page }) => {
+    await card(page, 'calming-breath').click()
+    await expect(page.locator('.btn-start')).toBeVisible()
+  })
+
+  test('Start muestra Pause y activa el timer', async ({ page }) => {
+    await card(page, 'calming-breath').click()
+    await page.locator('.btn-start').click()
+    await expect(page.locator('.btn-pause')).toBeVisible()
+    await expect(page.locator('.btn-start')).not.toBeVisible()
+  })
+
+  test('guidance text aparece al iniciar', async ({ page }) => {
+    await card(page, 'calming-breath').click()
+    await page.locator('.btn-start').click()
+    await expect(page.locator('.breathing-guidance')).toBeVisible()
+  })
+
+  test('exhale muestra instrucción de boca (Exhala por la boca / Exhale through mouth)', async ({ page }) => {
+    await card(page, 'calming-breath').click()
+    await page.locator('.btn-start').click()
+    await page.locator('.btn-skip').click() // Inhale → Hold
+    await page.locator('.btn-skip').click() // Hold → Exhale
+    await expect(page.locator('.breathing-instruction')).toContainText(/Exhala por la boca|Exhale through mouth/)
+  })
+
+  test('guidance de exhale visible en fase exhale', async ({ page }) => {
+    await card(page, 'calming-breath').click()
+    await page.locator('.btn-start').click()
+    await page.locator('.btn-skip').click() // → Hold
+    await page.locator('.btn-skip').click() // → Exhale
+    const guidance = page.locator('.breathing-guidance')
+    await expect(guidance).toBeVisible()
+    await expect(guidance).not.toBeEmpty()
+  })
+
+  test('Reset vuelve a ciclo 1 y estado inicial', async ({ page }) => {
+    await card(page, 'calming-breath').click()
+    await page.locator('.btn-start').click()
+    await page.locator('.btn-reset').click()
+    await expect(page.locator('.btn-start')).toBeVisible()
+    await expect(page.locator('.cycle-info')).toContainText('1')
+  })
+})
+
+// ─────────────────────────────────────────────────────
+// Navegación entre timers
+// ─────────────────────────────────────────────────────
+
 test.describe('Navegación entre timers', () => {
   test('después de volver al home, ambas cards siguen visibles', async ({ page }) => {
     await card(page, 'hiit').click()

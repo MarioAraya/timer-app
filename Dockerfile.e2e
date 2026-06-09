@@ -1,0 +1,13 @@
+FROM mcr.microsoft.com/playwright:v1.44.0-jammy
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --ignore-scripts
+
+COPY e2e/ ./e2e/
+COPY playwright.config.js ./
+
+ENV CI=true
+
+ENTRYPOINT ["npx", "playwright", "test", "--reporter=line"]

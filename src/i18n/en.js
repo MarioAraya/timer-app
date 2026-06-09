@@ -106,6 +106,33 @@ const en = {
     title: 'Calming Breath',
     description: 'Inhale for 4, hold for 2, exhale for 6. Gentle breathing technique for daily stress relief.',
     category: 'Wellness',
+    phases: {
+      inhale: {
+        instruction: 'Breathe In',
+        guidances: [
+          'Breathe in slowly through your nose',
+          'Fill your lungs completely',
+          'Draw in calm, slow and deep',
+        ],
+      },
+      hold: {
+        instruction: 'Hold',
+        guidances: [
+          'Notice the stillness',
+          'Let the breath settle',
+          'Feel the pause',
+        ],
+      },
+      exhale: {
+        instruction: 'Exhale through mouth',
+        guidances: [
+          'Drop your shoulders as you breathe out',
+          'Think of something you\'re grateful for',
+          'Release what\'s weighing on you',
+          'Soften your jaw and let go',
+        ],
+      },
+    },
   },
   wimHof: {
     name: 'Wim Hof',

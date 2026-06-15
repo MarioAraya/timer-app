@@ -110,10 +110,15 @@ function TabataTimerNew({
       }
       setTimeLeft(next)
       rafId = requestAnimationFrame(tick)
+      timerRef.current = rafId
     }
 
-    rafId = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafId)
+    timerRef.current = requestAnimationFrame(tick)
+    rafId = timerRef.current
+    return () => {
+      cancelAnimationFrame(rafId)
+      timerRef.current = null
+    }
   }, [isRunning, isFinished, currentRound, isWorkPhase, isPreparationPhase])
 
   // Handle phase completion - returns the new timeLeft value
@@ -167,6 +172,10 @@ function TabataTimerNew({
   }
 
   const handleReset = () => {
+    if (timerRef.current) {
+      cancelAnimationFrame(timerRef.current)
+      timerRef.current = null
+    }
     setIsRunning(false)
     setCurrentRound(1)
     setTimeLeft(preparationTime)

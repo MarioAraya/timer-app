@@ -19,5 +19,5 @@ export function t(lang, key) {
     if (cur == null || typeof cur !== 'object') return key
     cur = cur[part]
   }
-  return (cur != null && typeof cur !== 'object') ? cur : key
+  return (cur != null && (typeof cur !== 'object' || Array.isArray(cur))) ? cur : key
 }

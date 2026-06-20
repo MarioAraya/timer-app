@@ -1,16 +1,8 @@
 # CURRENT — HIIT & Tabata Timer
 
-Última sesión: 2026-06-14
+Última sesión: 2026-06-19
 
 ## En progreso
-
-### E2E tests en CI/CD homelab (feature #17)
-
-Playwright smoke tests en `.103` (cicd) post-deploy, apuntando a app en `.104:5177`. Branch: `e2e`. Ver `docs/E2E_CICD.md`.
-
-**Estado:** `in-progress` según features.json — no mergeado a main todavía.
-
----
 
 ### Worktree agente activo: `worktree-agent-a9499cb4`
 
@@ -24,19 +16,22 @@ Contiene cambios experimentales (diverge mucho de main):
 
 **No mergeado.** Decidir si vale la pena rescatar algo antes de borrar.
 
-## Completado recientemente (últimos commits a main)
+---
 
-- [x] feat(hiit): skip last rest, center confetti burst, add cheer sound (8032dbc)
-- [x] feat(breathing): add rotating guidance to CalmingBreath + CI safety net (e1427ca)
-- [x] Fix Dockerfile: `npm ci` en lugar de `npm install`
-- [x] Fix drone.yml: backtick syntax en scripts
-- [x] Migrar deploy a Traefik, eliminar port binding directo
-- [x] Confirm before leaving active HIIT/Tabata timer
-- [x] Wim Hof: audio ES + tests + i18n fixes
+### E2E tests en CI/CD homelab (feature #17)
+
+Playwright smoke tests en `.103` (cicd) post-deploy, apuntando a app en `.104:5177`. Branch: `e2e`.
+
+**Estado:** `in-progress` según features.json — no mergeado a main todavía.
+
+## Completado esta sesión
+
+- [x] fix: `hiit.exercises` mostraba clave literal en vez del array — `t()` rechazaba arrays (`typeof [] === 'object'`). Fix en `src/i18n/index.js:22` (656f4aa)
+- [x] fix: Reset race condition en HIIT y Tabata — RAF en vuelo podía disparar `handlePhaseComplete()` después del reset antes del re-render de Preact. Fix: `timerRef.current` almacena RAF ID activo, `handleReset` llama `cancelAnimationFrame` síncronamente. (656f4aa)
+- [x] Deploy a Vercel (origin) y Drone CI (gitea) — ambos OK, Vercel `state: success`
 
 ## Pendiente (próximos pasos inmediatos)
 
-- [ ] **Push a origin** — main está 2 commits adelante de origin/main (8032dbc, e1427ca)
 - [ ] Decidir qué hacer con worktree `agent-a9499cb4` — revisar/rescatar/borrar
 - [ ] Fix circular progress rings — Pomodoro y Tabata (feature #3, `high` priority)
 - [ ] Completar E2E tests en CI (feature #17, branch `e2e`)
@@ -44,7 +39,7 @@ Contiene cambios experimentales (diverge mucho de main):
 
 ## Notas
 
-- Main está 2 commits adelante de origin — pendiente push/deploy.
+- `main` sincronizado con origin y gitea (656f4aa).
+- Tests `useLanguage.test.js` tienen 3 fallos pre-existentes (no introducidos por esta sesión — verificado con `git stash`).
 - `features.json` es fuente de verdad para el backlog.
-- Worktree agente en `.claude/worktrees/agent-a9499cb4` tiene cambios no mergeados (backend C#) — posiblemente descartable.
 - Dead code candidato a borrar: `useAudioSync.js`, `useSeekControls.js`, `useTimerPersistence.js`, `useMouseTracking.js`, archivos `.backup` en `src/components/`.

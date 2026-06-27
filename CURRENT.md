@@ -1,6 +1,6 @@
 # CURRENT — HIIT & Tabata Timer
 
-Última sesión: 2026-06-19
+Última sesión: 2026-06-26
 
 ## En progreso
 
@@ -25,6 +25,8 @@ Playwright smoke tests en `.103` (cicd) post-deploy, apuntando a app en `.104:51
 **Estado:** `in-progress` según features.json — no mergeado a main todavía.
 
 ## Completado esta sesión
+
+*(Sin cambios esta sesión — retomando desde 2026-06-19)*
 
 - [x] fix: `hiit.exercises` mostraba clave literal en vez del array — `t()` rechazaba arrays (`typeof [] === 'object'`). Fix en `src/i18n/index.js:22` (656f4aa)
 - [x] fix: Reset race condition en HIIT y Tabata — RAF en vuelo podía disparar `handlePhaseComplete()` después del reset antes del re-render de Preact. Fix: `timerRef.current` almacena RAF ID activo, `handleReset` llama `cancelAnimationFrame` síncronamente. (656f4aa)

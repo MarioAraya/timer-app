@@ -2,12 +2,14 @@ import { useState, useEffect, useRef, useCallback } from 'preact/hooks'
 import './PomodoroTimer.scss'
 import { usePomodoroTimer } from '../hooks/usePomodoroTimer'
 import { usePomodoroControls } from '../hooks/usePomodoroControls'
+import { usePomodoroAudioSync } from '../hooks/usePomodoroAudioSync'
 import { pomodoroAudio } from '../utils/audioUtils'
-import { POMODORO_CONFIG, POMODORO_PRESETS, getBreakDuration, formatSessionInfo } from '../config/pomodoroConfig'
+import { POMODORO_PRESETS, getBreakDuration } from '../config/pomodoroConfig'
 import Confetti from './shared/Confetti'
 import CircularProgress from './shared/CircularProgress'
 import { savePomodoroState, loadPomodoroState, clearPomodoroState } from '../utils/localStorage'
 import PomodoroSetupView from './pomodoro/PomodoroSetupView'
+import PomodoroAudioBar from './pomodoro/PomodoroAudioBar'
 import { useLang } from '../context/LanguageContext'
 
 const formatTime = (seconds) => {
@@ -36,10 +38,6 @@ function PomodoroTimer({
   const [playerStatus, setPlayerStatus] = useState('idle')
   const [volume, setVolume] = useState(savedState?.volume || 0.5)
   const [stateRestored, setStateRestored] = useState(false)
-  const [musicPlaying, setMusicPlaying] = useState(false)
-
-  const ignoreNextPause = useRef(false)
-  const ignoreNextPlay = useRef(false)
 
   const storageFunctions = {
     save: savePomodoroState,
@@ -83,117 +81,13 @@ function PomodoroTimer({
     if (savedState) setStateRestored(true)
   }, [])
 
-  // Initialize audio when music mode enabled
-  useEffect(() => {
-    if (musicMode && playerStatus === 'idle') {
-      setPlayerStatus('loading')
-      pomodoroAudio.initialize().then(ready => {
-        setPlayerStatus(ready ? 'ready' : 'error')
-      })
-    }
-  }, [musicMode, playerStatus])
-
-  // Start music immediately if timer already running when music becomes ready
-  useEffect(() => {
-    if (musicMode && playerStatus === 'ready' && isRunning && isWorkPhase) {
-      ignoreNextPlay.current = true
-      pomodoroAudio.resume()
-    }
-  }, [playerStatus])
-
-  // Update audio volume
-  useEffect(() => {
-    const audioPlayer = pomodoroAudio.getPlayer()
-    if (audioPlayer) audioPlayer.volume = volume
-  }, [volume])
-
-  // Track music play/pause state for standalone play/pause button
-  useEffect(() => {
-    const audio = pomodoroAudio.getPlayer()
-    if (!audio) return
-    const onPlay = () => setMusicPlaying(true)
-    const onPause = () => { if (!pomodoroAudio.shouldIgnorePause()) setMusicPlaying(false) }
-    const onEnded = () => setMusicPlaying(false)
-    audio.addEventListener('play', onPlay)
-    audio.addEventListener('pause', onPause)
-    audio.addEventListener('ended', onEnded)
-    return () => {
-      audio.removeEventListener('play', onPlay)
-      audio.removeEventListener('pause', onPause)
-      audio.removeEventListener('ended', onEnded)
-    }
-  }, [playerStatus])
-
-  // Standalone music play/pause toggle — independent of timer state.
-  // Synchronous inside user gesture so Safari grants autoplay activation.
-  const handleMusicToggle = (e) => {
-    e.stopPropagation()
-    if (!musicMode) {
-      setMusicMode(true)
-      pomodoroAudio.play()
-      return
-    }
-    if (pomodoroAudio.isPlaying()) {
-      pomodoroAudio.pause()
-    } else if (pomodoroAudio.isReady()) {
-      pomodoroAudio.resume()
-    } else {
-      pomodoroAudio.play()
-    }
-  }
-
-  // Sync audio play/pause events with timer
-  useEffect(() => {
-    if (!musicMode || playerStatus !== 'ready') return
-
-    const handleAudioPause = () => {
-      if (ignoreNextPause.current) { ignoreNextPause.current = false; return }
-      if (pomodoroAudio.shouldIgnorePause()) return
-      if (isRunning && isWorkPhase && hasStarted()) setIsRunning(false)
-    }
-
-    const handleAudioPlay = () => {
-      if (ignoreNextPlay.current) { ignoreNextPlay.current = false; return }
-      if (!isRunning && !isFinished && isWorkPhase && hasStarted()) setIsRunning(true)
-    }
-
-    const audioPlayer = pomodoroAudio.getPlayer()
-    if (audioPlayer) {
-      audioPlayer.addEventListener('pause', handleAudioPause)
-      audioPlayer.addEventListener('play', handleAudioPlay)
-
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: 'Pomodoro Focus',
-          artist: 'Timer App',
-          album: 'Productivity',
-        })
-        navigator.mediaSession.setActionHandler('play', () => {
-          if (!isRunning && !isFinished && isWorkPhase && playerStatus === 'ready') {
-            ignoreNextPlay.current = true
-            pomodoroAudio.resume()
-            setIsRunning(true)
-          }
-        })
-        navigator.mediaSession.setActionHandler('pause', () => {
-          if (isRunning && isWorkPhase) {
-            ignoreNextPause.current = true
-            pomodoroAudio.pause()
-            setIsRunning(false)
-          }
-        })
-      }
-
-      return () => {
-        audioPlayer.removeEventListener('pause', handleAudioPause)
-        audioPlayer.removeEventListener('play', handleAudioPlay)
-        if ('mediaSession' in navigator) {
-          navigator.mediaSession.setActionHandler('play', null)
-          navigator.mediaSession.setActionHandler('pause', null)
-        }
-      }
-    }
-  }, [musicMode, playerStatus, isRunning, isFinished, isWorkPhase])
+  const { musicPlaying, handleMusicToggle, ignoreNextPause, ignoreNextPlay } = usePomodoroAudioSync({
+    musicMode, setMusicMode,
+    playerStatus, setPlayerStatus,
+    volume, setVolume,
+    isRunning, setIsRunning, isFinished, isWorkPhase, hasStarted,
+    audioFunctions: pomodoroAudio,
+  })
 
   // Save state when paused
   useEffect(() => {
@@ -411,81 +305,19 @@ function PomodoroTimer({
         </div>
 
         {/* Audio player — always visible */}
-        <div className="audio-player-bar">
-          <div className="audio-top-row">
-            <button
-              className={`audio-mode-btn ${musicMode ? 'active' : ''}`}
-              data-testid="pomodoro-music-mode"
-              onClick={(e) => {
-                e.stopPropagation()
-                const next = !musicMode
-                setMusicMode(next)
-                // If switching music ON while timer running, call play() NOW within
-                // this user gesture to register browser autoplay activation
-                if (next && isRunning && isWorkPhase) {
-                  pomodoroAudio.play()
-                }
-              }}
-            >
-              <span className="material-symbols-outlined">
-                {musicMode ? 'music_note' : 'music_off'}
-              </span>
-              <span className="audio-mode-label">
-                {playerStatus === 'loading' ? t('pomodoro.audio.loading') : musicMode ? t('pomodoro.audio.lofi') : t('pomodoro.audio.beeps')}
-              </span>
-            </button>
-
-            {musicMode && (
-              <div className="audio-track-controls">
-                <button
-                  className="track-btn"
-                  data-testid="pomodoro-music-play"
-                  onClick={handleMusicToggle}
-                  disabled={playerStatus === 'loading'}
-                  title={musicPlaying ? t('pomodoro.audio.pauseMusic') : t('pomodoro.audio.playMusic')}
-                >
-                  <span className="material-symbols-outlined">
-                    {musicPlaying ? 'pause' : 'play_arrow'}
-                  </span>
-                </button>
-                <button
-                  className="track-btn"
-                  data-testid="pomodoro-music-repeat"
-                  onClick={(e) => { e.stopPropagation(); pomodoroAudio.repeatTrack() }}
-                  disabled={playerStatus !== 'ready'}
-                  title={t('pomodoro.audio.repeatTrack')}
-                >
-                  <span className="material-symbols-outlined">replay</span>
-                </button>
-                <button
-                  className="track-btn"
-                  data-testid="pomodoro-music-next"
-                  onClick={(e) => { e.stopPropagation(); pomodoroAudio.nextTrack() }}
-                  disabled={playerStatus !== 'ready'}
-                  title={t('pomodoro.audio.nextTrack')}
-                >
-                  <span className="material-symbols-outlined">skip_next</span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {musicMode && playerStatus === 'ready' && (
-            <div className="volume-row">
-              <span className="material-symbols-outlined vol-icon">volume_up</span>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume * 100}
-                onChange={(e) => { e.stopPropagation(); setVolume(parseFloat(e.target.value) / 100) }}
-                onClick={(e) => e.stopPropagation()}
-                className="volume-slider"
-              />
-              <span className="volume-value">{Math.round(volume * 100)}%</span>
-            </div>
-          )}
-        </div>
+        <PomodoroAudioBar
+          musicMode={musicMode}
+          setMusicMode={setMusicMode}
+          isRunning={isRunning}
+          isWorkPhase={isWorkPhase}
+          playerStatus={playerStatus}
+          musicPlaying={musicPlaying}
+          handleMusicToggle={handleMusicToggle}
+          volume={volume}
+          setVolume={setVolume}
+          audioFunctions={pomodoroAudio}
+          t={t}
+        />
       </footer>
 
       <div className="bg-glow top-left"></div>

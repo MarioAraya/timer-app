@@ -1,5 +1,5 @@
 ---
-# Pipeline 1: unit tests — corre en TODAS las branches
+# Pipeline 1: front unit tests — corre en TODAS las branches
 # Reporta status a Gitea → permite branch protection en main
 kind: pipeline
 type: docker
@@ -9,6 +9,9 @@ trigger:
   event:
     - push
     - pull_request
+  paths:
+    exclude:
+      - backend/**
 
 steps:
   - name: unit-tests
@@ -18,7 +21,7 @@ steps:
       - npm test
 
 ---
-# Pipeline 2: build + deploy + e2e smoke — solo en main y release
+# Pipeline 2: front build + deploy + e2e smoke — solo en main y release
 kind: pipeline
 type: docker
 name: deploy-timer-app
@@ -30,6 +33,9 @@ trigger:
   event:
     - push
     - custom
+  paths:
+    exclude:
+      - backend/**
 
 steps:
   - name: build-and-push
@@ -73,3 +79,92 @@ steps:
       CI: "true"
     depends_on:
       - deploy
+
+---
+# Pipeline 3: backend unit tests — corre en TODAS las branches, solo si cambia backend/
+kind: pipeline
+type: docker
+name: backend-test
+
+trigger:
+  event:
+    - push
+    - pull_request
+  paths:
+    include:
+      - backend/**
+
+steps:
+  - name: unit-tests
+    image: golang:1.21-alpine
+    commands:
+      - cd backend
+      - go build ./...
+      - go test ./...
+
+---
+# Pipeline 4: backend build + deploy — solo en main y release, solo si cambia backend/
+kind: pipeline
+type: docker
+name: deploy-timer-app-backend
+
+trigger:
+  branch:
+    - main
+    - release
+  event:
+    - push
+    - custom
+  paths:
+    include:
+      - backend/**
+
+steps:
+  - name: build-and-push
+    image: plugins/docker
+    settings:
+      repo: 192.168.0.103:5000/maaya/timer-app-backend
+      registry: 192.168.0.103:5000
+      insecure: true
+      dockerfile: backend/Dockerfile
+      context: backend
+      tags:
+        - latest
+        - ${DRONE_COMMIT_SHA:0:8}
+
+  - name: deploy
+    image: appleboy/drone-ssh
+    settings:
+      host: 192.168.0.104
+      username: maaya
+      key:
+        from_secret: ssh_key
+      envs:
+        - SUPABASE_URL
+        - SUPABASE_SERVICE_KEY
+        - SUPABASE_JWT_SECRET
+      script:
+        - docker pull 192.168.0.103:5000/maaya/timer-app-backend:latest
+        - docker stop timer-app-backend || true
+        - docker rm timer-app-backend || true
+        - docker run -d --name timer-app-backend
+            --network traefik-net
+            --restart unless-stopped
+            --label "traefik.enable=true"
+            --label "traefik.http.routers.timers-api.rule=Host(\`api.timers.lab\`)"
+            --label "traefik.http.routers.timers-api.entrypoints=web"
+            --label "traefik.http.services.timers-api.loadbalancer.server.port=8080"
+            -e SUPABASE_URL="$SUPABASE_URL"
+            -e SUPABASE_SERVICE_KEY="$SUPABASE_SERVICE_KEY"
+            -e SUPABASE_JWT_SECRET="$SUPABASE_JWT_SECRET"
+            -e ALLOWED_ORIGINS="https://timers.lab,http://timers.lab"
+            192.168.0.103:5000/maaya/timer-app-backend:latest
+    depends_on:
+      - build-and-push
+    environment:
+      SUPABASE_URL:
+        from_secret: supabase_url
+      SUPABASE_SERVICE_KEY:
+        from_secret: supabase_service_key
+      SUPABASE_JWT_SECRET:
+        from_secret: supabase_jwt_secret

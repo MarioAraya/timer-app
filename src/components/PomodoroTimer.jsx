@@ -3,10 +3,12 @@ import './PomodoroTimer.scss'
 import { usePomodoroTimer } from '../hooks/usePomodoroTimer'
 import { usePomodoroControls } from '../hooks/usePomodoroControls'
 import { usePomodoroAudioSync } from '../hooks/usePomodoroAudioSync'
+import { useFloatingTimer } from '../hooks/useFloatingTimer'
 import { pomodoroAudio } from '../utils/audioUtils'
 import { POMODORO_PRESETS, getBreakDuration } from '../config/pomodoroConfig'
 import Confetti from './shared/Confetti'
 import CircularProgress from './shared/CircularProgress'
+import FloatingTimerContent from './shared/FloatingTimerContent'
 import { savePomodoroState, loadPomodoroState, clearPomodoroState } from '../utils/localStorage'
 import PomodoroSetupView from './pomodoro/PomodoroSetupView'
 import PomodoroAudioBar from './pomodoro/PomodoroAudioBar'
@@ -173,6 +175,16 @@ function PomodoroTimer({
     ? 'Complete!'
     : `Session ${currentSession} of ${totalSessions}`
 
+  const { isFloating, isSupported: pipSupported, toggle: togglePip } = useFloatingTimer(
+    <FloatingTimerContent
+      phaseLabel={phaseLabel}
+      timeDisplay={formatTime(timeLeft)}
+      isRunning={isRunning}
+      isFinished={isFinished}
+      onToggle={isRunning ? handlePause : handleStart}
+    />
+  )
+
   if (showSetup) {
     return (
       <PomodoroSetupView
@@ -210,6 +222,18 @@ function PomodoroTimer({
           <span className="session-label">POMODORO</span>
           <h2 className="round-info">{sessionDisplay}</h2>
         </div>
+        {pipSupported && (
+          <button
+            className="fullscreen-button"
+            onClick={togglePip}
+            data-testid="pomodoro-floating-window"
+            title={t('active.controls.floatingWindow')}
+          >
+            <span className="material-symbols-outlined">
+              {isFloating ? 'picture_in_picture' : 'picture_in_picture_alt'}
+            </span>
+          </button>
+        )}
         <button
           className="fullscreen-button"
           onClick={handleFullscreen}

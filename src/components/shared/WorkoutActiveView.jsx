@@ -1,6 +1,8 @@
 import { useEffect, useCallback, useRef, useState } from 'preact/hooks'
 import CircularProgress from './CircularProgress'
 import Confetti from './Confetti'
+import FloatingTimerContent from './FloatingTimerContent'
+import { useFloatingTimer } from '../../hooks/useFloatingTimer'
 import { useLang } from '../../context/LanguageContext'
 import './WorkoutActiveView.scss'
 
@@ -105,6 +107,16 @@ function WorkoutActiveView({
   const modeClass = isPreparationPhase ? 'prep-mode' : isWorkPhase ? 'work-mode' : 'rest-mode'
   const hasEverStarted = isRunning || totalElapsed > 0
 
+  const { isFloating, isSupported: pipSupported, toggle: togglePip } = useFloatingTimer(
+    <FloatingTimerContent
+      phaseLabel={phaseLabel}
+      timeDisplay={formatTime(timeLeft)}
+      isRunning={isRunning}
+      isFinished={isFinished}
+      onToggle={isRunning ? onPause : onStart}
+    />
+  )
+
   return (
     <div
       ref={containerRef}
@@ -127,6 +139,13 @@ function WorkoutActiveView({
               : `Round ${currentRound} of ${totalRounds}`}
           </h2>
         </div>
+        {pipSupported && (
+          <button className="fullscreen-button" onClick={togglePip} title={t('active.controls.floatingWindow')}>
+            <span className="material-symbols-outlined">
+              {isFloating ? 'picture_in_picture' : 'picture_in_picture_alt'}
+            </span>
+          </button>
+        )}
         <button className="fullscreen-button" onClick={handleFullscreen}>
           <span className="material-symbols-outlined">
             {isMaximized ? 'close_fullscreen' : 'open_in_full'}

@@ -28,6 +28,7 @@ const es = {
       loading: 'Cargando...',
       musicOn: 'Música',
       beepsOn: 'Pitidos',
+      floatingWindow: 'Ventana flotante',
     },
     exitConfirm: {
       message: 'El temporizador está en marcha. ¿Salir?',

@@ -28,6 +28,7 @@ const en = {
       loading: 'Loading...',
       musicOn: 'Music ON',
       beepsOn: 'Beeps ON',
+      floatingWindow: 'Floating window',
     },
     exitConfirm: {
       message: 'Timer is running. Leave?',

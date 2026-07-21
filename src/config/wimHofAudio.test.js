@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { WIM_HOF_MP3_URLS, getWimHofUrl } from './wimHofAudio'
 import { t } from '../i18n/index'
 
-const ES_URL = 'https://veqjsjzuaviqctplwkdb.supabase.co/storage/v1/object/public/audio/win_hof_4rounds-es.mp3'
-const EN_URL = 'https://veqjsjzuaviqctplwkdb.supabase.co/storage/v1/object/public/audio/win_hof_4rounds.mp3'
+const ES_URL = 'https://zyfiugarcxtcyjnuopft.supabase.co/storage/v1/object/public/audio/win_hof_4rounds-es.mp3'
+const EN_URL = 'https://zyfiugarcxtcyjnuopft.supabase.co/storage/v1/object/public/audio/win_hof_4rounds.mp3'
 
 describe('WIM_HOF_MP3_URLS', () => {
   it('contiene URL en español de Supabase', () => {

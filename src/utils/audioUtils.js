@@ -11,7 +11,7 @@ const initAudioContext = () => {
 
 // ─── Audio configs ────────────────────────────────────────────────────────────
 
-const SUPABASE_AUDIO = 'https://veqjsjzuaviqctplwkdb.supabase.co/storage/v1/object/public/audio'
+const SUPABASE_AUDIO = 'https://zyfiugarcxtcyjnuopft.supabase.co/storage/v1/object/public/audio'
 
 export const HIIT_AUDIO_CONFIG = {
   name: 'HIIT',

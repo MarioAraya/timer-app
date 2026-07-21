@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timer-app-v3';
+const CACHE_NAME = 'timer-app-v4';
 
 // Pre-cache only the app shell (guaranteed to exist)
 const PRECACHE_URLS = [
@@ -9,7 +9,7 @@ const PRECACHE_URLS = [
 // Audio files to cache on first use
 const AUDIO_EXTENSIONS = ['.mp3', '.wav', '.ogg'];
 
-const SUPABASE_AUDIO_ORIGIN = 'https://veqjsjzuaviqctplwkdb.supabase.co';
+const SUPABASE_AUDIO_ORIGIN = 'https://zyfiugarcxtcyjnuopft.supabase.co';
 
 self.addEventListener('install', event => {
   event.waitUntil(

@@ -109,7 +109,7 @@
       "id": 11,
       "title": "Audio continues after navigating back to home",
       "description": "When playing HIIT/Tabata music mode and pressing back, audio does not stop and no alert is shown. Should: pause the timer, show a 'Now Playing' badge on the timer card in home, and allow resuming from the same position when re-entering the timer.",
-      "status": "backlog",
+      "status": "done",
       "priority": "high",
       "area": "audio"
     },
@@ -197,7 +197,7 @@
       "id": 25,
       "title": "HIIT/Tabata: completed state resets on re-entry",
       "description": "After finishing a workout, navigating back to home and re-entering the timer shows 'Complete' instead of resetting to the start state. User must manually press Reset to begin again. On re-entry from home, state should auto-reset to initial.",
-      "status": "backlog",
+      "status": "done",
       "priority": "high",
       "area": "ux"
     },

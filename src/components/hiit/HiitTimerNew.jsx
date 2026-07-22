@@ -23,8 +23,13 @@ function HiitTimerNew({
   onRunningChange,
 }) {
   const { t } = useLang()
-  // Load saved state
-  const savedState = loadHiitState()
+  // Load saved state; a finished workout must not restore into the
+  // "Complete" screen — re-entry starts fresh (feature #25)
+  let savedState = loadHiitState()
+  if (savedState?.isFinished) {
+    clearHiitState()
+    savedState = null
+  }
 
   // View state: 'setup' or 'active'
   // If autoMaximize is true and we have saved state, go directly to active view
@@ -274,6 +279,12 @@ function HiitTimerNew({
       }
     }
   }, [view])
+
+  // Pause music when leaving the timer (feature #11) — position is kept so
+  // re-entering and pressing play resumes where it stopped
+  useEffect(() => {
+    return () => { hiitAudio.pause() }
+  }, [])
 
   return (
     <div className="hiit-timer-new">

@@ -23,8 +23,13 @@ function TabataTimerNew({
   onRunningChange,
 }) {
   const { t } = useLang()
-  // Load saved state
-  const savedState = loadTabataState()
+  // Load saved state; a finished workout must not restore into the
+  // "Complete" screen — re-entry starts fresh (feature #25)
+  let savedState = loadTabataState()
+  if (savedState?.isFinished) {
+    clearTabataState()
+    savedState = null
+  }
 
   // View state: 'setup' or 'active'
   const [view, setView] = useState(savedState?.hasStarted ? 'active' : 'setup')
@@ -239,6 +244,12 @@ function TabataTimerNew({
       }
     }
   }, [view])
+
+  // Pause music when leaving the timer (feature #11) — position is kept so
+  // re-entering and pressing play resumes where it stopped
+  useEffect(() => {
+    return () => { tabataAudio.pause() }
+  }, [])
 
   return (
     <div className="tabata-timer-new">

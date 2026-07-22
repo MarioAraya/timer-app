@@ -66,7 +66,8 @@ steps:
             --restart unless-stopped
             --label "traefik.enable=true"
             --label "traefik.http.routers.timers.rule=Host(\`timers.lab\`)"
-            --label "traefik.http.routers.timers.entrypoints=web"
+            --label "traefik.http.routers.timers.entrypoints=websecure"
+            --label "traefik.http.routers.timers.tls=true"
             --label "traefik.http.services.timers.loadbalancer.server.port=80"
             -v /home/maaya/audio:/usr/share/nginx/html/audio
             192.168.0.103:5000/maaya/timer-app:latest
@@ -145,7 +146,8 @@ steps:
             --restart unless-stopped
             --label "traefik.enable=true"
             --label "traefik.http.routers.timers-api.rule=Host(\`api.timers.lab\`)"
-            --label "traefik.http.routers.timers-api.entrypoints=web"
+            --label "traefik.http.routers.timers-api.entrypoints=websecure"
+            --label "traefik.http.routers.timers-api.tls=true"
             --label "traefik.http.services.timers-api.loadbalancer.server.port=8080"
             -e SUPABASE_URL="$SUPABASE_URL"
             -e SUPABASE_SERVICE_KEY="$SUPABASE_SERVICE_KEY"

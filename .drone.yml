@@ -21,7 +21,9 @@ steps:
       - npm test
 
 ---
-# Pipeline 2: front build + deploy + e2e smoke — solo en main y release
+# Pipeline 2: front build + deploy — solo en main y release
+# (e2e-smoke removido temporalmente: imagen playwright-e2e nunca se pusheó
+# al registry de .103 — ver docs/E2E_CICD.md paso 2, pendiente feature #17)
 kind: pipeline
 type: docker
 name: deploy-timer-app
@@ -70,15 +72,6 @@ steps:
             192.168.0.103:5000/maaya/timer-app:latest
     depends_on:
       - build-and-push
-
-  - name: e2e-smoke
-    image: 192.168.0.103:5000/maaya/playwright-e2e:latest
-    pull: if-not-exists
-    environment:
-      BASE_URL: http://192.168.0.104:5177
-      CI: "true"
-    depends_on:
-      - deploy
 
 ---
 # Pipeline 3: backend unit tests — corre en TODAS las branches, solo si cambia backend/

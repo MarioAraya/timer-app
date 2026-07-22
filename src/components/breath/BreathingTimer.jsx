@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'preact/hooks'
 import { useDoubleClick } from '../../hooks/useDoubleClick'
 import { isClickOnButton } from '../../utils/timerHelpers'
 import { breathingAudio } from '../../utils/audioUtils'
+import { useLang } from '../../context/LanguageContext'
 import './BreathingTimer.scss'
 
 const SCALE_MIN = 0.65
@@ -26,6 +27,7 @@ function BreathingTimer({
   onBackClick,
   onCycleComplete,
 }) {
+  const { t } = useLang()
   const [currentPhase, setCurrentPhase] = useState(0)
   const [timeLeft, setTimeLeft] = useState(phases[0].duration)
   const [isRunning, setIsRunning] = useState(false)
@@ -180,14 +182,14 @@ function BreathingTimer({
           onClick={(e) => { e.stopPropagation(); onBackClick() }}
           className={`breathing-back-btn ${isMaximized ? 'maximized' : ''}`}
         >
-          ← Back
+          {t('breathing.back')}
         </button>
       )}
 
       <h3 className="breathing-name">{name}</h3>
 
       <div className="breathing-cycle">
-        <div className="cycle-info">Cycle {cycleCount + 1}</div>
+        <div className="cycle-info">{t('breathing.cycle')} {cycleCount + 1}</div>
       </div>
 
       <div className="breathing-animation">
@@ -217,20 +219,20 @@ function BreathingTimer({
       <div className="breathing-controls">
         {!isRunning ? (
           <button onClick={(e) => { e.stopPropagation(); handleStart() }} className="btn btn-start">
-            {cycleCount === 0 && currentPhase === 0 ? 'Start' : 'Resume'}
+            {cycleCount === 0 && currentPhase === 0 ? t('breathing.start') : t('breathing.resume')}
           </button>
         ) : (
           <button onClick={(e) => { e.stopPropagation(); handlePause() }} className="btn btn-pause">
-            Pause
+            {t('breathing.pause')}
           </button>
         )}
 
         <button onClick={(e) => { e.stopPropagation(); handleSkip() }} className="btn btn-skip">
-          Skip Phase
+          {t('breathing.skipPhase')}
         </button>
 
         <button onClick={(e) => { e.stopPropagation(); handleReset() }} className="btn btn-reset">
-          Reset
+          {t('breathing.reset')}
         </button>
       </div>
 
@@ -238,11 +240,11 @@ function BreathingTimer({
         <button
           onClick={handleAudioToggle}
           className={`breathing-audio-toggle ${audioMode ? 'active' : ''}`}
-          title={audioMode ? 'Music on — click to disable' : 'Enable lofi music'}
+          title={audioMode ? t('breathing.musicOnTitle') : t('breathing.musicOffTitle')}
         >
           <span className="audio-icon">{audioMode ? '🎵' : '🔇'}</span>
           <span className="audio-label">
-            {audioStatus === 'loading' ? '...' : audioMode ? 'Lofi' : 'Mute'}
+            {audioStatus === 'loading' ? '...' : audioMode ? t('breathing.lofi') : t('breathing.mute')}
           </span>
         </button>
 
@@ -265,7 +267,7 @@ function BreathingTimer({
 
       <div className="breathing-pattern">
         <div className="pattern-info">
-          <span className="pattern-label">Pattern:</span>
+          <span className="pattern-label">{t('breathing.pattern')}</span>
           <span className="pattern-value">{patternName}</span>
         </div>
       </div>

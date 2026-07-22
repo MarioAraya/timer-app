@@ -76,7 +76,9 @@ function PomodoroTimer({
     ? 100
     : ((phaseDuration - timeLeft) / phaseDuration) * 100
 
-  const phaseLabel = isFinished ? 'DONE' : (isWorkPhase ? 'WORK' : 'BREAK')
+  const phaseLabel = isFinished
+    ? t('pomodoro.active.phases.done')
+    : (isWorkPhase ? t('pomodoro.active.phases.work') : t('pomodoro.active.phases.break'))
   const modeClass = isWorkPhase || isFinished ? 'work-mode' : 'rest-mode'
 
   useEffect(() => {
@@ -172,8 +174,8 @@ function PomodoroTimer({
   }, [handleFullscreen, isRunning, isFinished, handlePause, handleStart])
 
   const sessionDisplay = isFinished
-    ? 'Complete!'
-    : `Session ${currentSession} of ${totalSessions}`
+    ? t('pomodoro.active.complete')
+    : t('pomodoro.active.sessionOf').replace('{current}', currentSession).replace('{total}', totalSessions)
 
   const { isFloating, isSupported: pipSupported, toggle: togglePip } = useFloatingTimer(
     <FloatingTimerContent
@@ -249,11 +251,11 @@ function PomodoroTimer({
       <main className="pomodoro-main">
         <div className="stats-hud">
           <div className="stat-card elapsed">
-            <span className="stat-label">Session</span>
+            <span className="stat-label">{t('pomodoro.active.session')}</span>
             <span className="stat-value">{currentSession}/{totalSessions}</span>
           </div>
           <div className="stat-card mode">
-            <span className="stat-label">Phase</span>
+            <span className="stat-label">{t('pomodoro.active.phase')}</span>
             <span className="stat-value">{phaseLabel}</span>
           </div>
         </div>
@@ -262,7 +264,7 @@ function PomodoroTimer({
           totalProgress={totalProgress}
           roundProgress={roundProgress}
           timeDisplay={formatTime(timeLeft)}
-          label="sec"
+          label={t('pomodoro.active.sec')}
           onClick={isRunning ? handlePause : (!isFinished ? handleStart : undefined)}
           isRunning={isRunning}
           isFinished={isFinished}
@@ -270,7 +272,7 @@ function PomodoroTimer({
 
         <div className="set-progress">
           <div className="progress-header">
-            <span>Cycle progress</span>
+            <span>{t('pomodoro.active.cycleProgress')}</span>
             <span>{Math.round(totalProgress)}%</span>
           </div>
           <div className="progress-bar">
@@ -283,10 +285,10 @@ function PomodoroTimer({
       <footer className="pomodoro-footer">
         <div className="motivational-text">
           {currentMessage && (
-            <h3>{currentMessage}</h3>
+            <h3>{t(currentMessage)}</h3>
           )}
           {currentSubtitle && hasStarted() && (
-            <p className="subtitle-text">{currentSubtitle}</p>
+            <p className="subtitle-text">{t(currentSubtitle)}</p>
           )}
         </div>
 

@@ -141,7 +141,7 @@ function WorkoutActiveView({
           <h2 className="round-info">
             {isFinished
               ? t('active.completedRounds').replace('{n}', totalRounds)
-              : `Round ${currentRound} of ${totalRounds}`}
+              : t('active.roundOf').replace('{current}', currentRound).replace('{total}', totalRounds)}
           </h2>
         </div>
         {pipSupported && (
@@ -273,7 +273,7 @@ function WorkoutActiveView({
             <span className="material-symbols-outlined">
               {isMaximized ? 'close_fullscreen' : 'open_in_full'}
             </span>
-            <span className="btn-tooltip">Fullscreen</span>
+            <span className="btn-tooltip">{t('active.controls.fullscreen')}</span>
           </button>
         </div>
       </footer>

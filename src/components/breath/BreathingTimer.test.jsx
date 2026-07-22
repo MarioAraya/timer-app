@@ -5,6 +5,15 @@ import BreathingTimer from './BreathingTimer'
 
 afterEach(cleanup)
 
+// Mock useLang — fuerza 'en' para que los textos asserted no dependan
+// del navigator.language de la máquina que corre los tests
+vi.mock('../../context/LanguageContext', async () => {
+  const { t } = await import('../../i18n')
+  return {
+    useLang: () => ({ lang: 'en', setLang: vi.fn(), t: (key) => t('en', key) }),
+  }
+})
+
 // Mock breathingAudio — no audio real en tests
 vi.mock('../../utils/audioUtils', () => ({
   breathingAudio: {

@@ -1,18 +1,19 @@
 // Pomodoro Timer Configuration
 // Classic Pomodoro Technique: 25min work, 5min break, long break after 4 sessions
 
+// Messages/subtitles are i18n dot-keys resolved with t() at render time
 const SHARED_MESSAGES = {
-  work: "💼 Focus Time!",
-  shortBreak: "☕ Short Break",
-  longBreak: "🎉 Long Break - Well Done!",
-  preparation: "🍅 Ready to focus?"
+  work: 'pomodoro.messages.work',
+  shortBreak: 'pomodoro.messages.shortBreak',
+  longBreak: 'pomodoro.messages.longBreak',
+  preparation: 'pomodoro.messages.preparation'
 }
 
 const SHARED_SUBTITLES = {
-  work: "Stay focused, you've got this!",
-  shortBreak: "Take a quick breather",
-  longBreak: "You've earned it! Relax and recharge.",
-  preparation: "Get ready for your next Pomodoro session"
+  work: 'pomodoro.subtitles.work',
+  shortBreak: 'pomodoro.subtitles.shortBreak',
+  longBreak: 'pomodoro.subtitles.longBreak',
+  preparation: 'pomodoro.subtitles.preparation'
 }
 
 export const POMODORO_CONFIG = {

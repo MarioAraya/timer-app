@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterAll } from 'vitest'
 import { t, DEFAULT_LANG, VALID_LANGS } from './index'
 import { saveLanguage, loadLanguage } from './languageStorage'
 
@@ -15,6 +15,11 @@ const makeStorage = () => {
 
 global.localStorage = makeStorage()
 beforeEach(() => global.localStorage.clear())
+
+// Navigator determinista: sin esto, loadLanguage() detecta el idioma real de
+// la máquina que corre los tests (navigator.languages) y los asserts varían
+beforeEach(() => vi.stubGlobal('navigator', { languages: ['en-US'], language: 'en-US' }))
+afterAll(() => vi.unstubAllGlobals())
 
 // ─────────────────────────────────────────────────────
 // Constantes
@@ -53,6 +58,11 @@ describe('loadLanguage', () => {
   it('returns en when stored value is garbage', () => {
     global.localStorage.setItem('timer-app-lang', '???')
     expect(loadLanguage()).toBe('en')
+  })
+
+  it('detects es from navigator when localStorage is empty', () => {
+    vi.stubGlobal('navigator', { languages: ['es-CL', 'en-US'], language: 'es-CL' })
+    expect(loadLanguage()).toBe('es')
   })
 })
 

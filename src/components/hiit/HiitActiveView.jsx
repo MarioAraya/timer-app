@@ -15,9 +15,9 @@ function HiitActiveView({
   const exercises = t('hiit.exercises')
 
   const getPhaseLabel = () => {
-    if (isFinished) return 'COMPLETE'
-    if (isPreparationPhase) return 'PREP'
-    return isWorkPhase ? 'WORK' : 'REST'
+    if (isFinished) return t('active.phases.complete')
+    if (isPreparationPhase) return t('active.phases.prep')
+    return isWorkPhase ? t('active.phases.work') : t('active.phases.rest')
   }
 
   const getExerciseName = () => {
@@ -26,9 +26,9 @@ function HiitActiveView({
   }
 
   const getMotivation = () => {
-    if (isFinished) return { text: 'HIIT', highlight: 'COMPLETE!' }
-    if (isWorkPhase) return { text: 'PUSH YOUR', highlight: 'LIMITS!' }
-    return { text: 'BREATHE &', highlight: 'RECOVER' }
+    if (isFinished) return { text: t('hiit.motivation.finishedText'), highlight: t('hiit.motivation.finishedHighlight') }
+    if (isWorkPhase) return { text: t('hiit.motivation.workText'), highlight: t('hiit.motivation.workHighlight') }
+    return { text: t('hiit.motivation.restText'), highlight: t('hiit.motivation.restHighlight') }
   }
 
   return (

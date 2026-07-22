@@ -8,6 +8,7 @@ function TabataActiveView({
   onBackClick, onStart, onPause, onReset, onSkip,
   onToggleFullscreen, isMaximized,
   musicMode, onToggleMusicMode,
+  audioError, onCloseAudioError,
 }) {
   const getPhaseLabel = () => {
     if (isFinished) return 'COMPLETE'
@@ -45,6 +46,8 @@ function TabataActiveView({
       isMaximized={isMaximized}
       musicMode={musicMode}
       onToggleMusicMode={onToggleMusicMode}
+      audioError={audioError}
+      onCloseAudioError={onCloseAudioError}
       themeClass="theme-tabata"
       phaseLabel={getPhaseLabel()}
       motivationalContent={getMotivation()}

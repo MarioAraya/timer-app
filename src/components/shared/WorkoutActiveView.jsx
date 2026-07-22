@@ -2,6 +2,7 @@ import { useEffect, useCallback, useRef, useState } from 'preact/hooks'
 import CircularProgress from './CircularProgress'
 import Confetti from './Confetti'
 import FloatingTimerContent from './FloatingTimerContent'
+import AudioErrorAlert from './AudioErrorAlert'
 import { useFloatingTimer } from '../../hooks/useFloatingTimer'
 import { useLang } from '../../context/LanguageContext'
 import './WorkoutActiveView.scss'
@@ -22,6 +23,8 @@ function WorkoutActiveView({
   phaseLabel,
   motivationalContent,
   exerciseName,
+  audioError,
+  onCloseAudioError,
 }) {
   const { t } = useLang()
   const containerRef = useRef(null)
@@ -122,6 +125,8 @@ function WorkoutActiveView({
       ref={containerRef}
       className={`workout-active-view ${themeClass} ${modeClass} ${isFinished ? 'finished-mode' : ''} ${isMaximized ? 'maximized' : ''}`}
     >
+      {audioError && <AudioErrorAlert onClose={onCloseAudioError} />}
+
       {/* Header */}
       <header className="active-header">
         <button data-testid="active-back-btn" className="back-button" onClick={onBackClick}>

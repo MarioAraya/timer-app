@@ -101,12 +101,12 @@ $primary-glow: rgba(0, 204, 136, 0.3);
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 16px;
   }
 }
 
@@ -373,9 +373,9 @@ $primary-glow: rgba(0, 204, 136, 0.3);
     }
 
     &__grid {
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
-      padding: 0 40px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 0 32px;
     }
   }
 
@@ -425,9 +425,9 @@ $primary-glow: rgba(0, 204, 136, 0.3);
     }
 
     &__grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-      padding: 0 56px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      padding: 0 40px;
     }
   }
 
@@ -487,8 +487,9 @@ $primary-glow: rgba(0, 204, 136, 0.3);
     }
 
     &__grid {
-      gap: 32px;
-      padding: 0 64px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+      padding: 0 48px;
     }
   }
 

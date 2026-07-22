@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'preact/hooks'
 import './TabataTimer.scss'
 import TabataSetupView from './TabataSetupView'
 import TabataActiveView from './TabataActiveView'
-import { tabataAudio, playWorkSound, playCountdownSound } from '../../utils/audioUtils'
+import { tabataAudio, playWorkSound, playCountdownSound, playCheerSound } from '../../utils/audioUtils'
 import { TABATA_CONFIG, calculateTabataTotalTime } from '../../config/tabataConfig'
 import { saveTabataState, loadTabataState, clearTabataState, incrementSessionCount } from '../../utils/localStorage'
 import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
@@ -41,6 +41,7 @@ function TabataTimerNew({
   const [isFinished, setIsFinished] = useState(savedState?.isFinished ?? false)
   const [currentSubtitle, setCurrentSubtitle] = useState(savedState?.currentSubtitle ?? '')
   const [showConfetti, setShowConfetti] = useState(false)
+  const [audioError, setAudioError] = useState(false)
 
   // UI state
   const [isMaximized, setIsMaximized] = useState(initialMaximized || false)
@@ -68,7 +69,8 @@ function TabataTimerNew({
     onPause: () => saveTabataState({
       currentRound, timeLeft, isWorkPhase, isPreparationPhase,
       isFinished, currentSubtitle, musicMode, volume, hasStarted: true
-    })
+    }),
+    onAudioError: () => setAudioError(true)
   })
 
   useEffect(() => {
@@ -169,6 +171,7 @@ function TabataTimerNew({
     setCurrentSubtitle(t('tabata.finishedSubtitle'))
     incrementSessionCount('tabata')
     clearTabataState()
+    playCheerSound()
   }
 
   const handleReset = () => {
@@ -207,7 +210,9 @@ function TabataTimerNew({
     setView('active')
     // Initialize audio if in music mode
     if (musicMode) {
-      tabataAudio.initialize()
+      tabataAudio.initialize().then((ready) => {
+        if (!ready) setAudioError(true)
+      })
     }
   }
 
@@ -215,24 +220,25 @@ function TabataTimerNew({
     setIsMaximized(!isMaximized)
   }
 
-  // Save state on unmount
+  // Save state on unmount (not on every state change — a cleanup keyed to
+  // state deps re-fires on reset and re-saves the stale pre-reset values,
+  // overwriting the clearTabataState() call handleReset just made)
+  const latestStateRef = useRef(null)
+  useEffect(() => {
+    latestStateRef.current = {
+      currentRound, timeLeft, isWorkPhase, isPreparationPhase,
+      isFinished, currentSubtitle, musicMode, volume
+    }
+  })
+
   useEffect(() => {
     return () => {
-      if (view === 'active' && !isFinished) {
-        saveTabataState({
-          currentRound,
-          timeLeft,
-          isWorkPhase,
-          isPreparationPhase,
-          isFinished,
-          currentSubtitle,
-          musicMode,
-          volume,
-          hasStarted: true
-        })
+      const s = latestStateRef.current
+      if (view === 'active' && s && !s.isFinished) {
+        saveTabataState({ ...s, hasStarted: true })
       }
     }
-  }, [view, currentRound, timeLeft, isWorkPhase, isPreparationPhase, isFinished, musicMode, volume])
+  }, [view])
 
   return (
     <div className="tabata-timer-new">
@@ -267,6 +273,8 @@ function TabataTimerNew({
           isMaximized={isMaximized}
           musicMode={musicMode}
           onToggleMusicMode={handleToggleMusicMode}
+          audioError={audioError}
+          onCloseAudioError={() => setAudioError(false)}
         />
       )}
     </div>

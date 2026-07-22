@@ -9,6 +9,7 @@ function HiitActiveView({
   onBackClick, onStart, onPause, onReset, onSkip,
   onToggleFullscreen, isMaximized,
   musicMode, onToggleMusicMode,
+  audioError, onCloseAudioError,
 }) {
   const { t } = useLang()
   const exercises = t('hiit.exercises')
@@ -54,6 +55,8 @@ function HiitActiveView({
       isMaximized={isMaximized}
       musicMode={musicMode}
       onToggleMusicMode={onToggleMusicMode}
+      audioError={audioError}
+      onCloseAudioError={onCloseAudioError}
       themeClass="theme-hiit"
       phaseLabel={getPhaseLabel()}
       motivationalContent={getMotivation()}

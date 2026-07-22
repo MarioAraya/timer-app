@@ -17,6 +17,7 @@ const es = {
     currentMode: 'MODO ACTUAL',
     seconds: 'SEGUNDOS',
     setProgress: 'PROGRESO',
+    audioError: 'No se pudo cargar el archivo de audio (.mp3). Revisá tu conexión o probá con el modo Pitidos.',
     finished: '¡Completado!',
     completedRounds: '¡Completaste las {n} rondas!',
     controls: {

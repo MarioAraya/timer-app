@@ -42,6 +42,7 @@ function HiitTimerNew({
   const [isFinished, setIsFinished] = useState(savedState?.isFinished ?? false)
   const [currentSubtitle, setCurrentSubtitle] = useState(savedState?.currentSubtitle ?? '')
   const [showConfetti, setShowConfetti] = useState(false)
+  const [audioError, setAudioError] = useState(false)
 
   // UI state
   const [isMaximized, setIsMaximized] = useState(initialMaximized || false)
@@ -70,7 +71,8 @@ function HiitTimerNew({
     onPause: () => saveHiitState({
       currentRound, timeLeft, isWorkPhase, isPreparationPhase,
       isFinished, currentSubtitle, musicMode, volume, hasStarted: true
-    })
+    }),
+    onAudioError: () => setAudioError(true)
   })
 
   useEffect(() => {
@@ -207,7 +209,9 @@ function HiitTimerNew({
     setView('active')
     // Initialize audio if in music mode
     if (musicMode) {
-      hiitAudio.initialize()
+      hiitAudio.initialize().then((ready) => {
+        if (!ready) setAudioError(true)
+      })
     }
   }
 
@@ -251,24 +255,25 @@ function HiitTimerNew({
     }
   }
 
-  // Save state on unmount
+  // Save state on unmount (not on every state change — a cleanup keyed to
+  // state deps re-fires on reset and re-saves the stale pre-reset values,
+  // overwriting the clearHiitState() call handleReset just made)
+  const latestStateRef = useRef(null)
+  useEffect(() => {
+    latestStateRef.current = {
+      currentRound, timeLeft, isWorkPhase, isPreparationPhase,
+      isFinished, currentSubtitle, musicMode, volume
+    }
+  })
+
   useEffect(() => {
     return () => {
-      if (view === 'active' && !isFinished) {
-        saveHiitState({
-          currentRound,
-          timeLeft,
-          isWorkPhase,
-          isPreparationPhase,
-          isFinished,
-          currentSubtitle,
-          musicMode,
-          volume,
-          hasStarted: true
-        })
+      const s = latestStateRef.current
+      if (view === 'active' && s && !s.isFinished) {
+        saveHiitState({ ...s, hasStarted: true })
       }
     }
-  }, [view, currentRound, timeLeft, isWorkPhase, isPreparationPhase, isFinished, musicMode, volume])
+  }, [view])
 
   return (
     <div className="hiit-timer-new">
@@ -304,6 +309,8 @@ function HiitTimerNew({
           musicMode={musicMode}
           onToggleMusicMode={handleToggleMusicMode}
           onCalibrate={handleCalibrate}
+          audioError={audioError}
+          onCloseAudioError={() => setAudioError(false)}
         />
       )}
     </div>

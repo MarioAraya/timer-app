@@ -17,6 +17,7 @@ const en = {
     currentMode: 'CURRENT MODE',
     seconds: 'SECONDS',
     setProgress: 'SET PROGRESS',
+    audioError: 'The audio file (.mp3) could not be loaded. Check your connection or try Beeps mode instead.',
     finished: 'Finished!',
     completedRounds: "You've just completed the {n} Rounds!",
     controls: {

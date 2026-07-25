@@ -45,6 +45,8 @@ Backend Go crashea al arrancar en el homelab por falta de `SUPABASE_URL`.
 
 ## Notas
 
+- Backend Go NO es urgente: frontend no lo llama (habla directo con Supabase). Análisis completo + opciones de hosting gratis en `docs/BACKEND_STATUS.md`.
+
 - `main` adelantado a `origin/main` por 4 commits (sin pushear al momento de este wrap).
 - `mustEnv` no tiene fallback/default — es intencional (falla rápido en vez de arrancar mal configurado), no tocar sin discutirlo.
 - `features.json` sigue siendo fuente de verdad para el backlog — sin cambios esta sesión.

@@ -12,7 +12,7 @@ export const HIIT_TICKS = [
   { time: 0,       phase: 'prep',  subtitle: 'Get ready!' },
 
   // Round 1
-  { time: 10.589,  phase: 'work',  round: 1,  subtitle: "Let's go! Round 1!" },
+  { time: 12.589,  phase: 'work',  round: 1,  subtitle: "Let's go! Round 1!" },
   { time: 51.324,  phase: 'rest',  round: 1,  subtitle: 'Breathe... recover' },
 
   // Round 2
@@ -20,7 +20,7 @@ export const HIIT_TICKS = [
   { time: 112.797, phase: 'rest',  round: 2,  subtitle: 'Breathe... recover' },
 
   // Round 3
-  { time: 132.877, phase: 'work',  round: 3,  subtitle: 'Keep going! Round 3!' },
+  { time: 133.877, phase: 'work',  round: 3,  subtitle: 'Keep going! Round 3!' },
   { time: 173.863, phase: 'rest',  round: 3,  subtitle: 'Breathe... recover' },
 
   // Round 4

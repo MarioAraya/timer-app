@@ -2,13 +2,15 @@ import { test, expect } from '@playwright/test'
 
 // Helpers reutilizables
 const card = (page, id) => page.getByTestId(`timer-card-${id}`)
-const setupStartBtn = (page) => page.getByTestId('setup-start-btn')
+const chip = (page, id) => page.getByTestId(`timer-chip-${id}`)
+const settingsBtn = (page) => page.getByTestId('active-settings-btn')
+const setupCloseBtn = (page) => page.getByTestId('setup-close-btn')
 const activeBackBtn = (page) => page.getByTestId('active-back-btn')
 const ctrlStart = (page) => page.getByTestId('ctrl-start')
 const ctrlPause = (page) => page.getByTestId('ctrl-pause')
 const ctrlReset = (page) => page.getByTestId('ctrl-reset')
 const timersHome = (page) => page.locator('.timers-home')
-const setupView = (page) => page.locator('.workout-setup-view')
+const setupModal = (page) => page.locator('.setup-modal')
 const activeView = (page) => page.locator('.workout-active-view')
 
 test.beforeEach(async ({ page }) => {
@@ -25,29 +27,54 @@ test.describe('HIIT Timer', () => {
     await expect(card(page, 'hiit')).toBeVisible()
   })
 
-  test('click en la card abre la pantalla de setup', async ({ page }) => {
+  test('click en la card abre directo la vista activa', async ({ page }) => {
     await card(page, 'hiit').click()
-    await expect(setupView(page)).toBeVisible()
-    await expect(timersHome(page)).not.toBeVisible()
-  })
-
-  test('back en setup vuelve al home', async ({ page }) => {
-    await card(page, 'hiit').click()
-    await expect(setupView(page)).toBeVisible()
-    await page.locator('.back-button').click()
-    await expect(timersHome(page)).toBeVisible()
-  })
-
-  test('start workout abre la vista activa', async ({ page }) => {
-    await card(page, 'hiit').click()
-    await setupStartBtn(page).click()
     await expect(activeView(page)).toBeVisible()
-    await expect(setupView(page)).not.toBeVisible()
+    await expect(timersHome(page)).not.toBeVisible()
+    await expect(setupModal(page)).toHaveCount(0)
+  })
+
+  test('el cog abre la config como modal sobre la vista activa', async ({ page }) => {
+    await card(page, 'hiit').click()
+    await settingsBtn(page).click()
+    await expect(setupModal(page)).toBeVisible()
+    // La vista activa sigue montada detrás del modal
+    await expect(activeView(page)).toBeVisible()
+  })
+
+  test('el modal de config no tiene botón Iniciar', async ({ page }) => {
+    await card(page, 'hiit').click()
+    await settingsBtn(page).click()
+    await expect(setupModal(page)).toBeVisible()
+    await expect(page.getByTestId('setup-start-btn')).toHaveCount(0)
+  })
+
+  test('la X cierra el modal', async ({ page }) => {
+    await card(page, 'hiit').click()
+    await settingsBtn(page).click()
+    await setupCloseBtn(page).click()
+    await expect(setupModal(page)).toHaveCount(0)
+    await expect(activeView(page)).toBeVisible()
+  })
+
+  test('Escape cierra el modal', async ({ page }) => {
+    await card(page, 'hiit').click()
+    await settingsBtn(page).click()
+    await expect(setupModal(page)).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(setupModal(page)).toHaveCount(0)
+  })
+
+  test('click en el backdrop cierra el modal', async ({ page }) => {
+    await card(page, 'hiit').click()
+    await settingsBtn(page).click()
+    await expect(setupModal(page)).toBeVisible()
+    await page.getByTestId('setup-modal-overlay').click({ position: { x: 5, y: 5 } })
+    await expect(setupModal(page)).toHaveCount(0)
   })
 
   test('iniciar el timer muestra el botón de pausa', async ({ page }) => {
     await card(page, 'hiit').click()
-    await setupStartBtn(page).click()
     await ctrlStart(page).click()
     await expect(ctrlPause(page)).toBeVisible()
     await expect(ctrlStart(page)).not.toBeVisible()
@@ -55,7 +82,6 @@ test.describe('HIIT Timer', () => {
 
   test('pausar el timer muestra el botón de inicio', async ({ page }) => {
     await card(page, 'hiit').click()
-    await setupStartBtn(page).click()
     await ctrlStart(page).click()
     await ctrlPause(page).click()
     await expect(ctrlStart(page)).toBeVisible()
@@ -64,41 +90,44 @@ test.describe('HIIT Timer', () => {
 
   test('resetear vuelve al estado inicial (timer detenido)', async ({ page }) => {
     await card(page, 'hiit').click()
-    await setupStartBtn(page).click()
     await ctrlStart(page).click()
     await ctrlPause(page).click()
     await ctrlReset(page).click()
     await expect(ctrlStart(page)).toBeVisible()
   })
 
-  test('back en vista activa vuelve al setup', async ({ page }) => {
+  test('abrir la config pausa el timer en marcha', async ({ page }) => {
     await card(page, 'hiit').click()
-    await setupStartBtn(page).click()
+    await ctrlStart(page).click()
+    await expect(ctrlPause(page)).toBeVisible()
+    await settingsBtn(page).click()
+    await expect(setupModal(page)).toBeVisible()
+    await setupCloseBtn(page).click()
+    await expect(ctrlStart(page)).toBeVisible()
+  })
+
+  test('back en vista activa vuelve al home', async ({ page }) => {
+    await card(page, 'hiit').click()
     await activeBackBtn(page).click()
-    await expect(setupView(page)).toBeVisible()
+    await expect(timersHome(page)).toBeVisible()
     await expect(activeView(page)).not.toBeVisible()
   })
 
-  test('flujo completo: home → setup → activo → pausar → resetear → setup → home', async ({ page }) => {
-    // Home → setup
+  test('flujo completo: home → activo → config → pausar → resetear → home', async ({ page }) => {
     await card(page, 'hiit').click()
-    await expect(setupView(page)).toBeVisible()
-
-    // Setup → activo
-    await setupStartBtn(page).click()
     await expect(activeView(page)).toBeVisible()
 
-    // Iniciar → pausar → resetear
+    await settingsBtn(page).click()
+    await expect(setupModal(page)).toBeVisible()
+    await setupCloseBtn(page).click()
+
     await ctrlStart(page).click()
     await expect(ctrlPause(page)).toBeVisible()
     await ctrlPause(page).click()
     await ctrlReset(page).click()
     await expect(ctrlStart(page)).toBeVisible()
 
-    // Activo → setup → home
     await activeBackBtn(page).click()
-    await expect(setupView(page)).toBeVisible()
-    await page.locator('.back-button').click()
     await expect(timersHome(page)).toBeVisible()
   })
 })
@@ -112,28 +141,28 @@ test.describe('Tabata Timer', () => {
     await expect(card(page, 'tabata')).toBeVisible()
   })
 
-  test('click en la card abre la pantalla de setup', async ({ page }) => {
+  test('click en la card abre directo la vista activa', async ({ page }) => {
     await card(page, 'tabata').click()
-    await expect(setupView(page)).toBeVisible()
+    await expect(activeView(page)).toBeVisible()
     await expect(timersHome(page)).not.toBeVisible()
   })
 
-  test('back en setup vuelve al home', async ({ page }) => {
+  test('el cog abre la config como modal', async ({ page }) => {
     await card(page, 'tabata').click()
-    await expect(setupView(page)).toBeVisible()
-    await page.locator('.back-button').click()
-    await expect(timersHome(page)).toBeVisible()
+    await settingsBtn(page).click()
+    await expect(setupModal(page)).toBeVisible()
+    await expect(activeView(page)).toBeVisible()
   })
 
-  test('start workout abre la vista activa', async ({ page }) => {
+  test('Escape cierra el modal', async ({ page }) => {
     await card(page, 'tabata').click()
-    await setupStartBtn(page).click()
-    await expect(activeView(page)).toBeVisible()
+    await settingsBtn(page).click()
+    await page.keyboard.press('Escape')
+    await expect(setupModal(page)).toHaveCount(0)
   })
 
   test('iniciar el timer muestra el botón de pausa', async ({ page }) => {
     await card(page, 'tabata').click()
-    await setupStartBtn(page).click()
     await ctrlStart(page).click()
     await expect(ctrlPause(page)).toBeVisible()
     await expect(ctrlStart(page)).not.toBeVisible()
@@ -141,7 +170,6 @@ test.describe('Tabata Timer', () => {
 
   test('pausar el timer muestra el botón de inicio', async ({ page }) => {
     await card(page, 'tabata').click()
-    await setupStartBtn(page).click()
     await ctrlStart(page).click()
     await ctrlPause(page).click()
     await expect(ctrlStart(page)).toBeVisible()
@@ -149,19 +177,19 @@ test.describe('Tabata Timer', () => {
 
   test('resetear vuelve al estado inicial (timer detenido)', async ({ page }) => {
     await card(page, 'tabata').click()
-    await setupStartBtn(page).click()
     await ctrlStart(page).click()
     await ctrlPause(page).click()
     await ctrlReset(page).click()
     await expect(ctrlStart(page)).toBeVisible()
   })
 
-  test('flujo completo: home → setup → activo → pausar → resetear → setup → home', async ({ page }) => {
+  test('flujo completo: home → activo → config → pausar → resetear → home', async ({ page }) => {
     await card(page, 'tabata').click()
-    await expect(setupView(page)).toBeVisible()
-
-    await setupStartBtn(page).click()
     await expect(activeView(page)).toBeVisible()
+
+    await settingsBtn(page).click()
+    await expect(setupModal(page)).toBeVisible()
+    await setupCloseBtn(page).click()
 
     await ctrlStart(page).click()
     await expect(ctrlPause(page)).toBeVisible()
@@ -170,8 +198,6 @@ test.describe('Tabata Timer', () => {
     await expect(ctrlStart(page)).toBeVisible()
 
     await activeBackBtn(page).click()
-    await expect(setupView(page)).toBeVisible()
-    await page.locator('.back-button').click()
     await expect(timersHome(page)).toBeVisible()
   })
 })
@@ -242,11 +268,8 @@ test.describe('Reproducción de MP3', () => {
     await page.goto('/')
     await expect(timersHome(page)).toBeVisible()
 
-    // Entrar al timer con config default (sin cambiar nada en setup)
+    // Entrar al timer con config default (lands directo en la vista activa)
     await card(page, 'hiit').click()
-    await expect(setupView(page)).toBeVisible()
-
-    await setupStartBtn(page).click()
     await expect(activeView(page)).toBeVisible()
 
     // Dar play
@@ -336,9 +359,6 @@ test.describe('Reproducción de MP3', () => {
     await expect(timersHome(page)).toBeVisible()
 
     await card(page, 'tabata').click()
-    await expect(setupView(page)).toBeVisible()
-
-    await setupStartBtn(page).click()
     await expect(activeView(page)).toBeVisible()
 
     await ctrlStart(page).click()
@@ -364,36 +384,37 @@ test.describe('Reproducción de MP3', () => {
 // ─────────────────────────────────────────────────────
 
 test.describe('Calming Breath Timer (4-2-6)', () => {
-  test('card visible en home', async ({ page }) => {
-    await expect(card(page, 'calming-breath')).toBeVisible()
+  test('chip de patrón visible en la card de respiración', async ({ page }) => {
+    await expect(card(page, 'breathing')).toBeVisible()
+    await expect(chip(page, 'calming-breath')).toBeVisible()
   })
 
-  test('click en card abre el timer', async ({ page }) => {
-    await card(page, 'calming-breath').click()
+  test('click en chip abre el timer', async ({ page }) => {
+    await chip(page, 'calming-breath').click()
     await expect(page.locator('.calming-breath-timer')).toBeVisible()
     await expect(timersHome(page)).not.toBeVisible()
   })
 
   test('botón Start visible en estado inicial', async ({ page }) => {
-    await card(page, 'calming-breath').click()
+    await chip(page, 'calming-breath').click()
     await expect(page.locator('.btn-start')).toBeVisible()
   })
 
   test('Start muestra Pause y activa el timer', async ({ page }) => {
-    await card(page, 'calming-breath').click()
+    await chip(page, 'calming-breath').click()
     await page.locator('.btn-start').click()
     await expect(page.locator('.btn-pause')).toBeVisible()
     await expect(page.locator('.btn-start')).not.toBeVisible()
   })
 
   test('guidance text aparece al iniciar', async ({ page }) => {
-    await card(page, 'calming-breath').click()
+    await chip(page, 'calming-breath').click()
     await page.locator('.btn-start').click()
     await expect(page.locator('.breathing-guidance')).toBeVisible()
   })
 
   test('exhale muestra instrucción de boca (Exhala por la boca / Exhale through mouth)', async ({ page }) => {
-    await card(page, 'calming-breath').click()
+    await chip(page, 'calming-breath').click()
     await page.locator('.btn-start').click()
     await page.locator('.btn-skip').click() // Inhale → Hold
     await page.locator('.btn-skip').click() // Hold → Exhale
@@ -401,7 +422,7 @@ test.describe('Calming Breath Timer (4-2-6)', () => {
   })
 
   test('guidance de exhale visible en fase exhale', async ({ page }) => {
-    await card(page, 'calming-breath').click()
+    await chip(page, 'calming-breath').click()
     await page.locator('.btn-start').click()
     await page.locator('.btn-skip').click() // → Hold
     await page.locator('.btn-skip').click() // → Exhale
@@ -411,7 +432,7 @@ test.describe('Calming Breath Timer (4-2-6)', () => {
   })
 
   test('Reset vuelve a ciclo 1 y estado inicial', async ({ page }) => {
-    await card(page, 'calming-breath').click()
+    await chip(page, 'calming-breath').click()
     await page.locator('.btn-start').click()
     await page.locator('.btn-reset').click()
     await expect(page.locator('.btn-start')).toBeVisible()
@@ -426,7 +447,7 @@ test.describe('Calming Breath Timer (4-2-6)', () => {
 test.describe('Navegación entre timers', () => {
   test('después de volver al home, ambas cards siguen visibles', async ({ page }) => {
     await card(page, 'hiit').click()
-    await page.locator('.back-button').click()
+    await activeBackBtn(page).click()
     await expect(card(page, 'hiit')).toBeVisible()
     await expect(card(page, 'tabata')).toBeVisible()
   })
@@ -434,11 +455,11 @@ test.describe('Navegación entre timers', () => {
   test('puede entrar a HIIT y luego a Tabata en la misma sesión', async ({ page }) => {
     // HIIT
     await card(page, 'hiit').click()
-    await expect(setupView(page)).toBeVisible()
-    await page.locator('.back-button').click()
+    await expect(activeView(page)).toBeVisible()
+    await activeBackBtn(page).click()
 
     // Tabata
     await card(page, 'tabata').click()
-    await expect(setupView(page)).toBeVisible()
+    await expect(activeView(page)).toBeVisible()
   })
 })

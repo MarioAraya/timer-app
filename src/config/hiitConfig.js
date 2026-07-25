@@ -11,7 +11,7 @@ export const HIIT_CONFIG = {
 
   // Preparation phase (intro before round 1)
   preparation: {
-    duration: 9,
+    duration: 11,
     subtitle: "Get ready!"
   },
 
@@ -20,8 +20,8 @@ export const HIIT_CONFIG = {
   // Rounds 7-12: standard 40s work / 20s rest
   rounds: [
     {
-      // Round 1: WORK starts 10.589s, REST starts 51.324s
-      work: 40.74,  // 51.324 - 10.589
+      // Round 1: WORK starts 12.589s, REST starts 51.324s
+      work: 38.74,  // 51.324 - 12.589
       rest: 20.41,  // 71.730 - 51.324
       workSubtitle: "Let's go! Round 1!",
       restSubtitle: "Breathe... recover"
@@ -29,13 +29,13 @@ export const HIIT_CONFIG = {
     {
       // Round 2: WORK starts 71.730s, REST starts 112.797s
       work: 41.07,  // 112.797 - 71.730
-      rest: 20.08,  // 132.877 - 112.797
+      rest: 21.08,  // 133.877 - 112.797
       workSubtitle: "Push it! Round 2!",
       restSubtitle: "Breathe... recover"
     },
     {
-      // Round 3: WORK starts 132.877s, REST starts 173.863s
-      work: 40.99,  // 173.863 - 132.877
+      // Round 3: WORK starts 133.877s, REST starts 173.863s
+      work: 39.99,  // 173.863 - 133.877
       rest: 20.45,  // 194.310 - 173.863
       workSubtitle: "Keep going! Round 3!",
       restSubtitle: "Breathe... recover"
@@ -123,11 +123,11 @@ export const calculateTotalTime = () => {
 // Raw calibration timestamps for reference
 export const CALIBRATION_MARKS = {
   // From audio calibration 2026-02-11
-  prep_end: 10.589,      // WORK Round 1 starts
+  prep_end: 12.589,      // WORK Round 1 starts
   r1_rest: 51.324,       // REST Round 1 starts
   r2_work: 71.730,       // WORK Round 2 starts
   r2_rest: 112.797,      // REST Round 2 starts
-  r3_work: 132.877,      // WORK Round 3 starts
+  r3_work: 133.877,      // WORK Round 3 starts
   r3_rest: 173.863,      // REST Round 3 starts
   r4_work: 194.310,      // WORK Round 4 starts
   r4_rest: 235.048,      // REST Round 4 starts

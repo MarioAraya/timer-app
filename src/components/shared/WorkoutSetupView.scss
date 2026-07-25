@@ -59,6 +59,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
     z-index: 10;
 
     .back-button,
+    .close-button,
     .settings-button {
       display: flex;
       align-items: center;
@@ -390,54 +391,6 @@ $text-muted: rgba(255, 255, 255, 0.6);
     }
   }
 
-  // Footer
-  .setup-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 20;
-    padding: 24px;
-    background: linear-gradient(to top, $bg-dark, $bg-dark 80%, transparent);
-
-    .start-button {
-      width: 100%;
-      max-width: 430px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      background: var(--accent);
-      color: var(--btn-text);
-      border: none;
-      border-radius: 16px;
-      padding: 20px;
-      font-family: 'Lexend', sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 10px 30px var(--accent-glow);
-      transition: all 0.2s;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 15px 40px var(--accent-glow);
-      }
-
-      &:active {
-        transform: scale(0.98);
-      }
-
-      .material-symbols-outlined {
-        font-size: 24px;
-        font-variation-settings: 'FILL' 1;
-      }
-    }
-  }
-
   // ============================================
   // RESPONSIVE
   // ============================================
@@ -452,6 +405,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
       }
 
       .back-button,
+      .close-button,
       .settings-button {
         width: 48px;
         height: 48px;
@@ -594,20 +548,6 @@ $text-muted: rgba(255, 255, 255, 0.6);
       }
     }
 
-    .setup-footer {
-      padding: 32px 48px;
-
-      .start-button {
-        max-width: 600px;
-        padding: 24px 40px;
-        font-size: 20px;
-        border-radius: 20px;
-
-        .material-symbols-outlined {
-          font-size: 28px;
-        }
-      }
-    }
   }
 
   // Extra large desktop
@@ -654,11 +594,6 @@ $text-muted: rgba(255, 255, 255, 0.6);
       }
     }
 
-    .setup-footer .start-button {
-      max-width: 700px;
-      padding: 28px 48px;
-      font-size: 22px;
-    }
   }
 
   // Compress layout so all 3 sliders are visible without scrolling
@@ -742,6 +677,105 @@ $text-muted: rgba(255, 255, 255, 0.6);
     .quote-preview {
       margin-top: 10px;
       padding: 10px 12px;
+    }
+  }
+}
+
+// ============================================
+// MODAL SHELL
+// The setup view is rendered as a dialog over the active workout, not as a
+// standalone screen — these rules undo the full-page layout defaults above.
+// ============================================
+.setup-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(8px);
+  animation: setupOverlayIn 0.2s ease;
+}
+
+.workout-setup-view.setup-modal {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  min-height: 0;
+  height: auto;
+  max-height: min(88vh, 900px);
+  padding-bottom: 0;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.6),
+    0 0 0 1px var(--accent-border);
+  overflow: hidden;
+  animation: setupModalIn 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .setup-header {
+    position: static;
+    padding: 18px 20px;
+
+    .setup-title {
+      font-size: 18px;
+      text-align: left;
+    }
+  }
+
+  .setup-main {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    max-width: none;
+    margin: 0;
+  }
+
+  .setup-preview {
+    margin-bottom: 24px;
+
+    .preview-ring {
+      width: 180px;
+      height: 180px;
+
+      .preview-content {
+        .preview-label { font-size: 10px; letter-spacing: 0.1em; }
+        .preview-time { font-size: 34px; }
+        .preview-info { font-size: 11px; }
+      }
+    }
+  }
+
+  .interval-card { padding: 16px 18px; }
+}
+
+@keyframes setupOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes setupModalIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 480px) {
+  .setup-modal-overlay { padding: 12px; }
+
+  .workout-setup-view.setup-modal {
+    max-height: 92vh;
+    border-radius: 20px;
+
+    .setup-main { padding: 16px; }
+
+    .setup-preview {
+      margin-bottom: 18px;
+
+      .preview-ring { width: 150px; height: 150px; }
     }
   }
 }

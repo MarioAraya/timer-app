@@ -1,7 +1,7 @@
 import WorkoutSetupView from '../shared/WorkoutSetupView'
 import { useLang } from '../../context/LanguageContext'
 
-function TabataSetupView({ config, onStart, onBackClick, totalTime }) {
+function TabataSetupView({ config, onClose, totalTime }) {
   const { t } = useLang()
 
   const theme = {
@@ -24,8 +24,7 @@ function TabataSetupView({ config, onStart, onBackClick, totalTime }) {
     <WorkoutSetupView
       config={config}
       theme={theme}
-      onStart={onStart}
-      onBackClick={onBackClick}
+      onClose={onClose}
       totalTime={totalTime}
     />
   )

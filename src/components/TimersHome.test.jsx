@@ -58,9 +58,9 @@ describe('TimersHome — cards en español (default)', () => {
     expect(screen.getByText('Temporizador Pomodoro')).toBeTruthy()
   })
 
-  it('muestra card de Respiración Cuadrada', () => {
+  it('muestra card unificada de Respiración Guiada', () => {
     renderHome('es')
-    expect(screen.getByText('Respiración Cuadrada')).toBeTruthy()
+    expect(screen.getByText('Respiración Guiada')).toBeTruthy()
   })
 
   it('muestra card de Wim Hof', () => {
@@ -68,10 +68,10 @@ describe('TimersHome — cards en español (default)', () => {
     expect(screen.getAllByText('Wim Hof').length).toBeGreaterThan(0)
   })
 
-  it('muestra 7 cards en total', () => {
+  it('muestra 5 cards en total (3 breathing fusionados en 1)', () => {
     renderHome('es')
     const cards = document.querySelectorAll('[data-testid^="timer-card-"]')
-    expect(cards.length).toBe(7)
+    expect(cards.length).toBe(5)
   })
 
   it('categorías en español: Bienestar visible', () => {
@@ -163,5 +163,60 @@ describe('TimersHome — selección de timer', () => {
     renderHome('es', { onTimerSelect })
     fireEvent.click(document.querySelector('[data-testid="timer-card-hiit"]'))
     expect(onTimerSelect.mock.calls[0][0].component).toBe('HiitTimer')
+  })
+})
+
+// ─────────────────────────────────────────────────────
+// Card de respiración fusionada + chips de patrón
+// ─────────────────────────────────────────────────────
+
+describe('TimersHome — chips de patrón de respiración', () => {
+  it('renderiza los tres chips con su patrón', () => {
+    renderHome('es')
+    expect(screen.getByText('4-4-4-4')).toBeTruthy()
+    expect(screen.getByText('4-7-8')).toBeTruthy()
+    expect(screen.getByText('4-2-6')).toBeTruthy()
+  })
+
+  it('chip 4-7-8 abre RelaxingBreathTimer directo', () => {
+    const onTimerSelect = vi.fn()
+    renderHome('es', { onTimerSelect })
+    fireEvent.click(document.querySelector('[data-testid="timer-chip-relaxing-breath"]'))
+    expect(onTimerSelect).toHaveBeenCalledOnce()
+    expect(onTimerSelect.mock.calls[0][0].component).toBe('RelaxingBreathTimer')
+  })
+
+  it('chip 4-2-6 abre CalmingBreathTimer directo', () => {
+    const onTimerSelect = vi.fn()
+    renderHome('es', { onTimerSelect })
+    fireEvent.click(document.querySelector('[data-testid="timer-chip-calming-breath"]'))
+    expect(onTimerSelect.mock.calls[0][0].component).toBe('CalmingBreathTimer')
+  })
+
+  it('click en el chip no dispara además el click del card', () => {
+    const onTimerSelect = vi.fn()
+    renderHome('es', { onTimerSelect })
+    fireEvent.click(document.querySelector('[data-testid="timer-chip-relaxing-breath"]'))
+    expect(onTimerSelect).toHaveBeenCalledTimes(1)
+  })
+
+  it('click en el cuerpo del card abre el patrón por defecto (4-4-4-4)', () => {
+    const onTimerSelect = vi.fn()
+    renderHome('es', { onTimerSelect })
+    fireEvent.click(document.querySelector('[data-testid="timer-card-breathing"]'))
+    expect(onTimerSelect.mock.calls[0][0].component).toBe('BoxBreathingTimer')
+  })
+
+  it('tooltip muestra la descripción original de cada técnica', () => {
+    renderHome('es')
+    const chip = document.querySelector('[data-testid="timer-chip-relaxing-breath"]')
+    expect(chip.textContent).toContain('Inhala 4, mantén 7, exhala 8')
+    expect(chip.textContent).toContain('Respiración Relajante')
+  })
+
+  it('el card se marca como running si corre cualquiera de las variantes', () => {
+    renderHome('es', { activeTimer: { component: 'CalmingBreathTimer' } })
+    const card = document.querySelector('[data-testid="timer-card-breathing"]')
+    expect(card.className).toContain('timer-card--running')
   })
 })

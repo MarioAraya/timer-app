@@ -16,7 +16,7 @@ function WorkoutActiveView({
   isWorkPhase, isPreparationPhase, isRunning, isFinished,
   currentSubtitle, showConfetti, setShowConfetti,
   totalProgress, roundProgress,
-  onBackClick, onStart, onPause, onReset, onSkip,
+  onBackClick, onOpenSettings, onStart, onPause, onReset, onSkip,
   onToggleFullscreen, isMaximized,
   musicMode, onToggleMusicMode,
   themeClass,
@@ -144,6 +144,16 @@ function WorkoutActiveView({
               : t('active.roundOf').replace('{current}', currentRound).replace('{total}', totalRounds)}
           </h2>
         </div>
+        {onOpenSettings && (
+          <button
+            data-testid="active-settings-btn"
+            className="fullscreen-button"
+            onClick={onOpenSettings}
+            title={t('active.controls.settings')}
+          >
+            <span className="material-symbols-outlined">settings</span>
+          </button>
+        )}
         {pipSupported && (
           <button className="fullscreen-button" onClick={togglePip} title={t('active.controls.floatingWindow')}>
             <span className="material-symbols-outlined">

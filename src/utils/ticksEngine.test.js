@@ -28,7 +28,7 @@ describe('buildConfigFromTicks', () => {
 
   it('HIIT preparation duration matches tick difference', () => {
     const config = buildConfigFromTicks(HIIT_TICKS)
-    expect(config.preparation.duration).toBeCloseTo(10.589, 2)
+    expect(config.preparation.duration).toBeCloseTo(12.589, 2)
   })
 
   it('Tabata preparation duration is 11s', () => {
@@ -38,8 +38,8 @@ describe('buildConfigFromTicks', () => {
 
   it('HIIT round 1 work duration matches calibration', () => {
     const config = buildConfigFromTicks(HIIT_TICKS)
-    // 51.324 - 10.589 = 40.735
-    expect(config.rounds[0].work).toBeCloseTo(40.74, 1)
+    // 51.324 - 12.589 = 38.735
+    expect(config.rounds[0].work).toBeCloseTo(38.74, 1)
   })
 
   it('HIIT round 1 rest duration matches calibration', () => {
@@ -400,7 +400,7 @@ describe('Edge cases', () => {
 
   it('workStart field on rounds matches original tick times', () => {
     const config = buildConfigFromTicks(HIIT_TICKS)
-    expect(config.rounds[0].workStart).toBeCloseTo(10.589, 2)
+    expect(config.rounds[0].workStart).toBeCloseTo(12.589, 2)
     expect(config.rounds[1].workStart).toBeCloseTo(71.730, 2)
     expect(config.rounds[5].workStart).toBeCloseTo(317.134, 2)
   })

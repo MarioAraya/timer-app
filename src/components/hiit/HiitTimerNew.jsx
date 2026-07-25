@@ -31,9 +31,8 @@ function HiitTimerNew({
     savedState = null
   }
 
-  // View state: 'setup' or 'active'
-  // If autoMaximize is true and we have saved state, go directly to active view
-  const [view, setView] = useState(savedState?.hasStarted ? 'active' : 'setup')
+  // Config lives in a modal over the active view — the cog opens it
+  const [showSetup, setShowSetup] = useState(false)
 
   // If autoMaximize is true, start in maximized mode
   const initialMaximized = autoMaximize && savedState?.hasStarted
@@ -199,25 +198,15 @@ function HiitTimerNew({
     clearHiitState()
   }
 
-  const handleBackToSetup = () => {
-    handleReset()
-    setView('setup')
+  const handleOpenSetup = () => {
+    if (isRunning) handlePause()
+    setShowSetup(true)
   }
 
   const handleSkip = () => {
     if (isFinished) return
     const newTime = handlePhaseComplete()
     setTimeLeft(newTime)
-  }
-
-  const handleStartWorkout = () => {
-    setView('active')
-    // Initialize audio if in music mode
-    if (musicMode) {
-      hiitAudio.initialize().then((ready) => {
-        if (!ready) setAudioError(true)
-      })
-    }
   }
 
   const handleToggleFullscreen = () => {
@@ -274,11 +263,11 @@ function HiitTimerNew({
   useEffect(() => {
     return () => {
       const s = latestStateRef.current
-      if (view === 'active' && s && !s.isFinished) {
+      if (s && !s.isFinished) {
         saveHiitState({ ...s, hasStarted: true })
       }
     }
-  }, [view])
+  }, [])
 
   // Pause music when leaving the timer (feature #11) — position is kept so
   // re-entering and pressing play resumes where it stopped
@@ -286,44 +275,53 @@ function HiitTimerNew({
     return () => { hiitAudio.pause() }
   }, [])
 
+  // Entering lands directly on the active view — preload audio on mount
+  useEffect(() => {
+    if (musicMode) {
+      hiitAudio.initialize().then((ready) => {
+        if (!ready) setAudioError(true)
+      })
+    }
+  }, [])
+
   return (
     <div className="hiit-timer-new">
-      {view === 'setup' ? (
+      {showSetup && (
         <HiitSetupView
           config={HIIT_CONFIG}
-          onStart={handleStartWorkout}
-          onBackClick={onBackClick}
+          onClose={() => setShowSetup(false)}
           totalTime={totalTime}
         />
-      ) : (
-        <HiitActiveView
-          currentRound={currentRound}
-          totalRounds={totalRounds}
-          timeLeft={timeLeft}
-          totalElapsed={totalElapsed}
-          isWorkPhase={isWorkPhase}
-          isPreparationPhase={isPreparationPhase}
-          isRunning={isRunning}
-          isFinished={isFinished}
-          currentSubtitle={currentSubtitle}
-          showConfetti={showConfetti}
-          setShowConfetti={setShowConfetti}
-          totalProgress={calculateTotalProgress({ ...timerCtx, isFinished })}
-          roundProgress={calculateRoundProgress({ ...timerCtx, isFinished })}
-          onBackClick={handleBackToSetup}
-          onStart={handleStart}
-          onPause={handlePause}
-          onReset={handleReset}
-          onSkip={handleSkip}
-          onToggleFullscreen={handleToggleFullscreen}
-          isMaximized={isMaximized}
-          musicMode={musicMode}
-          onToggleMusicMode={handleToggleMusicMode}
-          onCalibrate={handleCalibrate}
-          audioError={audioError}
-          onCloseAudioError={() => setAudioError(false)}
-        />
       )}
+
+      <HiitActiveView
+        currentRound={currentRound}
+        totalRounds={totalRounds}
+        timeLeft={timeLeft}
+        totalElapsed={totalElapsed}
+        isWorkPhase={isWorkPhase}
+        isPreparationPhase={isPreparationPhase}
+        isRunning={isRunning}
+        isFinished={isFinished}
+        currentSubtitle={currentSubtitle}
+        showConfetti={showConfetti}
+        setShowConfetti={setShowConfetti}
+        totalProgress={calculateTotalProgress({ ...timerCtx, isFinished })}
+        roundProgress={calculateRoundProgress({ ...timerCtx, isFinished })}
+        onBackClick={onBackClick}
+        onOpenSettings={handleOpenSetup}
+        onStart={handleStart}
+        onPause={handlePause}
+        onReset={handleReset}
+        onSkip={handleSkip}
+        onToggleFullscreen={handleToggleFullscreen}
+        isMaximized={isMaximized}
+        musicMode={musicMode}
+        onToggleMusicMode={handleToggleMusicMode}
+        onCalibrate={handleCalibrate}
+        audioError={audioError}
+        onCloseAudioError={() => setAudioError(false)}
+      />
     </div>
   )
 }

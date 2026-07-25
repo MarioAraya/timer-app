@@ -625,9 +625,9 @@ $text-muted: rgba(255, 255, 255, 0.6);
 
       .stat-card {
         flex: 0 0 auto;
-        min-width: 130px;
-        padding: 8px 14px;
-        border-radius: 10px;
+        min-width: 195px;
+        padding: 12px 21px;
+        border-radius: 15px;
         opacity: 0.5;
         transition: opacity 0.3s;
 
@@ -636,12 +636,12 @@ $text-muted: rgba(255, 255, 255, 0.6);
         }
 
         .stat-label {
-          font-size: 8px;
+          font-size: 12px;
           letter-spacing: 0.08em;
         }
 
         .stat-value {
-          font-size: 14px;
+          font-size: 21px;
         }
       }
     }

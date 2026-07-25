@@ -9,6 +9,7 @@ const es = {
     restInterval: 'Intervalo de descanso',
     recovery: 'RECUPERACIÓN',
     startButton: 'INICIAR',
+    close: 'Cerrar',
     sets: 'Series',
   },
   active: {
@@ -37,6 +38,7 @@ const es = {
       musicOn: 'Música',
       beepsOn: 'Pitidos',
       floatingWindow: 'Ventana flotante',
+      settings: 'Configuración',
       fullscreen: 'Pantalla completa',
     },
     exitConfirm: {
@@ -153,6 +155,13 @@ const es = {
     lofi: 'Lofi',
     musicOnTitle: 'Música activada — clic para desactivar',
     musicOffTitle: 'Activar música lofi',
+  },
+  breathingGroup: {
+    name: 'Respiración',
+    title: 'Respiración Guiada',
+    description: 'Técnicas de respiración para calmar la mente y bajar el estrés. Elige un patrón para empezar.',
+    category: 'Bienestar',
+    chipsLabel: 'Patrones',
   },
   boxBreathing: {
     name: 'Respiración Cuadrada',

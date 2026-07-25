@@ -288,11 +288,54 @@
       font-size: 5.5rem;
     }
 
+    .breathing-phase .phase-indicator {
+      font-size: 0.9rem;
+      padding: 0.55rem 1.5rem;
+      letter-spacing: 0.2em;
+      margin-bottom: 0.9rem;
+    }
+
+    .breathing-cycle .cycle-info {
+      font-size: 0.95rem;
+      padding: 0.4rem 1.1rem;
+    }
+
+    .breathing-guidance {
+      font-size: 1.25rem;
+      max-width: 34ch;
+      margin-inline: 0;
+    }
+
+    // Pattern panel is the reference the user reads mid-session — keep it legible
+    .breathing-pattern .pattern-info {
+      padding: 1.1rem 1.6rem;
+      border-radius: 20px;
+
+      .pattern-label { font-size: 1rem; }
+      .pattern-value { font-size: 1.5rem; letter-spacing: 0.01em; color: rgba(255, 255, 255, 0.92); }
+    }
+
     // Controls appear slightly more visible on desktop (easier to find on hover)
     .breathing-controls {
       opacity: 1 !important;
 
-      .btn { color: rgba(255, 255, 255, 0.35); }
+      .btn {
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 1.05rem;
+        padding: 0.8rem 1.7rem;
+      }
+    }
+  }
+
+  // Large desktop — push type up another step
+  @media (min-width: 1400px) {
+    .breathing-name { font-size: 2.25rem; }
+    .breathing-instruction { font-size: 4.25rem; }
+    .breathing-timer-display { font-size: 6.5rem; }
+
+    .breathing-pattern .pattern-info {
+      .pattern-label { font-size: 1.1rem; }
+      .pattern-value { font-size: 1.85rem; }
     }
   }
 }

@@ -84,8 +84,8 @@
     {
       "id": 7,
       "title": "Setup screen config icon does nothing",
-      "description": "The gear/config icon shown at the top of the setup screen is not interactive. Either wire it up or remove it.",
-      "status": "backlog",
+      "description": "The gear/config icon shown at the top of the setup screen is not interactive. Either wire it up or remove it. Resolved differently than originally scoped: HIIT/Tabata now skip the setup view on entry and land directly on the active view; the cog in the active view's header opens setup as an overlay modal (WorkoutSetupView now takes onClose instead of onStart/onBackClick).",
+      "status": "done",
       "priority": "low",
       "area": "ui"
     },
@@ -204,8 +204,8 @@
     {
       "id": 26,
       "title": "Breathing timers — stacked carousel/spinner navigation",
-      "description": "Box, Calming, Relaxing, and Wim Hof breathing timers are accessed from separate cards on the home grid. Stack them into a single entry with a vertical spinner or carousel to swipe between them, reducing clutter on the home screen.",
-      "status": "backlog",
+      "description": "Box, Calming, Relaxing, and Wim Hof breathing timers are accessed from separate cards on the home grid. Stack them into a single entry with a vertical spinner or carousel to swipe between them, reducing clutter on the home screen. In-progress uncommitted work merges Box/Calming/Relaxing into one 'breathing' card with pattern chips in TimersHome.jsx (Wim Hof stays separate). Introduced a regression: setup.startButton i18n key was removed as part of a related WorkoutSetupView redesign, but PomodoroSetupView.jsx still reads it — 4 tests failing.",
+      "status": "in-progress",
       "priority": "medium",
       "area": "ux"
     }

@@ -9,6 +9,7 @@ const en = {
     restInterval: 'Rest Interval',
     recovery: 'RECOVERY',
     startButton: 'START WORKOUT',
+    close: 'Close',
     sets: 'Sets',
   },
   active: {
@@ -37,6 +38,7 @@ const en = {
       musicOn: 'Music ON',
       beepsOn: 'Beeps ON',
       floatingWindow: 'Floating window',
+      settings: 'Settings',
       fullscreen: 'Fullscreen',
     },
     exitConfirm: {
@@ -153,6 +155,13 @@ const en = {
     lofi: 'Lofi',
     musicOnTitle: 'Music on — click to disable',
     musicOffTitle: 'Enable lofi music',
+  },
+  breathingGroup: {
+    name: 'Breathing',
+    title: 'Guided Breathing',
+    description: 'Breathing techniques to calm your mind and lower stress. Pick a pattern to start.',
+    category: 'Wellness',
+    chipsLabel: 'Patterns',
   },
   boxBreathing: {
     name: 'Box Breathing',

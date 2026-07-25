@@ -1,7 +1,7 @@
 import WorkoutSetupView from '../shared/WorkoutSetupView'
 import { useLang } from '../../context/LanguageContext'
 
-function HiitSetupView({ config, onStart, onBackClick, totalTime }) {
+function HiitSetupView({ config, onClose, totalTime }) {
   const { t } = useLang()
 
   const theme = {
@@ -24,8 +24,7 @@ function HiitSetupView({ config, onStart, onBackClick, totalTime }) {
     <WorkoutSetupView
       config={config}
       theme={theme}
-      onStart={onStart}
-      onBackClick={onBackClick}
+      onClose={onClose}
       totalTime={totalTime}
     />
   )

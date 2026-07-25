@@ -6,7 +6,7 @@ function HiitActiveView({
   isWorkPhase, isPreparationPhase, isRunning, isFinished,
   currentSubtitle, showConfetti, setShowConfetti,
   totalProgress, roundProgress,
-  onBackClick, onStart, onPause, onReset, onSkip,
+  onBackClick, onOpenSettings, onStart, onPause, onReset, onSkip,
   onToggleFullscreen, isMaximized,
   musicMode, onToggleMusicMode,
   audioError, onCloseAudioError,
@@ -47,6 +47,7 @@ function HiitActiveView({
       totalProgress={totalProgress}
       roundProgress={roundProgress}
       onBackClick={onBackClick}
+      onOpenSettings={onOpenSettings}
       onStart={onStart}
       onPause={onPause}
       onReset={onReset}

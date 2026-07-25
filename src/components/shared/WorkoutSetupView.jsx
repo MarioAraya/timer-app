@@ -1,8 +1,8 @@
-import { useState } from 'preact/hooks'
+import { useState, useEffect } from 'preact/hooks'
 import { useLang } from '../../context/LanguageContext'
 import './WorkoutSetupView.scss'
 
-function WorkoutSetupView({ config, theme, onStart, onBackClick, totalTime }) {
+function WorkoutSetupView({ config, theme, onClose, totalTime }) {
   const { t } = useLang()
   const [prepDuration, setPrepDuration] = useState(config.preparation?.duration || 10)
   const [workDuration, setWorkDuration] = useState(theme.work.default)
@@ -18,30 +18,48 @@ function WorkoutSetupView({ config, theme, onStart, onBackClick, totalTime }) {
 
   const sliderFillPercent = (value, min, max) => ((value - min) / (max - min)) * 100
 
+  // Esc closes the modal
+  useEffect(() => {
+    const onKeyDown = (e) => { if (e.key === 'Escape') onClose?.() }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [onClose])
+
   return (
-    <div className={`workout-setup-view ${theme.className}`}>
+    <div
+      className="setup-modal-overlay"
+      data-testid="setup-modal-overlay"
+      onClick={onClose}
+    >
+      <div
+        className={`workout-setup-view setup-modal ${theme.className}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={theme.title}
+        onClick={(e) => e.stopPropagation()}
+      >
       <header className="setup-header">
-        <button className="back-button" onClick={onBackClick}>
-          <span className="material-symbols-outlined">arrow_back_ios_new</span>
-        </button>
         <h2 className="setup-title">{theme.title}</h2>
-        <button className="settings-button">
-          <span className="material-symbols-outlined">settings</span>
+        <button
+          data-testid="setup-close-btn"
+          className="close-button"
+          onClick={onClose}
+          aria-label={t('setup.close')}
+          title={t('setup.close')}
+        >
+          <span className="material-symbols-outlined">close</span>
         </button>
       </header>
 
       <main className="setup-main">
         <div className="setup-preview">
-          <div className="preview-ring clickable" onClick={onStart}>
+          <div className="preview-ring">
             <div className="preview-ring-outer"></div>
             <div className="preview-ring-inner"></div>
             <div className="preview-content">
               <span className="preview-label">{t('setup.totalTime')}</span>
               <span className="preview-time">{totalTime || theme.defaultTotalTime}</span>
               <span className="preview-info">{totalRounds} {t('setup.sets')}</span>
-            </div>
-            <div className="preview-play-overlay">
-              <span className="material-symbols-outlined">play_arrow</span>
             </div>
           </div>
         </div>
@@ -105,13 +123,7 @@ function WorkoutSetupView({ config, theme, onStart, onBackClick, totalTime }) {
         </div>
 
       </main>
-
-      <footer className="setup-footer">
-        <button data-testid="setup-start-btn" className="start-button" onClick={onStart}>
-          <span className="material-symbols-outlined">play_arrow</span>
-          {t('setup.startButton')}
-        </button>
-      </footer>
+      </div>
     </div>
   )
 }

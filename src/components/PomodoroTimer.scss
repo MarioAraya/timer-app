@@ -167,6 +167,9 @@ $text-dim:     rgba(255, 255, 255, 0.4);
 
   .header-center {
     text-align: center;
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
 
     .session-label {
       display: block;
@@ -181,6 +184,9 @@ $text-dim:     rgba(255, 255, 255, 0.4);
       font-size: 16px;
       font-weight: 700;
       margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }
@@ -613,5 +619,22 @@ $text-dim:     rgba(255, 255, 255, 0.4);
       width: 72px;
       height: 72px;
     }
+  }
+}
+
+// Cap and center content on wide desktop windows — otherwise stats-hud,
+// set-progress and the footer stretch full-bleed while the circle stays
+// a fixed size, leaving them visually disconnected from each other.
+@media (min-width: 1024px) {
+  .pomodoro-timer .stats-hud,
+  .pomodoro-footer .motivational-text,
+  .pomodoro-footer .audio-player-bar {
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .pomodoro-timer .set-progress {
+    max-width: 380px;
   }
 }

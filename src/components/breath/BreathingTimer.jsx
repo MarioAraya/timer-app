@@ -144,9 +144,9 @@ function BreathingTimer({
     setTimeLeft(phases[nextPhase].duration)
   }
 
-  const handleAudioToggle = (e) => {
+  const handleAudioToggle = (e, next) => {
     e.stopPropagation()
-    const next = !audioMode
+    if (next === audioMode) return
     setAudioMode(next)
     if (!next) breathingAudio.stop()
   }
@@ -171,6 +171,8 @@ function BreathingTimer({
   }
 
   const currentPhaseConfig = phases[currentPhase]
+  // "4-7-8 (Relaxing Breath)" → "4-7-8" for the chip; full text stays in the tooltip
+  const patternShort = patternName?.split('(')[0].trim()
 
   return (
     <div
@@ -190,31 +192,36 @@ function BreathingTimer({
 
       <div className="breathing-cycle">
         <div className="cycle-info">{t('breathing.cycle')} {cycleCount + 1}</div>
+        {patternName && (
+          <div className="pattern-chip" title={patternName}>{patternShort}</div>
+        )}
       </div>
 
       <div className="breathing-animation">
         <div ref={circleRef} className={`breathing-circle ${currentPhaseConfig.color}`}>
-          <div className="breathing-circle-inner">
-            <div className="breathing-timer-display">
-              {Math.floor(timeLeft)}
-            </div>
+          <div className="breathing-circle-inner"></div>
+        </div>
+
+        {/* Sits outside the circle element so the scale animation never
+            stretches the copy — it only tracks the circle's center */}
+        <div className="breathing-phase">
+          <div className={`phase-indicator ${currentPhaseConfig.color}`}>
+            {currentPhaseConfig.name}
+          </div>
+          <div className="breathing-instruction">
+            {currentPhaseConfig.instruction}
+          </div>
+          <div className="breathing-timer-display">
+            {Math.floor(timeLeft)}
           </div>
         </div>
       </div>
 
-      <div className="breathing-phase">
-        <div className={`phase-indicator ${currentPhaseConfig.color}`}>
-          {currentPhaseConfig.name}
+      {currentPhaseConfig.guidances?.length > 0 && (
+        <div className="breathing-guidance">
+          {currentPhaseConfig.guidances[cycleCount % currentPhaseConfig.guidances.length]}
         </div>
-        <div className="breathing-instruction">
-          {currentPhaseConfig.instruction}
-        </div>
-        {currentPhaseConfig.guidances?.length > 0 && (
-          <div className="breathing-guidance">
-            {currentPhaseConfig.guidances[cycleCount % currentPhaseConfig.guidances.length]}
-          </div>
-        )}
-      </div>
+      )}
 
       <div className="breathing-controls">
         {!isRunning ? (
@@ -237,16 +244,39 @@ function BreathingTimer({
       </div>
 
       <div className="breathing-audio-controls">
-        <button
-          onClick={handleAudioToggle}
-          className={`breathing-audio-toggle ${audioMode ? 'active' : ''}`}
-          title={audioMode ? t('breathing.musicOnTitle') : t('breathing.musicOffTitle')}
+        <div
+          className={`breathing-audio-toggle ${audioMode ? 'on' : 'off'}`}
+          role="radiogroup"
+          aria-label={t('breathing.audioMode')}
         >
-          <span className="audio-icon">{audioMode ? '🎵' : '🔇'}</span>
-          <span className="audio-label">
-            {audioStatus === 'loading' ? '...' : audioMode ? t('breathing.lofi') : t('breathing.mute')}
-          </span>
-        </button>
+          <span className="audio-toggle-thumb" aria-hidden="true"></span>
+
+          <button
+            type="button"
+            role="radio"
+            aria-checked={!audioMode}
+            className={`audio-toggle-option ${!audioMode ? 'active' : ''}`}
+            onClick={(e) => handleAudioToggle(e, false)}
+            title={t('breathing.muteTitle')}
+          >
+            <span className="audio-icon">🔇</span>
+            <span className="audio-label">{t('breathing.mute')}</span>
+          </button>
+
+          <button
+            type="button"
+            role="radio"
+            aria-checked={audioMode}
+            className={`audio-toggle-option ${audioMode ? 'active' : ''}`}
+            onClick={(e) => handleAudioToggle(e, true)}
+            title={t('breathing.musicOffTitle')}
+          >
+            <span className="audio-icon">🎵</span>
+            <span className="audio-label">
+              {audioMode && audioStatus === 'loading' ? '...' : t('breathing.music')}
+            </span>
+          </button>
+        </div>
 
         {audioMode && audioStatus === 'ready' && (
           <div className="breathing-volume">
@@ -263,13 +293,6 @@ function BreathingTimer({
             <span className="volume-pct">{Math.round(audioVolume * 100)}%</span>
           </div>
         )}
-      </div>
-
-      <div className="breathing-pattern">
-        <div className="pattern-info">
-          <span className="pattern-label">{t('breathing.pattern')}</span>
-          <span className="pattern-value">{patternName}</span>
-        </div>
       </div>
     </div>
   )

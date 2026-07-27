@@ -11,9 +11,9 @@ function CalmingBreathTimer(props) {
   const phases = useMemo(() => {
     const p = translations[lang]?.calmingBreath?.phases ?? translations.en.calmingBreath.phases
     return [
-      { name: 'Inhale', duration: 4, instruction: p.inhale.instruction, color: 'inhale', type: 'inhale', guidances: p.inhale.guidances },
-      { name: 'Hold',   duration: 2, instruction: p.hold.instruction,   color: 'hold',   type: 'hold',   guidances: p.hold.guidances   },
-      { name: 'Exhale', duration: 6, instruction: p.exhale.instruction, color: 'exhale', type: 'exhale', guidances: p.exhale.guidances  },
+      { name: p.inhale.name, duration: 4, instruction: p.inhale.instruction, color: 'inhale', type: 'inhale', guidances: p.inhale.guidances },
+      { name: p.hold.name,   duration: 2, instruction: p.hold.instruction,   color: 'hold',   type: 'hold',   guidances: p.hold.guidances   },
+      { name: p.exhale.name, duration: 6, instruction: p.exhale.instruction, color: 'exhale', type: 'exhale', guidances: p.exhale.guidances  },
     ]
   }, [lang])
 

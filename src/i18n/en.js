@@ -152,6 +152,9 @@ const en = {
     reset: 'Reset',
     pattern: 'Pattern:',
     mute: 'Mute',
+    music: 'Music',
+    audioMode: 'Audio mode',
+    muteTitle: 'No music — breathing only',
     lofi: 'Lofi',
     musicOnTitle: 'Music on — click to disable',
     musicOffTitle: 'Enable lofi music',
@@ -192,6 +195,7 @@ const en = {
     category: 'Wellness',
     phases: {
       inhale: {
+        name: 'Inhale',
         instruction: 'Breathe In',
         guidances: [
           'Breathe in slowly through your nose',
@@ -200,6 +204,7 @@ const en = {
         ],
       },
       hold: {
+        name: 'Hold',
         instruction: 'Hold',
         guidances: [
           'Notice the stillness',
@@ -208,6 +213,7 @@ const en = {
         ],
       },
       exhale: {
+        name: 'Exhale',
         instruction: 'Exhale through mouth',
         guidances: [
           'Drop your shoulders as you breathe out',

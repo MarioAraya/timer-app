@@ -157,6 +157,7 @@ test.describe('Tabata Timer', () => {
   test('Escape cierra el modal', async ({ page }) => {
     await card(page, 'tabata').click()
     await settingsBtn(page).click()
+    await expect(setupModal(page)).toBeVisible()
     await page.keyboard.press('Escape')
     await expect(setupModal(page)).toHaveCount(0)
   })

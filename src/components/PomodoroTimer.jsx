@@ -203,7 +203,6 @@ function PomodoroTimer({
   }
 
   const handleOpenSetup = () => {
-    if (isRunning) handlePause()
     setShowSetup(true)
   }
 

@@ -40,6 +40,7 @@ $text-dim:     rgba(255, 255, 255, 0.4);
 
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100vh;
   height: 100dvh;
   background: $bg-dark;
@@ -622,19 +623,120 @@ $text-dim:     rgba(255, 255, 255, 0.4);
   }
 }
 
-// Cap and center content on wide desktop windows — otherwise stats-hud,
-// set-progress and the footer stretch full-bleed while the circle stays
-// a fixed size, leaving them visually disconnected from each other.
+// Desktop two-column layout — otherwise the circle stays a fixed size while
+// everything above/below it stretches full-bleed, leaving a mobile card
+// floating in a sea of empty space on wide windows.
 @media (min-width: 1024px) {
-  .pomodoro-timer .stats-hud,
-  .pomodoro-footer .motivational-text,
-  .pomodoro-footer .audio-player-bar {
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
+  .pomodoro-timer {
+    display: grid;
+    grid-template-columns: minmax(380px, 1fr) minmax(320px, 440px);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "header header"
+      "main   footer";
+    column-gap: 3rem;
+    padding: 0 4rem;
+    align-items: center;
   }
 
-  .pomodoro-timer .set-progress {
-    max-width: 380px;
+  .pomodoro-header {
+    grid-area: header;
+    padding: 24px 0;
+  }
+
+  .pomodoro-main {
+    grid-area: main;
+    padding: 0;
+    height: 100%;
+  }
+
+  .pomodoro-timer .circular-progress-container {
+    width: min(420px, 50vh);
+    height: min(420px, 50vh);
+  }
+
+  .pomodoro-footer {
+    grid-area: footer;
+    align-items: flex-start;
+    justify-content: center;
+    height: 100%;
+    padding: 0;
+    gap: 24px;
+
+    .motivational-text {
+      text-align: left;
+      width: 100%;
+    }
+
+    .playback-controls {
+      justify-content: flex-start;
+    }
+
+    .audio-player-bar {
+      max-width: none;
+    }
+
+    .playback-controls {
+      gap: 32px;
+
+      .control-button.secondary {
+        width: 60px;
+        height: 60px;
+
+        .material-symbols-outlined { font-size: 26px; }
+      }
+
+      .control-button.primary {
+        width: 84px;
+        height: 84px;
+
+        .material-symbols-outlined { font-size: 36px; }
+      }
+    }
+
+    .audio-mode-btn {
+      padding: 10px 22px;
+      font-size: 14px;
+    }
+
+    .track-btn {
+      width: 40px;
+      height: 40px;
+
+      .material-symbols-outlined { font-size: 20px; }
+    }
+
+    .volume-row {
+      padding: 10px 18px;
+
+      .volume-slider { width: 140px; }
+    }
+  }
+
+  // Let the corner glows reach the true viewport edges instead of stopping
+  // in a flat band once the grid adds horizontal padding.
+  .pomodoro-timer .bg-glow {
+    &.top-left {
+      width: 420px;
+      height: 420px;
+      top: -160px;
+      left: -160px;
+      filter: blur(140px);
+    }
+
+    &.bottom-right {
+      width: 480px;
+      height: 480px;
+      bottom: -100px;
+      right: -160px;
+      filter: blur(160px);
+    }
+  }
+}
+
+@media (min-width: 1400px) {
+  .pomodoro-timer .circular-progress-container {
+    width: min(460px, 52vh);
+    height: min(460px, 52vh);
   }
 }

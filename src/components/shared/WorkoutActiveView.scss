@@ -67,6 +67,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
 
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100vh;
   height: 100dvh; // dynamic viewport height for mobile Safari
   background: $bg-dark;

@@ -33,7 +33,8 @@ function PomodoroTimer({
 
   const defaultPreset = POMODORO_PRESETS.find(p => p.id === 'popular')
   const [pomodoroConfig, setPomodoroConfig] = useState(savedState?.config || defaultPreset)
-  const [showSetup, setShowSetup] = useState(true)
+  // Config lives in a modal over the active view — the cog opens it
+  const [showSetup, setShowSetup] = useState(false)
 
   const [isMaximized, setIsMaximized] = useState(false)
   const [musicMode, setMusicMode] = useState(savedState?.musicMode ?? true)
@@ -187,25 +188,23 @@ function PomodoroTimer({
     />
   )
 
-  if (showSetup) {
-    return (
-      <PomodoroSetupView
-        onStart={(config) => {
-          clearPomodoroState()
-          setIsRunning(false)
-          setIsFinished(false)
-          setCurrentSession(1)
-          setIsWorkPhase(true)
-          setTimeLeft(config.workDuration)
-          setCurrentMessage(config.messages.preparation)
-          setCurrentSubtitle(config.subtitles.preparation)
-          setShowConfetti(false)
-          setPomodoroConfig(config)
-          setShowSetup(false)
-        }}
-        onBackClick={onBackClick}
-      />
-    )
+  const handleApplyConfig = (config) => {
+    clearPomodoroState()
+    setIsRunning(false)
+    setIsFinished(false)
+    setCurrentSession(1)
+    setIsWorkPhase(true)
+    setTimeLeft(config.workDuration)
+    setCurrentMessage(config.messages.preparation)
+    setCurrentSubtitle(config.subtitles.preparation)
+    setShowConfetti(false)
+    setPomodoroConfig(config)
+    setShowSetup(false)
+  }
+
+  const handleOpenSetup = () => {
+    if (isRunning) handlePause()
+    setShowSetup(true)
   }
 
   return (
@@ -213,6 +212,13 @@ function PomodoroTimer({
       ref={containerRef}
       className={`pomodoro-timer ${modeClass} ${isFinished ? 'finished-mode' : ''} ${isMaximized ? 'maximized' : ''}`}
     >
+      {showSetup && (
+        <PomodoroSetupView
+          onApply={handleApplyConfig}
+          onClose={() => setShowSetup(false)}
+        />
+      )}
+
       {/* Header */}
       <header className="pomodoro-header">
         {onBackClick && (
@@ -224,6 +230,14 @@ function PomodoroTimer({
           <span className="session-label">POMODORO</span>
           <h2 className="round-info">{sessionDisplay}</h2>
         </div>
+        <button
+          data-testid="pomodoro-settings-btn"
+          className="fullscreen-button"
+          onClick={handleOpenSetup}
+          title={t('active.controls.settings')}
+        >
+          <span className="material-symbols-outlined">settings</span>
+        </button>
         {pipSupported && (
           <button
             className="fullscreen-button"

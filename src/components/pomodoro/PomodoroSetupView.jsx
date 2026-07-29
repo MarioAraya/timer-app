@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks'
+import { useState, useEffect } from 'preact/hooks'
 import { useLang } from '../../context/LanguageContext'
 import { POMODORO_PRESETS } from '../../config/pomodoroConfig'
 import './PomodoroSetupView.scss'
@@ -7,12 +7,19 @@ const formatMin = (seconds) => `${Math.round(seconds / 60)} min`
 
 const sliderFill = (value, min, max) => ((value - min) / (max - min)) * 100
 
-function PomodoroSetupView({ onStart, onBackClick }) {
+function PomodoroSetupView({ onApply, onClose }) {
   const { t } = useLang()
   const [selectedId, setSelectedId] = useState('popular')
   const [customWork, setCustomWork] = useState(15)
   const [customShortBreak, setCustomShortBreak] = useState(8)
   const [customLongBreak, setCustomLongBreak] = useState(10)
+
+  // Esc closes the modal
+  useEffect(() => {
+    const onKeyDown = (e) => { if (e.key === 'Escape') onClose?.() }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [onClose])
 
   const handleStart = () => {
     let config
@@ -27,7 +34,7 @@ function PomodoroSetupView({ onStart, onBackClick }) {
     } else {
       config = POMODORO_PRESETS.find(p => p.id === selectedId)
     }
-    onStart(config)
+    onApply(config)
   }
 
   const presetLabels = {
@@ -39,15 +46,29 @@ function PomodoroSetupView({ onStart, onBackClick }) {
   }
 
   return (
-    <div className="pomodoro-setup-view">
+    <div
+      className="setup-modal-overlay"
+      data-testid="pomodoro-setup-modal-overlay"
+      onClick={onClose}
+    >
+    <div
+      className="pomodoro-setup-view setup-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label={t('pomodoro.setup.title')}
+      onClick={(e) => e.stopPropagation()}
+    >
       <header className="psetup-header">
-        {onBackClick && (
-          <button className="back-button" onClick={onBackClick}>
-            <span className="material-symbols-outlined">arrow_back_ios_new</span>
-          </button>
-        )}
         <h2 className="psetup-title">{t('pomodoro.setup.title')}</h2>
-        <div className="psetup-header-spacer" />
+        <button
+          data-testid="pomodoro-setup-close-btn"
+          className="close-button"
+          onClick={onClose}
+          aria-label={t('setup.close')}
+          title={t('setup.close')}
+        >
+          <span className="material-symbols-outlined">close</span>
+        </button>
       </header>
 
       <main className="psetup-main">
@@ -138,6 +159,7 @@ function PomodoroSetupView({ onStart, onBackClick }) {
           {t('setup.startButton')}
         </button>
       </footer>
+    </div>
     </div>
   )
 }

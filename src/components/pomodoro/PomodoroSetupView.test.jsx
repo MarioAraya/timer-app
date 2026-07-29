@@ -14,7 +14,7 @@ function makeCtx(lang = 'es') {
 function renderSetup(lang = 'es', props = {}) {
   return render(
     <LanguageContext.Provider value={makeCtx(lang)}>
-      <PomodoroSetupView onStart={vi.fn()} {...props} />
+      <PomodoroSetupView onApply={vi.fn()} onClose={vi.fn()} {...props} />
     </LanguageContext.Provider>
   )
 }
@@ -72,24 +72,24 @@ describe('PomodoroSetupView — presets en EN', () => {
 // onStart callback — recibe config correcta
 // ─────────────────────────────────────────────────────
 
-describe('PomodoroSetupView — onStart callback', () => {
-  it('start con preset popular llama onStart con workDuration=20min', () => {
-    const onStart = vi.fn()
-    renderSetup('es', { onStart })
+describe('PomodoroSetupView — onApply callback', () => {
+  it('start con preset popular llama onApply con workDuration=20min', () => {
+    const onApply = vi.fn()
+    renderSetup('es', { onApply })
     fireEvent.click(document.querySelector('[data-testid="pomodoro-setup-start"]'))
-    expect(onStart).toHaveBeenCalledOnce()
-    const config = onStart.mock.calls[0][0]
+    expect(onApply).toHaveBeenCalledOnce()
+    const config = onApply.mock.calls[0][0]
     expect(config.id).toBe('popular')
     expect(config.workDuration).toBe(20 * 60)
   })
 
   it('start con preset custom pasa durations personalizadas', () => {
-    const onStart = vi.fn()
-    renderSetup('es', { onStart })
+    const onApply = vi.fn()
+    renderSetup('es', { onApply })
     fireEvent.click(screen.getByText('Personalizado'))
     // Valores default custom: 15 work, 8 short, 10 long
     fireEvent.click(document.querySelector('[data-testid="pomodoro-setup-start"]'))
-    const config = onStart.mock.calls[0][0]
+    const config = onApply.mock.calls[0][0]
     expect(config.workDuration).toBe(15 * 60)
     expect(config.shortBreakDuration).toBe(8 * 60)
   })

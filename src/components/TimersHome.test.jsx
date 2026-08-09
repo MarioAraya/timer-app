@@ -2,7 +2,9 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import { render, screen, fireEvent, cleanup } from '@testing-library/preact'
 import { LanguageContext } from '../context/LanguageContext'
+import { ThemeContext } from '../context/ThemeContext'
 import { t as translate } from '../i18n/index'
+import { VALID_THEMES } from '../theme/index'
 import TimersHome from './TimersHome'
 
 afterEach(cleanup)
@@ -23,7 +25,11 @@ function makeCtx(lang, setLang = vi.fn()) {
   return { lang, t: (key) => translate(lang, key), setLang }
 }
 
-function renderHome(lang = 'es', props = {}) {
+function makeThemeCtx(theme = 'dark', cycleTheme = vi.fn()) {
+  return { theme, setTheme: vi.fn(), cycleTheme, themes: VALID_THEMES }
+}
+
+function renderHome(lang = 'es', props = {}, themeCtx = makeThemeCtx()) {
   const defaults = {
     onTimerSelect: vi.fn(),
     activeTimer: null,
@@ -32,9 +38,11 @@ function renderHome(lang = 'es', props = {}) {
     onSignOut: vi.fn(),
   }
   return render(
-    <LanguageContext.Provider value={makeCtx(lang)}>
-      <TimersHome {...defaults} {...props} />
-    </LanguageContext.Provider>
+    <ThemeContext.Provider value={themeCtx}>
+      <LanguageContext.Provider value={makeCtx(lang)}>
+        <TimersHome {...defaults} {...props} />
+      </LanguageContext.Provider>
+    </ThemeContext.Provider>
   )
 }
 
@@ -126,9 +134,11 @@ describe('TimersHome — toggle de idioma', () => {
   it('click en toggle llama setLang con el idioma opuesto (es → en)', () => {
     const setLang = vi.fn()
     render(
-      <LanguageContext.Provider value={{ lang: 'es', t: (k) => translate('es', k), setLang }}>
-        <TimersHome onTimerSelect={vi.fn()} activeTimer={null} session={null} onAuthClick={vi.fn()} onSignOut={vi.fn()} />
-      </LanguageContext.Provider>
+      <ThemeContext.Provider value={makeThemeCtx()}>
+        <LanguageContext.Provider value={{ lang: 'es', t: (k) => translate('es', k), setLang }}>
+          <TimersHome onTimerSelect={vi.fn()} activeTimer={null} session={null} onAuthClick={vi.fn()} onSignOut={vi.fn()} />
+        </LanguageContext.Provider>
+      </ThemeContext.Provider>
     )
     fireEvent.click(screen.getByText('ES'))
     expect(setLang).toHaveBeenCalledWith('en')
@@ -137,12 +147,42 @@ describe('TimersHome — toggle de idioma', () => {
   it('click en toggle llama setLang con el idioma opuesto (en → es)', () => {
     const setLang = vi.fn()
     render(
-      <LanguageContext.Provider value={{ lang: 'en', t: (k) => translate('en', k), setLang }}>
-        <TimersHome onTimerSelect={vi.fn()} activeTimer={null} session={null} onAuthClick={vi.fn()} onSignOut={vi.fn()} />
-      </LanguageContext.Provider>
+      <ThemeContext.Provider value={makeThemeCtx()}>
+        <LanguageContext.Provider value={{ lang: 'en', t: (k) => translate('en', k), setLang }}>
+          <TimersHome onTimerSelect={vi.fn()} activeTimer={null} session={null} onAuthClick={vi.fn()} onSignOut={vi.fn()} />
+        </LanguageContext.Provider>
+      </ThemeContext.Provider>
     )
     fireEvent.click(screen.getByText('EN'))
     expect(setLang).toHaveBeenCalledWith('es')
+  })
+})
+
+// ─────────────────────────────────────────────────────
+// Toggle de tema
+// ─────────────────────────────────────────────────────
+
+describe('TimersHome — toggle de tema', () => {
+  it('muestra el icono del tema activo', () => {
+    renderHome('es', {}, makeThemeCtx('light'))
+    expect(screen.getByTestId('theme-toggle').textContent).toBe('light_mode')
+  })
+
+  it('el título anuncia el siguiente tema del ciclo', () => {
+    renderHome('es', {}, makeThemeCtx('dark'))
+    expect(screen.getByTestId('theme-toggle').getAttribute('title')).toBe('Cambiar a tema Claro')
+  })
+
+  it('desde green el ciclo vuelve a dark', () => {
+    renderHome('en', {}, makeThemeCtx('green'))
+    expect(screen.getByTestId('theme-toggle').getAttribute('title')).toBe('Switch to Dark theme')
+  })
+
+  it('click llama cycleTheme', () => {
+    const cycleTheme = vi.fn()
+    renderHome('es', {}, makeThemeCtx('dark', cycleTheme))
+    fireEvent.click(screen.getByTestId('theme-toggle'))
+    expect(cycleTheme).toHaveBeenCalled()
   })
 })
 

@@ -1,15 +1,15 @@
-// Timer Carousel - Dark Theme
+// Timer Carousel — colors from theme tokens (src/styles/themes.css)
 // Matches HIIT/Tabata design system
 
 // Colors
-$bg-dark: #18181b;
-$bg-card: rgba(255, 255, 255, 0.03);
-$bg-card-hover: rgba(255, 255, 255, 0.06);
-$bg-card-border: rgba(255, 255, 255, 0.08);
-$text-primary: #ffffff;
-$text-secondary: rgba(255, 255, 255, 0.5);
-$text-muted: rgba(255, 255, 255, 0.7);
-$primary: #00cc88;
+$bg-dark: var(--bg-base);
+$bg-card: var(--surface-1);
+$bg-card-hover: var(--surface-2);
+$bg-card-border: var(--border-1);
+$text-primary: var(--text-1);
+$text-secondary: var(--text-3);
+$text-muted: var(--text-2);
+$primary: var(--accent);
 $primary-glow: rgba(0, 204, 136, 0.3);
 
 .timer-carousel {
@@ -22,7 +22,7 @@ $primary-glow: rgba(0, 204, 136, 0.3);
   // Header
   .carousel-header {
     padding: 24px 24px 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(var(--fg-rgb), 0.06);
     margin-bottom: 24px;
 
     .header-content {
@@ -83,7 +83,7 @@ $primary-glow: rgba(0, 204, 136, 0.3);
     height: 120px;
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.02) 0%,
+      rgba(var(--fg-rgb), 0.02) 0%,
       transparent 100%
     );
     pointer-events: none;
@@ -92,9 +92,9 @@ $primary-glow: rgba(0, 204, 136, 0.3);
   &:hover {
     transform: translateY(-4px);
     background: $bg-card-hover;
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(var(--fg-rgb), 0.12);
     box-shadow:
-      0 20px 40px rgba(0, 0, 0, 0.3),
+      0 20px 40px rgba(var(--shadow-rgb), 0.3),
       0 0 40px rgba(var(--accent-color-rgb, 0, 204, 136), 0.1);
 
     .timer-card__icon-wrapper {
@@ -223,7 +223,7 @@ $primary-glow: rgba(0, 204, 136, 0.3);
   }
 
   &__category {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(var(--fg-rgb), 0.08);
     color: $text-secondary;
     padding: 4px 10px;
     border-radius: 6px;
@@ -268,7 +268,7 @@ $primary-glow: rgba(0, 204, 136, 0.3);
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(var(--fg-rgb), 0.05);
     margin-top: auto;
   }
 

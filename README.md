@@ -29,7 +29,7 @@ Workout PWA with millisecond-precise MP3 audio sync. HIIT (12 rounds 40s/20s) an
 ## Dev
 
 ```bash
-npm run dev        # http://localhost:5177
+npm run dev        # http://localhost:5555
 npm run build
 npm run preview
 npm run test

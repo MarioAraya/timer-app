@@ -251,6 +251,13 @@ const es = {
   language: {
     toggle: 'ES',
   },
+  theme: {
+    label: 'Tema',
+    dark: 'Oscuro',
+    light: 'Claro',
+    green: 'Verde',
+    next: 'Cambiar a tema {theme}',
+  },
 }
 
 export default es

@@ -2,6 +2,8 @@ import { useState } from 'preact/hooks'
 import './TimersHome.scss'
 import UserMenu from './auth/UserMenu'
 import { useLang } from '../context/LanguageContext'
+import { useThemeCtx } from '../context/ThemeContext'
+import { nextTheme } from '../theme/index'
 import { loadSessionCounts } from '../utils/localStorage'
 import Credits from './shared/Credits'
 
@@ -11,6 +13,12 @@ const BREATHING_VARIANTS = [
   { id: 'relaxing-breath',i18nKey: 'relaxingBreath', sessionKey: 'relaxingBreath',pattern: '4-7-8',   duration: '3 min', icon: 'nights_stay',      component: 'RelaxingBreathTimer', accentColor: '#9b59b6' },
   { id: 'calming-breath', i18nKey: 'calmingBreath',  sessionKey: 'calmingBreath', pattern: '4-2-6',   duration: '4 min', icon: 'spa',              component: 'CalmingBreathTimer',  accentColor: '#3498db' },
 ]
+
+const THEME_ICONS = {
+  dark: 'dark_mode',
+  light: 'light_mode',
+  green: 'eco',
+}
 
 const TIMER_STATIC = [
   { id: 'hiit',           i18nKey: 'hiit',           sessionKey: 'hiit',          duration: '12 min',  icon: 'local_fire_department', component: 'HiitTimer',     accentColor: '#00cc88' },
@@ -22,6 +30,7 @@ const TIMER_STATIC = [
 
 function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOut }) {
   const { t, lang, setLang } = useLang()
+  const { theme, cycleTheme } = useThemeCtx()
   const [sessionCounts] = useState(() => loadSessionCounts())
 
   const localize = (s) => ({
@@ -46,6 +55,15 @@ function TimersHome({ onTimerSelect, activeTimer, session, onAuthClick, onSignOu
           <h1 className="header-title">{t('home.subtitle')}</h1>
         </div>
         <div className="header-auth">
+          <button
+            className="theme-toggle"
+            data-testid="theme-toggle"
+            onClick={cycleTheme}
+            aria-label={t('theme.next').replace('{theme}', t(`theme.${nextTheme(theme)}`))}
+            title={t('theme.next').replace('{theme}', t(`theme.${nextTheme(theme)}`))}
+          >
+            <span className="material-symbols-outlined">{THEME_ICONS[theme]}</span>
+          </button>
           <button
             className="lang-toggle"
             onClick={() => setLang(lang === 'es' ? 'en' : 'es')}

@@ -1,10 +1,10 @@
 // Shared Workout Setup View Styles
 // Themed via CSS custom properties set by .theme-hiit / .theme-tabata
 
-$bg-dark: #18181b;
-$text-primary: #ffffff;
-$text-secondary: rgba(255, 255, 255, 0.4);
-$text-muted: rgba(255, 255, 255, 0.6);
+$bg-dark: var(--bg-base);
+$text-primary: var(--text-1);
+$text-secondary: var(--text-3);
+$text-muted: var(--text-2);
 
 // ============================================
 // SETUP VIEW
@@ -51,7 +51,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
     align-items: center;
     justify-content: space-between;
     padding: 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(var(--fg-rgb), 0.1);
     position: sticky;
     top: 0;
     background: rgba(24, 24, 27, 0.95);
@@ -74,7 +74,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
       transition: background 0.2s;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(var(--fg-rgb), 0.1);
       }
 
       .material-symbols-outlined {
@@ -142,7 +142,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
           position: absolute;
           inset: -12px;
           border-radius: 50%;
-          border: 12px solid rgba(255, 255, 255, 0.2);
+          border: 12px solid rgba(var(--fg-rgb), 0.2);
           border-bottom-color: transparent;
           border-right-color: transparent;
           transform: rotate(12deg);
@@ -231,7 +231,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
   // Interval cards
   .interval-card {
     background: rgba(15, 23, 42, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(var(--fg-rgb), 0.1);
     border-radius: 16px;
     padding: 20px;
     margin-bottom: 16px;
@@ -305,7 +305,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
           border-radius: 50%;
           background: white;
           border: 2px solid var(--accent);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.3);
           cursor: pointer;
         }
 
@@ -315,7 +315,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
           border-radius: 50%;
           background: white;
           border: 2px solid var(--accent);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.3);
           cursor: pointer;
         }
       }
@@ -325,7 +325,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
         position: absolute;
         width: 100%;
         height: 6px;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(var(--fg-rgb), 0.1);
         border-radius: 3px;
       }
 
@@ -353,8 +353,8 @@ $text-muted: rgba(255, 255, 255, 0.6);
     display: flex;
     align-items: center;
     gap: 16px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px dashed rgba(255, 255, 255, 0.2);
+    background: rgba(var(--fg-rgb), 0.03);
+    border: 1px dashed rgba(var(--fg-rgb), 0.2);
     border-radius: 12px;
     padding: 16px;
     margin-top: 32px;
@@ -694,7 +694,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(0, 0, 0, 0.68);
+  background: rgba(var(--shadow-rgb), 0.68);
   backdrop-filter: blur(8px);
   animation: setupOverlayIn 0.2s ease;
 }
@@ -708,9 +708,9 @@ $text-muted: rgba(255, 255, 255, 0.6);
   max-height: min(88vh, 900px);
   padding-bottom: 0;
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--fg-rgb), 0.1);
   box-shadow:
-    0 32px 80px rgba(0, 0, 0, 0.6),
+    0 32px 80px rgba(var(--shadow-rgb), 0.6),
     0 0 0 1px var(--accent-border);
   overflow: hidden;
   animation: setupModalIn 0.22s cubic-bezier(0.4, 0, 0.2, 1);

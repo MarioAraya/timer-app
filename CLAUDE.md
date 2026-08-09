@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ```bash
-npm run dev        # Start Vite dev server (http://localhost:5177)
+npm run dev        # Start Vite dev server (http://localhost:5555)
 npm run build      # Production build
 npm run preview    # Preview production build
 npm run test       # Run Vitest tests once
@@ -135,6 +135,19 @@ The circle animation is **JS-driven** (not CSS keyframes): `BreathingTimer.jsx` 
 `src/context/LanguageContext.jsx` wraps the app (via `main.jsx`'s `<LanguageProvider>`) and exposes the `useLang()` hook. Components call `useLang()` to get `{ lang, t }` — never call `t()` directly with a hardcoded lang string.
 
 `src/hooks/useLanguage.js` manages language state and persists selection via `src/i18n/languageStorage.js`.
+
+### Theming (`src/styles/themes.css`)
+
+Three appearance themes: `dark` (default), `light`, `green` (light with green tones). Tokens are CSS custom properties on `:root[data-theme='…']`; `useTheme.js` writes the `data-theme` attribute on `<html>`.
+
+`src/theme/index.js` (`VALID_THEMES`, `nextTheme`) + `themeStorage.js` (key `timer-app-theme`) + `context/ThemeContext.jsx` mirror the i18n setup. Components call `useThemeCtx()` — never read the attribute directly. The header toggle in `TimersHome.jsx` cycles dark → light → green.
+
+Two token channels, and the distinction matters:
+- `--fg-rgb` / `--shadow-rgb` go **inside** `rgba()`, so pre-existing alphas keep working when the theme inverts (`rgba(var(--fg-rgb), 0.1)`).
+- `--surface-1/2/3`, `--border-1/2`, `--text-1/2/3` are explicit per theme, because a 3% overlay that reads as "elevated" on dark reads as nothing on light.
+- `--accent-text` is the accent darkened for small text on light backgrounds; `--on-accent` is text sitting **on** an accent fill.
+
+**Only the chrome is themed** (home, carousel, setup views, modals, auth). Active workout views (`WorkoutActiveView.scss`, `BreathingTimer.scss`, `PomodoroTimer.scss`) stay dark in all themes — their backgrounds are phase gradients with white text, so tokenizing them makes text illegible. Aclararlas requiere rediseñar los gradientes de fase.
 
 ### State Persistence (`src/utils/localStorage.js`)
 

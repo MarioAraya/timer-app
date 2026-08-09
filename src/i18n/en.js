@@ -251,6 +251,13 @@ const en = {
   language: {
     toggle: 'EN',
   },
+  theme: {
+    label: 'Theme',
+    dark: 'Dark',
+    light: 'Light',
+    green: 'Green',
+    next: 'Switch to {theme} theme',
+  },
 }
 
 export default en

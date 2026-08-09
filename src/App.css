@@ -1,7 +1,7 @@
-/* App - Dark Theme */
+/* App shell — colors come from theme tokens (src/styles/themes.css) */
 .app {
   min-height: 100vh;
-  background: #18181b;
+  background: var(--bg-base);
   display: flex;
   flex-direction: column;
 }
@@ -47,7 +47,7 @@
 .exit-confirm-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,14 +55,14 @@
 }
 
 .exit-confirm-dialog {
-  background: #1a1a2e;
-  border: 1px solid rgba(255,255,255,0.15);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-2);
   border-radius: 16px;
   padding: 2rem;
   max-width: 320px;
   width: 90%;
   text-align: center;
-  color: #fff;
+  color: var(--text-1);
 }
 
 .exit-confirm-dialog p {
@@ -88,8 +88,8 @@
 }
 
 .exit-confirm-cancel {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
+  background: var(--surface-3);
+  color: var(--text-1);
 }
 
 .exit-confirm-leave {

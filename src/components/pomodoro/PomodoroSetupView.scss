@@ -1,7 +1,7 @@
-$bg-dark: #18181b;
-$text-primary: #ffffff;
-$text-secondary: rgba(255, 255, 255, 0.4);
-$text-muted: rgba(255, 255, 255, 0.6);
+$bg-dark: var(--bg-base);
+$text-primary: var(--text-1);
+$text-secondary: rgba(var(--fg-rgb), 0.4);
+$text-muted: rgba(var(--fg-rgb), 0.6);
 
 // Pomodoro accent: tomato red
 $accent: rgb(239, 68, 68);
@@ -18,7 +18,7 @@ $accent-border: rgba(239, 68, 68, 0.25);
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(0, 0, 0, 0.68);
+  background: rgba(var(--shadow-rgb), 0.68);
   backdrop-filter: blur(8px);
   animation: psetupOverlayIn 0.2s ease;
 }
@@ -45,9 +45,9 @@ $accent-border: rgba(239, 68, 68, 0.25);
   color: $text-primary;
   font-family: 'Lexend', sans-serif;
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--fg-rgb), 0.1);
   box-shadow:
-    0 32px 80px rgba(0, 0, 0, 0.6),
+    0 32px 80px rgba(var(--shadow-rgb), 0.6),
     0 0 0 1px $accent-border;
   overflow: hidden;
   animation: psetupModalIn 0.22s cubic-bezier(0.4, 0, 0.2, 1);
@@ -59,7 +59,7 @@ $accent-border: rgba(239, 68, 68, 0.25);
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(var(--fg-rgb), 0.08);
   flex-shrink: 0;
 
   .close-button {
@@ -76,7 +76,7 @@ $accent-border: rgba(239, 68, 68, 0.25);
     transition: background 0.2s, color 0.2s;
     flex-shrink: 0;
 
-    &:hover { background: rgba(255, 255, 255, 0.1); color: $text-primary; }
+    &:hover { background: rgba(var(--fg-rgb), 0.1); color: $text-primary; }
 
     .material-symbols-outlined { font-size: 22px; }
   }
@@ -121,15 +121,15 @@ $accent-border: rgba(239, 68, 68, 0.25);
   color: $text-primary;
   cursor: pointer;
   text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(var(--fg-rgb), 0.07);
   transition: background 0.15s;
   border-radius: 0;
   width: 100%;
   font-family: 'Lexend', sans-serif;
 
-  &:first-child { border-top: 1px solid rgba(255, 255, 255, 0.07); }
+  &:first-child { border-top: 1px solid rgba(var(--fg-rgb), 0.07); }
 
-  &:hover { background: rgba(255, 255, 255, 0.04); }
+  &:hover { background: rgba(var(--fg-rgb), 0.04); }
 
   &.selected {
     background: $accent-light;
@@ -141,7 +141,7 @@ $accent-border: rgba(239, 68, 68, 0.25);
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(var(--fg-rgb), 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -245,7 +245,7 @@ $accent-border: rgba(239, 68, 68, 0.25);
       border-radius: 50%;
       background: white;
       border: 2px solid $accent;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.3);
       cursor: pointer;
     }
 
@@ -255,7 +255,7 @@ $accent-border: rgba(239, 68, 68, 0.25);
       border-radius: 50%;
       background: white;
       border: 2px solid $accent;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.3);
       cursor: pointer;
       border: none;
     }
@@ -266,14 +266,14 @@ $accent-border: rgba(239, 68, 68, 0.25);
     position: absolute;
     width: 100%;
     height: 6px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(var(--fg-rgb), 0.1);
     border-radius: 3px;
   }
 
   .slider-fill {
     position: absolute;
     height: 6px;
-    background: rgba(255, 255, 255, 0.35);
+    background: rgba(var(--fg-rgb), 0.35);
     border-radius: 3px;
     pointer-events: none;
 
@@ -288,7 +288,7 @@ $accent-border: rgba(239, 68, 68, 0.25);
 .psetup-footer {
   flex-shrink: 0;
   padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(var(--fg-rgb), 0.08);
 
   .psetup-start-button {
     width: 100%;

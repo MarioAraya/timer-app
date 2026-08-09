@@ -1,7 +1,7 @@
 .auth-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(var(--shadow-rgb), 0.75);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -11,14 +11,14 @@
 }
 
 .auth-modal {
-  background: #27272a;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-elevated);
+  border: 1px solid rgba(var(--fg-rgb), 0.08);
   border-radius: 20px;
   padding: 2rem;
   width: 100%;
   max-width: 380px;
   position: relative;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 60px rgba(var(--shadow-rgb), 0.5);
 
   &__close {
     position: absolute;
@@ -34,8 +34,8 @@
     transition: color 0.2s, background 0.2s;
 
     &:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-1);
+      background: rgba(var(--fg-rgb), 0.08);
     }
 
     .material-symbols-outlined { font-size: 20px; }
@@ -47,14 +47,14 @@
 
     h2 {
       margin: 0.5rem 0 0.25rem;
-      color: #fff;
+      color: var(--text-1);
       font-size: 1.4rem;
       font-weight: 700;
     }
 
     p {
       margin: 0;
-      color: #a1a1aa;
+      color: var(--text-2);
       font-size: 0.875rem;
     }
   }
@@ -99,14 +99,14 @@
     align-items: center;
     gap: 0.75rem;
     margin: 1.25rem 0;
-    color: #52525b;
+    color: var(--text-3);
     font-size: 0.8rem;
 
     &::before, &::after {
       content: '';
       flex: 1;
       height: 1px;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(var(--fg-rgb), 0.08);
     }
   }
 
@@ -119,16 +119,16 @@
   &__input {
     width: 100%;
     padding: 0.75rem 1rem;
-    background: #18181b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-base);
+    border: 1px solid rgba(var(--fg-rgb), 0.1);
     border-radius: 12px;
-    color: #fff;
+    color: var(--text-1);
     font-size: 0.95rem;
     outline: none;
     transition: border-color 0.2s;
     box-sizing: border-box;
 
-    &::placeholder { color: #52525b; }
+    &::placeholder { color: var(--text-3); }
 
     &:focus {
       border-color: #00cc88;
@@ -168,7 +168,7 @@
   &__spinner {
     width: 18px;
     height: 18px;
-    border: 2px solid rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(var(--shadow-rgb), 0.2);
     border-top-color: #000;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
@@ -183,7 +183,7 @@
   }
 
   &__disclaimer {
-    color: #52525b;
+    color: var(--text-3);
     font-size: 0.78rem;
     text-align: center;
     margin: 1rem 0 0;
@@ -200,16 +200,16 @@
     }
 
     h3 {
-      color: #fff;
+      color: var(--text-1);
       margin: 0.75rem 0 0.5rem;
     }
 
     p {
-      color: #a1a1aa;
+      color: var(--text-2);
       font-size: 0.9rem;
       margin: 0 0 1.25rem;
 
-      strong { color: #fff; }
+      strong { color: var(--text-1); }
     }
   }
 

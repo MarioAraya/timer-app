@@ -1,0 +1,92 @@
+/* Theme tokens.
+   Applied via `data-theme` on <html> by ThemeContext.
+   Two channels:
+   - --fg-rgb / --shadow-rgb: used inside rgba() so existing alphas keep working.
+   - --surface-* / --border-*: explicit surface steps, because a 3% overlay that
+     reads as "elevated" on dark reads as nothing on light. */
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-base: #18181b;
+  --bg-elevated: #1f1f23;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  --fg-rgb: 255, 255, 255;
+  --fg: #ffffff;
+  --text-1: #ffffff;
+  --text-2: rgba(255, 255, 255, 0.7);
+  --text-3: rgba(255, 255, 255, 0.5);
+
+  --surface-1: rgba(255, 255, 255, 0.03);
+  --surface-2: rgba(255, 255, 255, 0.06);
+  --surface-3: rgba(255, 255, 255, 0.1);
+
+  --border-1: rgba(255, 255, 255, 0.08);
+  --border-2: rgba(255, 255, 255, 0.16);
+
+  --shadow-rgb: 0, 0, 0;
+
+  --accent: #00cc88;
+  --accent-strong: #00b377;
+  /* Accent used as small text — needs contrast against --bg-base */
+  --accent-text: #00cc88;
+  --on-accent: #18181b;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg-base: #f4f4f5;
+  --bg-elevated: #ffffff;
+  --bg-overlay: rgba(24, 24, 27, 0.45);
+
+  --fg-rgb: 24, 24, 27;
+  --fg: #18181b;
+  --text-1: #18181b;
+  --text-2: rgba(24, 24, 27, 0.72);
+  --text-3: rgba(24, 24, 27, 0.52);
+
+  --surface-1: #ffffff;
+  --surface-2: #ebebee;
+  --surface-3: rgba(24, 24, 27, 0.07);
+
+  --border-1: rgba(24, 24, 27, 0.12);
+  --border-2: rgba(24, 24, 27, 0.22);
+
+  --shadow-rgb: 82, 82, 91;
+
+  --accent: #059669;
+  --accent-strong: #047857;
+  --accent-text: #046c4e;
+  --on-accent: #ffffff;
+}
+
+:root[data-theme='green'] {
+  color-scheme: light;
+
+  --bg-base: #eaf3ec;
+  --bg-elevated: #f8fcf9;
+  --bg-overlay: rgba(19, 51, 34, 0.45);
+
+  --fg-rgb: 19, 51, 34;
+  --fg: #133322;
+  --text-1: #133322;
+  --text-2: rgba(19, 51, 34, 0.74);
+  --text-3: rgba(19, 51, 34, 0.54);
+
+  --surface-1: #f8fcf9;
+  --surface-2: #dfeee3;
+  --surface-3: rgba(19, 51, 34, 0.08);
+
+  --border-1: rgba(19, 51, 34, 0.14);
+  --border-2: rgba(19, 51, 34, 0.24);
+
+  --shadow-rgb: 30, 82, 54;
+
+  --accent: #0f9d58;
+  --accent-strong: #0b7d46;
+  --accent-text: #0a6b3c;
+  --on-accent: #ffffff;
+}

@@ -1,7 +1,7 @@
 import WorkoutSetupView from '../shared/WorkoutSetupView'
 import { useLang } from '../../context/LanguageContext'
 
-function HiitSetupView({ config, onClose, totalTime }) {
+function HiitSetupView({ config, onClose }) {
   const { t } = useLang()
 
   const theme = {
@@ -10,7 +10,6 @@ function HiitSetupView({ config, onClose, totalTime }) {
     title: t('hiit.setupTitle'),
     roundsLabel: t('setup.sets'),
     workLabel: t('hiit.workLabel'),
-    defaultTotalTime: '12:00',
     quote: {
       phase: t('hiit.quotePhase'),
       time: '0:05',
@@ -25,7 +24,6 @@ function HiitSetupView({ config, onClose, totalTime }) {
       config={config}
       theme={theme}
       onClose={onClose}
-      totalTime={totalTime}
     />
   )
 }

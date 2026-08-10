@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'preact/hooks'
 import { useLang } from '../../context/LanguageContext'
+import { computeTotalSeconds, formatTotal } from '../../utils/workoutTotals'
 import './WorkoutSetupView.scss'
 
-function WorkoutSetupView({ config, theme, onClose, totalTime }) {
+function WorkoutSetupView({ config, theme, onClose }) {
   const { t } = useLang()
   const [prepDuration, setPrepDuration] = useState(config.preparation?.duration || 10)
   const [workDuration, setWorkDuration] = useState(theme.work.default)
   const [restDuration, setRestDuration] = useState(theme.rest.default)
 
   const totalRounds = config.rounds?.length || 8
+
+  const totalSeconds = computeTotalSeconds({
+    prep: prepDuration,
+    rounds: totalRounds,
+    work: workDuration,
+    rest: restDuration,
+  })
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
@@ -54,11 +62,9 @@ function WorkoutSetupView({ config, theme, onClose, totalTime }) {
       <main className="setup-main">
         <div className="setup-preview">
           <div className="preview-ring">
-            <div className="preview-ring-outer"></div>
-            <div className="preview-ring-inner"></div>
             <div className="preview-content">
               <span className="preview-label">{t('setup.totalTime')}</span>
-              <span className="preview-time">{totalTime || theme.defaultTotalTime}</span>
+              <span className="preview-time">{formatTotal(totalSeconds)}</span>
               <span className="preview-info">{totalRounds} {t('setup.sets')}</span>
             </div>
           </div>

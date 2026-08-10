@@ -54,7 +54,7 @@ $text-muted: var(--text-2);
     border-bottom: 1px solid rgba(var(--fg-rgb), 0.1);
     position: sticky;
     top: 0;
-    background: rgba(24, 24, 27, 0.95);
+    background: color-mix(in srgb, var(--bg-base) 95%, transparent);
     backdrop-filter: blur(10px);
     z-index: 10;
 
@@ -99,7 +99,7 @@ $text-muted: var(--text-2);
     padding: 24px 16px;
   }
 
-  // Preview ring
+  // Total-time preview (no ring — the summary is the text itself)
   .setup-preview {
     display: flex;
     justify-content: center;
@@ -107,47 +107,10 @@ $text-muted: var(--text-2);
 
     .preview-ring {
       position: relative;
-      width: 192px;
-      height: 192px;
+      padding: 8px 0;
       display: flex;
       align-items: center;
       justify-content: center;
-
-      .preview-ring-outer {
-        position: absolute;
-        inset: 0;
-        border-radius: 50%;
-        border: 12px solid var(--accent-border);
-
-        &::after {
-          content: '';
-          position: absolute;
-          inset: -12px;
-          border-radius: 50%;
-          border: 12px solid var(--accent);
-          border-left-color: transparent;
-          border-bottom-color: transparent;
-          transform: rotate(-45deg);
-        }
-      }
-
-      .preview-ring-inner {
-        position: absolute;
-        inset: 16px;
-        border-radius: 50%;
-        border: 12px solid var(--accent-light);
-
-        &::after {
-          content: '';
-          position: absolute;
-          inset: -12px;
-          border-radius: 50%;
-          border: 12px solid rgba(var(--fg-rgb), 0.2);
-          border-bottom-color: transparent;
-          border-right-color: transparent;
-          transform: rotate(12deg);
-        }
-      }
 
       .preview-content {
         text-align: center;
@@ -184,7 +147,7 @@ $text-muted: var(--text-2);
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba($bg-dark, 0.7);
+        background: color-mix(in srgb, var(--bg-base) 70%, transparent);
         border-radius: 50%;
         opacity: 0;
         transition: opacity 0.3s ease;
@@ -230,7 +193,7 @@ $text-muted: var(--text-2);
 
   // Interval cards
   .interval-card {
-    background: rgba(15, 23, 42, 0.5);
+    background: var(--surface-1);
     border: 1px solid rgba(var(--fg-rgb), 0.1);
     border-radius: 16px;
     padding: 20px;
@@ -303,7 +266,7 @@ $text-muted: var(--text-2);
           width: 20px;
           height: 20px;
           border-radius: 50%;
-          background: white;
+          background: var(--bg-elevated);
           border: 2px solid var(--accent);
           box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.3);
           cursor: pointer;
@@ -313,7 +276,7 @@ $text-muted: var(--text-2);
           width: 20px;
           height: 20px;
           border-radius: 50%;
-          background: white;
+          background: var(--bg-elevated);
           border: 2px solid var(--accent);
           box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.3);
           cursor: pointer;
@@ -426,28 +389,6 @@ $text-muted: var(--text-2);
       margin-bottom: 48px;
 
       .preview-ring {
-        width: 280px;
-        height: 280px;
-
-        .preview-ring-outer {
-          border-width: 16px;
-
-          &::after {
-            inset: -16px;
-            border-width: 16px;
-          }
-        }
-
-        .preview-ring-inner {
-          inset: 24px;
-          border-width: 16px;
-
-          &::after {
-            inset: -16px;
-            border-width: 16px;
-          }
-        }
-
         .preview-content {
           .preview-label {
             font-size: 14px;
@@ -561,9 +502,6 @@ $text-muted: var(--text-2);
       margin-bottom: 56px;
 
       .preview-ring {
-        width: 320px;
-        height: 320px;
-
         .preview-content {
           .preview-label {
             font-size: 16px;
@@ -606,28 +544,6 @@ $text-muted: var(--text-2);
       margin-bottom: 10px;
 
       .preview-ring {
-        width: 110px;
-        height: 110px;
-
-        .preview-ring-outer {
-          border-width: 7px;
-
-          &::after {
-            inset: -7px;
-            border-width: 7px;
-          }
-        }
-
-        .preview-ring-inner {
-          inset: 9px;
-          border-width: 7px;
-
-          &::after {
-            inset: -7px;
-            border-width: 7px;
-          }
-        }
-
         .preview-content {
           .preview-time {
             font-size: 20px;
@@ -739,9 +655,6 @@ $text-muted: var(--text-2);
     margin-bottom: 24px;
 
     .preview-ring {
-      width: 180px;
-      height: 180px;
-
       .preview-content {
         .preview-label { font-size: 10px; letter-spacing: 0.1em; }
         .preview-time { font-size: 34px; }
@@ -775,7 +688,7 @@ $text-muted: var(--text-2);
     .setup-preview {
       margin-bottom: 18px;
 
-      .preview-ring { width: 150px; height: 150px; }
+      
     }
   }
 }

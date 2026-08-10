@@ -3,7 +3,7 @@ import './HiitTimer.scss'
 import HiitSetupView from './HiitSetupView'
 import HiitActiveView from './HiitActiveView'
 import { hiitAudio, playWorkSound, playCountdownSound, playCheerSound } from '../../utils/audioUtils'
-import { HIIT_CONFIG, calculateTotalTime } from '../../config/hiitConfig'
+import { HIIT_CONFIG } from '../../config/hiitConfig'
 import { saveHiitState, loadHiitState, clearHiitState, incrementSessionCount } from '../../utils/localStorage'
 import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
 import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
@@ -62,7 +62,6 @@ function HiitTimerNew({
   const preparationTime = HIIT_CONFIG.preparation.duration
 
   // Calculate total workout time
-  const totalTime = calculateTotalTime()
 
   const timerCtx = { config: HIIT_CONFIG, preparationTime, currentRound, timeLeft, isWorkPhase, isPreparationPhase }
 
@@ -290,7 +289,6 @@ function HiitTimerNew({
         <HiitSetupView
           config={HIIT_CONFIG}
           onClose={() => setShowSetup(false)}
-          totalTime={totalTime}
         />
       )}
 

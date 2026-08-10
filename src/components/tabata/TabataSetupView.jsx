@@ -1,7 +1,7 @@
 import WorkoutSetupView from '../shared/WorkoutSetupView'
 import { useLang } from '../../context/LanguageContext'
 
-function TabataSetupView({ config, onClose, totalTime }) {
+function TabataSetupView({ config, onClose }) {
   const { t } = useLang()
 
   const theme = {
@@ -10,7 +10,6 @@ function TabataSetupView({ config, onClose, totalTime }) {
     title: t('tabata.setupTitle'),
     roundsLabel: t('setup.sets'),
     workLabel: t('tabata.workLabel'),
-    defaultTotalTime: '4:00',
     quote: {
       phase: t('tabata.quotePhase'),
       time: '0:15',
@@ -25,7 +24,6 @@ function TabataSetupView({ config, onClose, totalTime }) {
       config={config}
       theme={theme}
       onClose={onClose}
-      totalTime={totalTime}
     />
   )
 }

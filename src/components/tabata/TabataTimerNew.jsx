@@ -3,7 +3,7 @@ import './TabataTimer.scss'
 import TabataSetupView from './TabataSetupView'
 import TabataActiveView from './TabataActiveView'
 import { tabataAudio, playWorkSound, playCountdownSound, playCheerSound } from '../../utils/audioUtils'
-import { TABATA_CONFIG, calculateTabataTotalTime } from '../../config/tabataConfig'
+import { TABATA_CONFIG } from '../../config/tabataConfig'
 import { saveTabataState, loadTabataState, clearTabataState, incrementSessionCount } from '../../utils/localStorage'
 import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
 import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
@@ -61,7 +61,6 @@ function TabataTimerNew({
   const preparationTime = TABATA_CONFIG.preparation.duration
 
   // Calculate total workout time
-  const totalTime = calculateTabataTotalTime()
 
   const timerCtx = { config: TABATA_CONFIG, preparationTime, currentRound, timeLeft, isWorkPhase, isPreparationPhase }
 
@@ -256,7 +255,6 @@ function TabataTimerNew({
         <TabataSetupView
           config={TABATA_CONFIG}
           onClose={() => setShowSetup(false)}
-          totalTime={totalTime}
         />
       )}
 

@@ -173,6 +173,43 @@ class WorkoutAudioPlayer {
   }
 
   /**
+   * Stop and park the playhead exactly on startTime, ready for a fresh run.
+   *
+   * stop() already assigns currentTime, but an MP3 seek lands on a frame
+   * boundary, so the element can settle a few tens of ms past the target and
+   * the next play() clips the beginning of the song. This waits for the seek
+   * to report done and corrects it once if it drifted.
+   */
+  reset() {
+    if (!this.audio) return
+
+    this.stopWatchdog()
+    this.shouldBePlaying = false
+
+    try {
+      this.audio.pause()
+      const target = this.config.startTime || 0
+      this.audio.currentTime = target
+
+      const settle = () => {
+        this.audio.removeEventListener('seeked', settle)
+        const drift = this.audio.currentTime - target
+        // One correction only — the listener is already detached, so a seek
+        // that cannot land exactly will not bounce forever.
+        if (Math.abs(drift) > 0.02) {
+          console.log(`⏮️ ${this.config.name} seek landed ${drift.toFixed(3)}s off, correcting`)
+          this.audio.currentTime = target
+        }
+      }
+      this.audio.addEventListener('seeked', settle)
+
+      console.log(`⏮️ Reset ${this.config.name} song to ${target}s`)
+    } catch (error) {
+      console.error(`Error resetting ${this.config.name} audio:`, error)
+    }
+  }
+
+  /**
    * Pause audio without resetting
    */
   pause() {

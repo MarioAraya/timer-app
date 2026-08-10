@@ -58,6 +58,7 @@ function HiitActiveView({
       onToggleMusicMode={onToggleMusicMode}
       audioError={audioError}
       onCloseAudioError={onCloseAudioError}
+      spaceTogglesPlayback={false}
       themeClass="theme-hiit"
       phaseLabel={getPhaseLabel()}
       motivationalContent={getMotivation()}

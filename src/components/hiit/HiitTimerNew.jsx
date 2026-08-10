@@ -192,7 +192,9 @@ function HiitTimerNew({
     setShowConfetti(false)
 
     if (musicMode) {
-      hiitAudio.stop()
+      // reset(), not stop(): parks the playhead exactly on startTime so the
+      // next Play does not clip the opening of the track.
+      hiitAudio.reset()
     }
 
     clearHiitState()
@@ -226,6 +228,15 @@ function HiitTimerNew({
   const calibrationMarksRef = useRef([])
   const handleCalibrate = () => {
     const audioTime = hiitAudio.getPosition()
+
+    // getPosition() is null until the MP3 is loaded, and in beeps mode it never
+    // loads. Marking then would push NaN into the list and poison every
+    // duration derived from it afterwards.
+    if (audioTime == null) {
+      console.warn('[calibrate] no audio position yet — start the workout in Music mode first')
+      return
+    }
+
     const markIndex = calibrationMarksRef.current.length
     const isWork = markIndex % 2 === 0
     const roundNum = Math.floor(markIndex / 2) + 1
@@ -250,13 +261,47 @@ function HiitTimerNew({
     // Also log the raw seconds for config
     console.log(`  → ${audioTime.toFixed(3)}s`)
 
-    // If we have pairs, log the duration
-    if (!isWork && calibrationMarksRef.current.length >= 2) {
-      const prevMark = calibrationMarksRef.current[calibrationMarksRef.current.length - 2]
-      const duration = audioTime - prevMark.time
-      console.log(`  → Work duration: ${duration.toFixed(2)}s`)
+    // Duration of the phase this mark just closed
+    const marks = calibrationMarksRef.current
+    if (marks.length >= 2) {
+      const prev = marks[marks.length - 2]
+      const duration = audioTime - prev.time
+      console.log(`  → ${prev.type} round ${prev.round} lasted ${duration.toFixed(2)}s`)
     }
+
+    dumpCalibration()
   }
+
+  // Prints the marks so far as a paste-ready HIIT_TICKS block. Reprinted after
+  // every mark, so whatever is at the bottom of the console when the workout
+  // ends is the complete list.
+  const dumpCalibration = () => {
+    const marks = calibrationMarksRef.current
+    if (!marks.length) return
+
+    const lines = marks.map(m =>
+      `  { time: ${m.time.toFixed(3)}, phase: '${m.type.toLowerCase()}', round: ${m.round} },`
+    )
+    console.log(
+      `%c─── HIIT_TICKS (${marks.length} marks) ───\n{ time: 0, phase: 'prep' },\n${lines.join('\n')}`,
+      'color:#888'
+    )
+  }
+
+  // SPACE marks a calibration point against the MP3 clock. Registered on
+  // document so it works regardless of focus, and preventDefault stops the
+  // browser from re-triggering whatever button happens to be focused.
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.code !== 'Space' && e.key !== ' ') return
+      const target = e.target
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return
+      e.preventDefault()
+      handleCalibrate()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  })
 
   // Save state on unmount (not on every state change — a cleanup keyed to
   // state deps re-fires on reset and re-saves the stale pre-reset values,

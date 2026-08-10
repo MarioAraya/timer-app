@@ -25,6 +25,9 @@ function WorkoutActiveView({
   exerciseName,
   audioError,
   onCloseAudioError,
+  // HIIT turns this off while calibrating, so SPACE can mark MP3 timestamps
+  // instead of toggling playback. Tabata keeps the default.
+  spaceTogglesPlayback = true,
 }) {
   const { t } = useLang()
   const containerRef = useRef(null)
@@ -80,7 +83,7 @@ function WorkoutActiveView({
         e.preventDefault()
         handleFullscreen()
       }
-      if (e.key === ' ') {
+      if (e.key === ' ' && spaceTogglesPlayback) {
         e.preventDefault()
         if (isFinished) return
         isRunning ? onPause() : onStart()
@@ -88,7 +91,7 @@ function WorkoutActiveView({
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
-  }, [handleFullscreen, isRunning, isFinished, onPause, onStart])
+  }, [handleFullscreen, isRunning, isFinished, onPause, onStart, spaceTogglesPlayback])
 
   // Sync isMaximized state with native fullscreen changes
   useEffect(() => {

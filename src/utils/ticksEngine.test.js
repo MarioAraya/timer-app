@@ -28,7 +28,7 @@ describe('buildConfigFromTicks', () => {
 
   it('HIIT preparation duration matches tick difference', () => {
     const config = buildConfigFromTicks(HIIT_TICKS)
-    expect(config.preparation.duration).toBeCloseTo(12.589, 2)
+    expect(config.preparation.duration).toBeCloseTo(10.315, 2)
   })
 
   it('Tabata preparation duration is 11s', () => {
@@ -38,14 +38,14 @@ describe('buildConfigFromTicks', () => {
 
   it('HIIT round 1 work duration matches calibration', () => {
     const config = buildConfigFromTicks(HIIT_TICKS)
-    // 51.324 - 12.589 = 38.735
-    expect(config.rounds[0].work).toBeCloseTo(38.74, 1)
+    // 51.284 - 10.315 = 40.969
+    expect(config.rounds[0].work).toBeCloseTo(40.97, 1)
   })
 
   it('HIIT round 1 rest duration matches calibration', () => {
     const config = buildConfigFromTicks(HIIT_TICKS)
-    // 71.730 - 51.324 = 20.406
-    expect(config.rounds[0].rest).toBeCloseTo(20.41, 1)
+    // 71.718 - 51.284 = 20.434
+    expect(config.rounds[0].rest).toBeCloseTo(20.43, 1)
   })
 
   it('Tabata last round has rest = 0', () => {
@@ -341,8 +341,8 @@ describe('getTotalDuration', () => {
   it('HIIT total matches sum of all ticks', () => {
     const config = buildConfigFromTicks(HIIT_TICKS)
     const total = getTotalDuration(config)
-    // Should be approximately 732.549 (end tick)
-    expect(total).toBeCloseTo(732.549, 0)
+    // Should be approximately 747.027 (end tick)
+    expect(total).toBeCloseTo(747.027, 0)
   })
 
   it('Tabata total is 241s (11 prep + 8*20 work + 7*10 rest)', () => {
@@ -400,9 +400,9 @@ describe('Edge cases', () => {
 
   it('workStart field on rounds matches original tick times', () => {
     const config = buildConfigFromTicks(HIIT_TICKS)
-    expect(config.rounds[0].workStart).toBeCloseTo(12.589, 2)
-    expect(config.rounds[1].workStart).toBeCloseTo(71.730, 2)
-    expect(config.rounds[5].workStart).toBeCloseTo(317.134, 2)
+    expect(config.rounds[0].workStart).toBeCloseTo(10.315, 2)
+    expect(config.rounds[1].workStart).toBeCloseTo(71.718, 2)
+    expect(config.rounds[5].workStart).toBeCloseTo(316.842, 2)
   })
 })
 

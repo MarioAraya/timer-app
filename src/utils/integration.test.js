@@ -17,6 +17,7 @@ import {
 import { HIIT_TICKS } from '../config/hiitTicks'
 import { TABATA_TICKS } from '../config/tabataTicks'
 import { HIIT_CONFIG, CALIBRATION_MARKS } from '../config/hiitConfig'
+import { HIIT_AUDIO_CONFIG } from './audioUtils'
 import { TABATA_CONFIG } from '../config/tabataConfig'
 import {
   saveHiitState,
@@ -168,6 +169,31 @@ describe('HIIT_CONFIG vs CALIBRATION_MARKS', () => {
   it('round 1 work coincide con las marcas de calibración', () => {
     const expected = CALIBRATION_MARKS.r1_rest - CALIBRATION_MARKS.prep_end
     expect(HIIT_CONFIG.rounds[0].work).toBeCloseTo(expected, 1)
+  })
+
+  // La preparación es el único valor que no es una resta entre marcas: el MP3
+  // arranca en startTime, así que el timer solo cubre lo que falta hasta la
+  // primera marca de work.
+  it('preparación descuenta el startTime del audio', () => {
+    const expected = CALIBRATION_MARKS.prep_end - HIIT_AUDIO_CONFIG.startTime
+    expect(HIIT_CONFIG.preparation.duration).toBeCloseTo(expected, 2)
+  })
+
+  // Guarda contra volver a "redondear" a 40/20: la canción no es eso, y
+  // hacerlo desincroniza ~1.4s por round.
+  it('ningún round usa los 40/20 redondos del nombre del archivo', () => {
+    HIIT_CONFIG.rounds.forEach((r, i) => {
+      expect(r.work, `round ${i + 1} work`).not.toBe(40)
+      expect(r.rest, `round ${i + 1} rest`).not.toBe(20)
+    })
+  })
+
+  it('el total del workout cae en el fin del MP3', () => {
+    const total =
+      HIIT_CONFIG.preparation.duration +
+      HIIT_CONFIG.rounds.reduce((s, r) => s + r.work + r.rest, 0)
+    const expected = CALIBRATION_MARKS.mp3_end - HIIT_AUDIO_CONFIG.startTime
+    expect(total).toBeCloseTo(expected, 2)
   })
 
   it('round 1 rest coincide con las marcas de calibración', () => {

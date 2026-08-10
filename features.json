@@ -2,7 +2,7 @@
   "_schema": {
     "status": "backlog | in-progress | done | blocked",
     "priority": "high | medium | low",
-    "area": "infra | ui | audio | pwa | ci | ux",
+    "area": "infra | ui | audio | pwa | ci | ux | desktop",
     "branch": "branch activa (opcional)",
     "docs": "archivo de referencia (opcional)"
   },
@@ -204,10 +204,73 @@
     {
       "id": 26,
       "title": "Breathing timers — stacked carousel/spinner navigation",
-      "description": "Box, Calming, Relaxing, and Wim Hof breathing timers are accessed from separate cards on the home grid. Stack them into a single entry with a vertical spinner or carousel to swipe between them, reducing clutter on the home screen. In-progress uncommitted work merges Box/Calming/Relaxing into one 'breathing' card with pattern chips in TimersHome.jsx (Wim Hof stays separate). Introduced a regression: setup.startButton i18n key was removed as part of a related WorkoutSetupView redesign, but PomodoroSetupView.jsx still reads it — 4 tests failing.",
+      "description": "Box, Calming, Relaxing, and Wim Hof breathing timers are accessed from separate cards on the home grid. Stack them into a single entry with a vertical spinner or carousel to swipe between them, reducing clutter on the home screen. In-progress uncommitted work merges Box/Calming/Relaxing into one 'breathing' card with pattern chips in TimersHome.jsx (Wim Hof stays separate). The setup.startButton regression noted earlier is resolved — key exists in es.js/en.js and PomodoroSetupView.jsx:159 reads it fine; suite verified green 296/296 on 2026-08-09.",
       "status": "in-progress",
       "priority": "medium",
       "area": "ux"
+    },
+    {
+      "id": 27,
+      "title": "macOS: base limpia para arrancar Tauri (slice 0)",
+      "description": "Prerrequisitos antes de tocar nada de desktop: instalar target rustup x86_64-apple-darwin, agregar assets-audio/, public/audio/, src-tauri/target/ a .gitignore + public/audio/ a .vercelignore, y commitear/stashear el working tree para aislar los diffs de desktop. Suite ya verificada verde (296/296, 2026-08-09) — no hay tests que arreglar.",
+      "status": "backlog",
+      "priority": "high",
+      "area": "desktop",
+      "docs": "PLAN_MACOS.md"
+    },
+    {
+      "id": 28,
+      "title": "macOS: shell Tauri v2 + build universal (slice 1)",
+      "description": "Scaffold src-tauri/ cargando el frontend Preact existente, sin fork. Scripts tauri:dev/tauri:build, iconos, src/utils/tauri.js con isTauri() y wrappers no-op. Build universal apple-darwin verificado con lipo -archs. GO/NO-GO del proyecto: validar que WKWebView no throttlea el sync de audio con la ventana en background durante un HIIT de 12 rondas.",
+      "status": "backlog",
+      "priority": "high",
+      "area": "desktop",
+      "docs": "SPEC_MACOS.md"
+    },
+    {
+      "id": 29,
+      "title": "macOS: audio 100% offline bundleado (slice 2)",
+      "description": "Los 9 lofi + 2 Wim Hof hoy en Supabase pasan a assets locales del bundle. scripts/fetch-audio.mjs baja a assets-audio/ (git-ignored), scripts/link-audio.mjs copia a public/audio/ pre-build. src/config/audioSource.js resuelve local en Tauri y Supabase en web — único punto de bifurcación. La web no debe regresionar.",
+      "status": "backlog",
+      "priority": "high",
+      "area": "desktop",
+      "docs": "SPEC_MACOS.md"
+    },
+    {
+      "id": 30,
+      "title": "macOS: prevenir sleep durante timer activo (slice 3)",
+      "description": "Comando Rust set_keep_awake(enabled) via crate keepawake (IOPMAssertionCreateWithName). La Mac no duerme ni apaga pantalla mientras corre un timer. Fallo suave: si la assertion falla, warning y el timer sigue. Crítico liberar la assertion en Drop — filtrarla deja la Mac sin dormir para siempre.",
+      "status": "backlog",
+      "priority": "high",
+      "area": "desktop",
+      "docs": "SPEC_MACOS.md"
+    },
+    {
+      "id": 31,
+      "title": "macOS: modo overlay always-on-top (slice 4)",
+      "description": "Ventana chica (320x320, min 240) siempre encima, sin decoración, arrastrable via data-tauri-drag-region. Clase .overlay-mode oculta stats HUD, nav y selector de idioma, y agranda el contador. Al desactivar restaura tamaño, posición y decoración previos.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "desktop",
+      "docs": "SPEC_MACOS.md"
+    },
+    {
+      "id": 32,
+      "title": "macOS: tray/menubar con tiempo restante (slice 5)",
+      "description": "TrayIconBuilder con título en vivo (throttle 1/s desde el frontend, nunca por tick de render) y menú Pausar/Reanudar, Saltar fase, Reiniciar, Mostrar ventana, Salir. Evento tray-action enruta a los controles reales. Cerrar la ventana oculta en vez de matar (prevent_close + hide); salir es explícito desde el tray.",
+      "status": "backlog",
+      "priority": "medium",
+      "area": "desktop",
+      "docs": "SPEC_MACOS.md"
+    },
+    {
+      "id": 33,
+      "title": "macOS: firma Developer ID + notarización",
+      "description": "Fuera de scope de v1 por decisión explícita: la .app v1 se abre con click derecho la primera vez. Requiere Apple Developer Program (US$99/año), Developer ID cert, hardened runtime, entitlements y flujo notarytool en CI. Prerrequisito de auto-update via tauri-plugin-updater.",
+      "status": "backlog",
+      "priority": "low",
+      "area": "desktop",
+      "docs": "SPEC_MACOS.md"
     }
   ]
 }

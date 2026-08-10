@@ -464,6 +464,34 @@
   .audio-icon { font-size: 0.9rem; }
 }
 
+.breathing-track-controls {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.breathing-track-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(var(--breath-fg-rgb), 0.1);
+  border: 1px solid rgba(var(--breath-fg-rgb), 0.2);
+  color: rgba(var(--breath-fg-rgb), 0.85);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: rgba(var(--breath-fg-rgb), 0.22); }
+
+  &.active {
+    background: rgba(var(--breath-fg-rgb), 0.9);
+    color: var(--breath-on-fg);
+  }
+
+  .material-symbols-outlined { font-size: 16px; }
+}
+
 .breathing-volume {
   display: flex;
   align-items: center;

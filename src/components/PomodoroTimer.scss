@@ -496,6 +496,11 @@ $text-dim:     var(--text-3);
       cursor: not-allowed;
     }
 
+    &.active {
+      background: rgb(var(--accent-rgb));
+      color: $bg-dark;
+    }
+
     .material-symbols-outlined { font-size: 16px; }
   }
 

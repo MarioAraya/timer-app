@@ -40,8 +40,8 @@ export function usePomodoroTimer({
 
       if (next <= 0) {
         if (isWorkPhase) {
-          if (musicMode && playerStatus === 'ready') audioFunctions.stop()
-          if (!musicMode) playBeep(1200, 300, 0.4)
+          if (musicMode && playerStatus === 'ready') audioFunctions.pause()
+          playBeep(1200, 300, 0.4)
           const breakDuration = getBreakDuration(currentSession, config)
           setIsWorkPhase(false)
           setCurrentMessage(getPhaseMessage(false, currentSession, config))
@@ -64,8 +64,8 @@ export function usePomodoroTimer({
             setIsWorkPhase(true)
             setCurrentMessage(getPhaseMessage(true, nextSession, config))
             setCurrentSubtitle(getPhaseSubtitle(true, nextSession, config))
-            if (musicMode && playerStatus !== 'error') audioFunctions.play()
-            else playWorkSound()
+            playWorkSound()
+            if (musicMode && playerStatus === 'ready') audioFunctions.resume()
             setTimeLeft(config.workDuration)
           }
         }
@@ -73,7 +73,7 @@ export function usePomodoroTimer({
       }
 
       // Countdown beeps last 3 seconds of work phase
-      if (!musicMode && isWorkPhase) {
+      if (isWorkPhase) {
         const secondsLeft = Math.ceil(next)
         if (secondsLeft <= 3 && secondsLeft >= 1 && lastBeepRef.current !== secondsLeft) {
           lastBeepRef.current = secondsLeft

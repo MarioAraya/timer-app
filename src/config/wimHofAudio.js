@@ -1,6 +1,10 @@
+import { audioUrl, AUDIO_FILES } from './audioSource'
+
+const [ES_FILE, EN_FILE] = AUDIO_FILES.breathing
+
 export const WIM_HOF_MP3_URLS = {
-  es: 'https://zyfiugarcxtcyjnuopft.supabase.co/storage/v1/object/public/audio/win_hof_4rounds-es.mp3',
-  en: 'https://zyfiugarcxtcyjnuopft.supabase.co/storage/v1/object/public/audio/win_hof_4rounds.mp3',
+  es: audioUrl(ES_FILE),
+  en: audioUrl(EN_FILE),
 }
 
 export function getWimHofUrl(lang) {

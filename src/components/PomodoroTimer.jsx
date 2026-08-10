@@ -4,6 +4,7 @@ import { usePomodoroTimer } from '../hooks/usePomodoroTimer'
 import { usePomodoroControls } from '../hooks/usePomodoroControls'
 import { usePomodoroAudioSync } from '../hooks/usePomodoroAudioSync'
 import { useFloatingTimer } from '../hooks/useFloatingTimer'
+import { useDesktopIntegration } from '../hooks/useDesktopIntegration'
 import { pomodoroAudio } from '../utils/audioUtils'
 import { POMODORO_PRESETS, getBreakDuration } from '../config/pomodoroConfig'
 import Confetti from './shared/Confetti'
@@ -40,6 +41,7 @@ function PomodoroTimer({
   const [musicMode, setMusicMode] = useState(savedState?.musicMode ?? true)
   const [playerStatus, setPlayerStatus] = useState('idle')
   const [volume, setVolume] = useState(savedState?.volume || 0.5)
+  const [repeatOne, setRepeatOne] = useState(false)
   const [stateRestored, setStateRestored] = useState(false)
 
   const storageFunctions = {
@@ -124,6 +126,15 @@ function PomodoroTimer({
     setTimeLeft, setCurrentMessage, setCurrentSubtitle, setShowConfetti,
     storageFunctions,
     config: pomodoroConfig
+  })
+
+  // Keep-awake, menubar label and tray controls. No-op outside the macOS app.
+  useDesktopIntegration({
+    isRunning,
+    timeLeft,
+    onToggle: () => (isRunning ? handlePause() : handleStart()),
+    onSkip: handleSkip,
+    onReset: handleReset,
   })
 
   // Native fullscreen toggle
@@ -354,6 +365,8 @@ function PomodoroTimer({
           handleMusicToggle={handleMusicToggle}
           volume={volume}
           setVolume={setVolume}
+          repeatOne={repeatOne}
+          onToggleRepeat={() => setRepeatOne(pomodoroAudio.repeatTrack())}
           audioFunctions={pomodoroAudio}
           t={t}
         />

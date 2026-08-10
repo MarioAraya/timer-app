@@ -158,6 +158,8 @@ const en = {
     lofi: 'Lofi',
     musicOnTitle: 'Music on — click to disable',
     musicOffTitle: 'Enable lofi music',
+    repeatTrack: 'Repeat track',
+    nextTrack: 'Next track',
   },
   breathingGroup: {
     name: 'Breathing',

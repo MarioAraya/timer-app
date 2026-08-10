@@ -158,6 +158,8 @@ const es = {
     lofi: 'Lofi',
     musicOnTitle: 'Música activada — clic para desactivar',
     musicOffTitle: 'Activar música lofi',
+    repeatTrack: 'Repetir pista',
+    nextTrack: 'Siguiente pista',
   },
   breathingGroup: {
     name: 'Respiración',

@@ -7,6 +7,7 @@ import { HIIT_CONFIG } from '../../config/hiitConfig'
 import { saveHiitState, loadHiitState, clearHiitState, incrementSessionCount } from '../../utils/localStorage'
 import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
 import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
+import { useDesktopIntegration } from '../../hooks/useDesktopIntegration'
 import { useLang } from '../../context/LanguageContext'
 
 /**
@@ -211,6 +212,15 @@ function HiitTimerNew({
   const handleToggleFullscreen = () => {
     setIsMaximized(!isMaximized)
   }
+
+  // Keep-awake, menubar label and tray controls. No-op outside the macOS app.
+  useDesktopIntegration({
+    isRunning,
+    timeLeft,
+    onToggle: () => (isRunning ? handlePause() : handleStart()),
+    onSkip: handleSkip,
+    onReset: handleReset,
+  })
 
   // Calibration: log current audio time to console
   const calibrationMarksRef = useRef([])

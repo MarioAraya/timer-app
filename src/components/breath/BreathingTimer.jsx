@@ -36,7 +36,9 @@ function BreathingTimer({
   const [audioMode, setAudioMode] = useState(false)
   const [audioVolume, setAudioVolume] = useState(0.4)
   const [audioStatus, setAudioStatus] = useState('idle')
+  const [repeatOne, setRepeatOne] = useState(false)
   const circleRef = useRef(null)
+  const pausedRef = useRef(false)
 
   useEffect(() => {
     if (autoStart && !isRunning) setIsRunning(true)
@@ -74,27 +76,35 @@ function BreathingTimer({
     const phase = phases[currentPhase]
 
     if (!isRunning) {
+      // Freeze the circle exactly where it was instead of snapping to
+      // SCALE_MIN, which caused a visible shrink-then-grow flash on pause/resume
+      pausedRef.current = true
+      const frozenTransform = getComputedStyle(el).transform
       el.style.transition = 'none'
-      el.style.transform = `scale(${SCALE_MIN})`
+      el.style.transform = frozenTransform && frozenTransform !== 'none'
+        ? frozenTransform
+        : `scale(${SCALE_MIN})`
       return
     }
 
-    if (phase.type === 'inhale') {
-      el.style.transition = 'none'
-      el.style.transform = `scale(${SCALE_MIN})`
+    // Resuming mid-phase: animate only the remaining time from the frozen
+    // scale instead of restarting the full phase duration from scratch
+    const resuming = pausedRef.current
+    pausedRef.current = false
+
+    if (phase.type === 'inhale' || phase.type === 'exhale') {
+      const startScale = phase.type === 'inhale' ? SCALE_MIN : SCALE_MAX
+      const targetScale = phase.type === 'inhale' ? SCALE_MAX : SCALE_MIN
+      const duration = resuming ? timeLeft : phase.duration
+
+      if (!resuming) {
+        el.style.transition = 'none'
+        el.style.transform = `scale(${startScale})`
+      }
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          el.style.transition = `transform ${phase.duration}s ease-in-out`
-          el.style.transform = `scale(${SCALE_MAX})`
-        })
-      })
-    } else if (phase.type === 'exhale') {
-      el.style.transition = 'none'
-      el.style.transform = `scale(${SCALE_MAX})`
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          el.style.transition = `transform ${phase.duration}s ease-in-out`
-          el.style.transform = `scale(${SCALE_MIN})`
+          el.style.transition = `transform ${duration}s ease-in-out`
+          el.style.transform = `scale(${targetScale})`
         })
       })
     } else {
@@ -277,6 +287,27 @@ function BreathingTimer({
             </span>
           </button>
         </div>
+
+        {audioMode && audioStatus === 'ready' && (
+          <div className="breathing-track-controls">
+            <button
+              type="button"
+              className={`breathing-track-btn ${repeatOne ? 'active' : ''}`}
+              onClick={(e) => { e.stopPropagation(); setRepeatOne(breathingAudio.repeatTrack()) }}
+              title={t('breathing.repeatTrack')}
+            >
+              <span className="material-symbols-outlined">repeat_one</span>
+            </button>
+            <button
+              type="button"
+              className="breathing-track-btn"
+              onClick={(e) => { e.stopPropagation(); breathingAudio.nextTrack() }}
+              title={t('breathing.nextTrack')}
+            >
+              <span className="material-symbols-outlined">skip_next</span>
+            </button>
+          </div>
+        )}
 
         {audioMode && audioStatus === 'ready' && (
           <div className="breathing-volume">

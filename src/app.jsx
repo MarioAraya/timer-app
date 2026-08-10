@@ -8,6 +8,7 @@ import BoxBreathingTimer from './components/breath/BoxBreathingTimer'
 import RelaxingBreathTimer from './components/breath/RelaxingBreathTimer'
 import CalmingBreathTimer from './components/breath/CalmingBreathTimer'
 import WimHofTimer from './components/breath/WimHofTimer'
+import OverlayToggle from './components/desktop/OverlayToggle'
 import { saveActiveTimer, loadActiveTimer, clearActiveTimer, saveFavoriteTimer, loadFavoriteTimer } from './utils/localStorage'
 import { useAuth } from './hooks/useAuth'
 import AuthModal from './components/auth/AuthModal'
@@ -166,6 +167,10 @@ function App() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      {/* macOS only: floating-window toggle + titlebar-less drag handle */}
+      <OverlayToggle />
+      <div className="overlay-drag-region" data-tauri-drag-region />
+
       <header className="app-header">
         {/* Show offline indicator when needed */}
         {!isOnline && (

@@ -1,4 +1,5 @@
 import WorkoutAudioPlayer from './WorkoutAudioPlayer'
+import { audioUrl, AUDIO_FILES } from '../config/audioSource'
 
 let audioContext
 
@@ -11,39 +12,32 @@ const initAudioContext = () => {
 
 // ─── Audio configs ────────────────────────────────────────────────────────────
 
-const SUPABASE_AUDIO = 'https://zyfiugarcxtcyjnuopft.supabase.co/storage/v1/object/public/audio'
+// URLs resolve to Supabase on the web and to bundled files under Tauri.
+// audioSource.js is the only place that knows the difference.
+const hiitMp3 = audioUrl(AUDIO_FILES.workout[0])
+const tabataMp3 = audioUrl(AUDIO_FILES.workout[1])
 
 export const HIIT_AUDIO_CONFIG = {
   name: 'HIIT',
-  audioPath: `${SUPABASE_AUDIO}/hiit_next-level_40-20_x12.mp3`,
+  audioPath: hiitMp3,
   startTime: 1.37,
-  url: `${SUPABASE_AUDIO}/hiit_next-level_40-20_x12.mp3`,
+  url: hiitMp3,
   defaultVolume: 0.7,
   loop: false
 }
 
 export const TABATA_AUDIO_CONFIG = {
   name: 'Tabata',
-  audioPath: `${SUPABASE_AUDIO}/tabata_rocky_20-10_x4.mp3`,
+  audioPath: tabataMp3,
   startTime: 0,
-  url: `${SUPABASE_AUDIO}/tabata_rocky_20-10_x4.mp3`,
+  url: tabataMp3,
   defaultVolume: 0.7,
   loop: false
 }
 
 // ─── Lofi playlist ────────────────────────────────────────────────────────────
 
-export const LOFI_TRACKS = [
-  `${SUPABASE_AUDIO}/lofi_morning_routine-chosic.com.mp3`,
-  `${SUPABASE_AUDIO}/lofi_music_library-lofi-ambient-study-lofi-music-455378.mp3`,
-  `${SUPABASE_AUDIO}/fassounds-lofi-study-calm-peaceful-chill-hop-112191.mp3`,
-  `${SUPABASE_AUDIO}/fassounds-good-night-lofi-cozy-chill-music-160166.mp3`,
-  `${SUPABASE_AUDIO}/lofidreams-cozy-lofi-background-music-for-study-457198.mp3`,
-  `${SUPABASE_AUDIO}/mondamusic-lofi-lofi-girl-lofi-chill-512853.mp3`,
-  `${SUPABASE_AUDIO}/pulsebox-lofi-melody-522894.mp3`,
-  `${SUPABASE_AUDIO}/pulsebox-lofi-night-522890.mp3`,
-  `${SUPABASE_AUDIO}/pulsebox-lofi-smooth-522876.mp3`,
-]
+export const LOFI_TRACKS = AUDIO_FILES.lofi.map(audioUrl)
 
 // Cycles through all 9 lofi tracks sequentially, looping indefinitely.
 // Mirrors WorkoutAudioPlayer's play/resume/watchdog flow so HIIT-style
@@ -60,6 +54,7 @@ export class LofiPlaylistPlayer {
     this.shouldBePlaying = false
     this.watchdog = null
     this.inTrackTransition = false
+    this.repeatOne = false
   }
 
   initialize() {
@@ -109,8 +104,14 @@ export class LofiPlaylistPlayer {
       })
 
       this.audio.addEventListener('ended', () => {
-        console.log(`🏁 ${this.config.name} track ended, advancing`)
-        this._nextTrack()
+        if (this.repeatOne) {
+          console.log(`🔂 ${this.config.name} track ended, repeating`)
+          this.audio.currentTime = 0
+          this.audio.play().catch(() => {})
+        } else {
+          console.log(`🏁 ${this.config.name} track ended, advancing`)
+          this._nextTrack()
+        }
       })
 
       this.audio.addEventListener('canplaythrough', () => {
@@ -186,13 +187,11 @@ export class LofiPlaylistPlayer {
   }
 
   repeatTrack() {
-    if (this.audio && this.playerReady) {
-      this.audio.currentTime = 0
-      if (this.shouldBePlaying) {
-        this.audio.play().catch(() => {})
-      }
-    }
+    this.repeatOne = !this.repeatOne
+    return this.repeatOne
   }
+
+  isRepeatOne() { return this.repeatOne }
 
   async play() {
     if (!this.audio) {

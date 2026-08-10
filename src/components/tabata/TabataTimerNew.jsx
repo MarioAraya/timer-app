@@ -7,6 +7,7 @@ import { TABATA_CONFIG } from '../../config/tabataConfig'
 import { saveTabataState, loadTabataState, clearTabataState, incrementSessionCount } from '../../utils/localStorage'
 import { calculateElapsedTime, calculateTotalProgress, calculateRoundProgress } from '../../utils/timerHelpers'
 import { useWorkoutAudio } from '../../hooks/useWorkoutAudio'
+import { useDesktopIntegration } from '../../hooks/useDesktopIntegration'
 import { useLang } from '../../context/LanguageContext'
 
 /**
@@ -213,6 +214,15 @@ function TabataTimerNew({
   const handleToggleFullscreen = () => {
     setIsMaximized(!isMaximized)
   }
+
+  // Keep-awake, menubar label and tray controls. No-op outside the macOS app.
+  useDesktopIntegration({
+    isRunning,
+    timeLeft,
+    onToggle: () => (isRunning ? handlePause() : handleStart()),
+    onSkip: handleSkip,
+    onReset: handleReset,
+  })
 
   // Save state on unmount (not on every state change — a cleanup keyed to
   // state deps re-fires on reset and re-saves the stale pre-reset values,

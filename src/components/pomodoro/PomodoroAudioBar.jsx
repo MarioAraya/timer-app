@@ -11,6 +11,8 @@ function PomodoroAudioBar({
   handleMusicToggle,
   volume,
   setVolume,
+  repeatOne,
+  onToggleRepeat,
   audioFunctions,
   t,
 }) {
@@ -53,13 +55,13 @@ function PomodoroAudioBar({
               </span>
             </button>
             <button
-              className="track-btn"
+              className={`track-btn ${repeatOne ? 'active' : ''}`}
               data-testid="pomodoro-music-repeat"
-              onClick={(e) => { e.stopPropagation(); audioFunctions.repeatTrack() }}
+              onClick={(e) => { e.stopPropagation(); onToggleRepeat() }}
               disabled={playerStatus !== 'ready'}
               title={t('pomodoro.audio.repeatTrack')}
             >
-              <span className="material-symbols-outlined">replay</span>
+              <span className="material-symbols-outlined">repeat_one</span>
             </button>
             <button
               className="track-btn"

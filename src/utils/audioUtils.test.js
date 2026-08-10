@@ -195,11 +195,34 @@ describe('LofiPlaylistPlayer — repeatTrack', () => {
     expect(p.currentIndex).toBe(1)
   })
 
-  it('resetea currentTime a 0', async () => {
+  it('activa modo repetir-uno y lo alterna en cada llamado', async () => {
     const p = await readyLofi()
-    currentMockAudio.currentTime = 30
+    expect(p.isRepeatOne()).toBe(false)
+    expect(p.repeatTrack()).toBe(true)
+    expect(p.isRepeatOne()).toBe(true)
+    expect(p.repeatTrack()).toBe(false)
+    expect(p.isRepeatOne()).toBe(false)
+  })
+})
+
+// ─────────────────────────────────────────────────────
+// LofiPlaylistPlayer — repeat-one mode on ended
+// ─────────────────────────────────────────────────────
+
+describe('LofiPlaylistPlayer — repeat-one on ended', () => {
+  it('con repeatOne activo, ended reinicia la misma pista en vez de avanzar', async () => {
+    const p = await readyLofi()
     p.repeatTrack()
+    currentMockAudio.currentTime = 30
+    currentMockAudio._emit('ended')
+    expect(p.currentIndex).toBe(0)
     expect(currentMockAudio.currentTime).toBe(0)
+  })
+
+  it('sin repeatOne, ended sigue avanzando de pista', async () => {
+    const p = await readyLofi()
+    currentMockAudio._emit('ended')
+    expect(p.currentIndex).toBe(1)
   })
 })
 

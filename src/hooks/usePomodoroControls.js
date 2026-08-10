@@ -83,7 +83,7 @@ export function usePomodoroControls({
     if (isWorkPhase) {
       if (musicMode && playerStatus === 'ready') {
         ignoreNextPause.current = true
-        audioFunctions.stop()
+        audioFunctions.pause()
       }
 
       const breakDuration = getBreakDuration(currentSession, config)
@@ -111,9 +111,9 @@ export function usePomodoroControls({
         setCurrentMessage(getPhaseMessage(true, nextSession, config))
         setCurrentSubtitle(getPhaseSubtitle(true, nextSession, config))
 
-        if (musicMode && playerStatus !== 'error') {
+        if (musicMode && playerStatus === 'ready') {
           ignoreNextPlay.current = true
-          audioFunctions.play()
+          audioFunctions.resume()
         }
       }
     }

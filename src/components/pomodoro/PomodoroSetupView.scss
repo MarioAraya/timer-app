@@ -360,3 +360,42 @@ $accent-border: rgba(239, 68, 68, 0.25);
     border-radius: 20px;
   }
 }
+
+// ── Viewport bajo ────────────────────────────────────────────────────────────
+// La ventana de escritorio arranca en 1100x760, donde el bloque de min-width:768
+// agranda el padding de las filas y los 5 presets no entran: "Personalizado"
+// queda cortado. Acá se compacta para que la config completa se vea sin scroll.
+// Va último a propósito — misma especificidad que min-width:768, gana por orden.
+@media (max-height: 860px) {
+  .setup-modal-overlay { padding: 16px; }
+
+  .pomodoro-setup-view.setup-modal { max-height: 94vh; }
+
+  .psetup-header { padding: 12px 20px; }
+
+  .psetup-main { padding: 16px 20px 4px; }
+
+  .psetup-subtitle {
+    font-size: 19px;
+    margin-bottom: 14px;
+  }
+
+  .psetup-preset-row { padding: 11px 4px; }
+
+  .psetup-preset-name { font-size: 16px; }
+  .psetup-preset-times { font-size: 13px; }
+
+  .psetup-custom-sliders {
+    padding: 14px;
+    gap: 14px;
+  }
+
+  .psetup-footer {
+    padding: 12px 20px;
+
+    .psetup-start-button {
+      padding: 14px 20px;
+      border-radius: 14px;
+    }
+  }
+}

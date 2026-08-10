@@ -13,8 +13,10 @@
     "test:e2e:ui": "playwright test --ui",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build --target universal-apple-darwin",
-    "tauri:build:native": "tauri build"
+    "tauri:build": "npm run audio:local && tauri build --target universal-apple-darwin",
+    "tauri:build:native": "npm run audio:local && tauri build",
+    "audio:fetch": "node scripts/fetch-audio.mjs",
+    "audio:local": "node scripts/link-audio.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.1",

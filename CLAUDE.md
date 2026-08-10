@@ -162,6 +162,29 @@ Save/load/clear functions per timer type (HIIT, Tabata, Pomodoro). All `load*Sta
 
 `app.jsx` also persists the user's **favorite timer** (`saveFavoriteTimer` / `loadFavoriteTimer`) and **last active timer** (`saveActiveTimer` / `loadActiveTimer`) to survive page reloads.
 
+### macOS Desktop App (Tauri v2)
+
+`src-tauri/` wraps the **same** `src/` frontend in a native macOS window — there is no desktop fork of any component. Build docs: `docs/MACOS_BUILD.md`. Spec: `SPEC_MACOS.md`.
+
+```bash
+npm run audio:fetch    # once — downloads 13 MP3s (81MB) to assets-audio/
+npm run tauri:dev      # native window against the Vite dev server
+npm run tauri:build    # universal binary (arm64 + x86_64) → Timer.app
+```
+
+**The Rust layer never counts time.** Timer state lives in the frontend and only there; `src-tauri/` reflects what the frontend reports (`update_tray`) and forwards tray clicks back as `tray-action` events. A phase check in a `.rs` file means the abstraction is wrong.
+
+Three commands, three modules: `sleep.rs` (`set_keep_awake` — IOKit assertion via the `keepawake` crate), `overlay.rs` (`set_overlay_mode` — 320×320 always-on-top, restores prior geometry), `tray.rs` (`update_tray` — menubar label + play/skip/reset menu).
+
+Frontend seams — do not bypass them:
+- `src/utils/tauri.js` — the only place that calls `invoke()`/`listen()`. Every wrapper is a **no-op that resolves** outside Tauri, so shared components call them unconditionally and the web PWA is unaffected.
+- `src/config/audioSource.js` — the only place that decides Supabase vs bundled `/audio/`. All 13 tracks (2 workout + 9 lofi + 2 Wim Hof) come from Supabase on the web; `audioUrl()` swaps them wholesale under Tauri.
+- `src/hooks/useDesktopIntegration.js` — wires one timer to keep-awake + tray. Called by `HiitTimerNew`, `TabataTimerNew`, `PomodoroTimer`.
+
+Closing the window hides it (`prevent_close`) so the tray keeps counting; Quit is explicit from the tray menu.
+
+**`npm ci` is currently broken:** `package.json` depends on `@tauri-apps/cli` and `@tauri-apps/api` but the lockfile predates them. Re-sync with the `node:22-alpine` command below before trusting CI.
+
 ### Backend (Go)
 
 Located in `backend/`. Uses `chi` router, JWT auth, Supabase as DB.
@@ -193,6 +216,10 @@ SCSS with `src/styles/_variables.scss` (colors, timing) and `src/styles/_mixins.
 | Audio instances + beeps | `src/utils/audioUtils.js` |
 | State persistence | `src/utils/localStorage.js` |
 | Timer home grid | `src/components/TimersHome.jsx` |
+| macOS shell setup | `src-tauri/src/lib.rs` |
+| Tauri IPC wrappers | `src/utils/tauri.js` |
+| Audio local vs remote | `src/config/audioSource.js` |
+| macOS build docs | `docs/MACOS_BUILD.md` |
 
 ## Timer Component Props Interface
 

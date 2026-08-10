@@ -1,7 +1,7 @@
 # Calibración HIIT — "Next Level" (40/20 ×12)
 
 MP3: `hiit_next-level_40-20_x12.mp3`
-Medido: 2026-08-10 · Método: tecla SPACE en la app (`handleCalibrate` → `hiitAudio.getPosition()`)
+Medido: 2026-08-10 · Método: tecla **M** en la app (`handleCalibrate` → `hiitAudio.getPosition()`)
 
 **Estos tiempos valen solo para esta canción.** Si se cambia el MP3, todo este
 documento y la config derivada quedan inválidos y hay que recalibrar.
@@ -99,7 +99,8 @@ Total del workout: 745.657s = **12:25**, que coincide con el fin del MP3 (747.02
 ## Cómo recalibrar
 
 1. HIIT en **modo Música** (en beeps no hay MP3 que medir).
-2. SPACE en cada transición que se escuche en la canción — alterna work/rest solo.
+2. **M** en cada transición que se escuche en la canción — alterna work/rest solo.
+   (SPACE no: eso es play/pause, y pausaría la canción en cada marca.)
 3. La consola reimprime el bloque `HIIT_TICKS` completo en cada marca; al terminar
    se copia el último.
 4. Marcar el fin del MP3 como última pulsación.

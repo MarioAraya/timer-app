@@ -288,12 +288,12 @@ function HiitTimerNew({
     )
   }
 
-  // SPACE marks a calibration point against the MP3 clock. Registered on
-  // document so it works regardless of focus, and preventDefault stops the
-  // browser from re-triggering whatever button happens to be focused.
+  // M marks a calibration point against the MP3 clock — see
+  // docs/HIIT_CALIBRATION_NEXT_LEVEL.md. Not SPACE: that toggles playback, and
+  // one key doing both would pause the song on every mark.
   useEffect(() => {
     const onKeyDown = (e) => {
-      if (e.code !== 'Space' && e.key !== ' ') return
+      if (e.key !== 'm' && e.key !== 'M') return
       const target = e.target
       if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return
       e.preventDefault()

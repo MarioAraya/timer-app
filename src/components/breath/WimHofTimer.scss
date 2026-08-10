@@ -1,12 +1,12 @@
 .wim-hof-timer {
-  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  background: var(--wimhof-bg);
   border-radius: 20px;
   padding: 2rem;
-  color: white;
+  color: var(--breath-fg);
   text-align: center;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 20px 60px rgba(var(--shadow-rgb), 0.35);
 
   &.maximized {
     position: fixed;
@@ -25,9 +25,9 @@
     position: absolute;
     top: 1.5rem;
     left: 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
+    background: rgba(var(--breath-fg-rgb), 0.1);
+    border: 1px solid rgba(var(--breath-fg-rgb), 0.2);
+    color: var(--breath-fg);
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -36,7 +36,7 @@
     justify-content: center;
     cursor: pointer;
     transition: background 0.2s;
-    &:hover { background: rgba(255, 255, 255, 0.2); }
+    &:hover { background: rgba(var(--breath-fg-rgb), 0.2); }
   }
 
   .wh-content {
@@ -75,7 +75,7 @@
   .wh-progress {
     width: 100%;
     height: 6px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(var(--breath-fg-rgb), 0.15);
     border-radius: 999px;
     overflow: hidden;
   }
@@ -137,14 +137,14 @@
 
   .wh-btn-primary {
     background: linear-gradient(90deg, #4ecdc4 0%, #44a08d 100%);
-    color: #0f2027;
+    color: var(--wimhof-on-accent);
   }
 
   .wh-btn-secondary {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    &:hover { background: rgba(255, 255, 255, 0.2); }
+    background: rgba(var(--breath-fg-rgb), 0.12);
+    border: 1px solid rgba(var(--breath-fg-rgb), 0.2);
+    color: var(--breath-fg);
+    &:hover { background: rgba(var(--breath-fg-rgb), 0.2); }
   }
 }
 

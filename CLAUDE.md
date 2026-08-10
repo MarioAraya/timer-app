@@ -150,7 +150,11 @@ Two token channels, and the distinction matters:
 
 Phase colors (`--accent-rgb`, `--rest-rgb`, `--primary-rgb` in `WorkoutActiveView.scss`) are **identity, not theme** — they stay the same in all three themes. Same for `--btn-text`, which sits on an accent fill.
 
-Themed: home, carousel, setup views, modals, auth, and the active HIIT/Tabata/Pomodoro views. **Not yet themed:** `BreathingTimer.scss` and `WimHofTimer.scss` still hardcode their dark palette.
+Breathing timers work the other way around: the phase **is** the background, so everything drawn on top reads against the phase gradient, not against `--bg-base`. They use a separate channel — `--breath-fg` / `--breath-fg-rgb` for content, `--breath-on-fg` for text on a `--breath-fg` fill, and `--breath-idle` / `--breath-inhale` / `--breath-hold` / `--breath-exhale` / `--breath-hold2` for the gradients themselves. Never use `--fg-rgb` inside `BreathingTimer.scss`; on the light themes it resolves to a color that fights the pastel gradient.
+
+Two things there are deliberately not the content color: `--breath-sheen-*` (the circle's glass highlights, always white — light comes from above in every theme) and Wim Hof's `--wimhof-bg`, which keeps its own teal identity per theme.
+
+Themed: everything except the two orphaned `Breathing426Timer` / `Breathing478Timer` components, which nothing imports.
 
 ### State Persistence (`src/utils/localStorage.js`)
 

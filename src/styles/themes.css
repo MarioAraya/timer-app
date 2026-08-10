@@ -37,6 +37,30 @@
   /* Accent used as small text — needs contrast against --bg-base */
   --accent-text: #00cc88;
   --on-accent: #18181b;
+
+  /* ── Breathing phase backdrops ──────────────────────────────────────────
+     The whole timer surface becomes the phase color, so everything drawn on
+     top reads against the gradient, not against --bg-base. --breath-fg is
+     that content color; --breath-on-fg sits on a --breath-fg fill. */
+  --breath-fg: #ffffff;
+  --breath-fg-rgb: 255, 255, 255;
+  --breath-on-fg: #1c1c22;
+  --breath-idle:   linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --breath-inhale: linear-gradient(150deg, #4776e6 0%, #8e54e9 100%);
+  --breath-hold:   linear-gradient(150deg, #5b21b6 0%, #7c3aed 100%);
+  --breath-exhale: linear-gradient(150deg, #f97316 0%, #f59e0b 100%);
+  --breath-hold2:  linear-gradient(150deg, #0c4a6e 0%, #0369a1 100%);
+  /* Wim Hof keeps its own teal identity, lightened per theme */
+  --wimhof-bg: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  --wimhof-on-accent: #0f2027;
+  /* Glass highlights on the circle are light, never the content color */
+  --breath-sheen: rgba(255, 255, 255, 0.35);
+  --breath-sheen-soft: rgba(255, 255, 255, 0.05);
+  --breath-sheen-edge: rgba(255, 255, 255, 0.45);
+  --breath-sheen-glow: rgba(255, 255, 255, 0.22);
+  /* Dimmed control label; the light themes need more than the dark 0.28 */
+  --breath-muted: rgba(255, 255, 255, 0.28);
+  --breath-muted-strong: rgba(255, 255, 255, 0.35);
 }
 
 :root[data-theme='light'] {
@@ -67,6 +91,24 @@
   --accent-strong: #047857;
   --accent-text: #046c4e;
   --on-accent: #ffffff;
+
+  /* Same hue families as dark, pitched light enough for dark text */
+  --breath-fg: #18181b;
+  --breath-fg-rgb: 24, 24, 27;
+  --breath-on-fg: #fafafa;
+  --breath-idle:   linear-gradient(135deg, #e9ebf3 0%, #dee2ee 100%);
+  --breath-inhale: linear-gradient(150deg, #c9dcff 0%, #b6c8fb 100%);
+  --breath-hold:   linear-gradient(150deg, #ded0fb 0%, #c9b4f6 100%);
+  --breath-exhale: linear-gradient(150deg, #ffdcb8 0%, #ffedbd 100%);
+  --breath-hold2:  linear-gradient(150deg, #c2e5f7 0%, #a9def5 100%);
+  --wimhof-bg: linear-gradient(135deg, #dcebef 0%, #cfe3e8 50%, #c3dbe3 100%);
+  --wimhof-on-accent: #0f2027;
+  --breath-sheen: rgba(255, 255, 255, 0.5);
+  --breath-sheen-soft: rgba(255, 255, 255, 0.12);
+  --breath-sheen-edge: rgba(255, 255, 255, 0.6);
+  --breath-sheen-glow: rgba(255, 255, 255, 0.3);
+  --breath-muted: rgba(24, 24, 27, 0.45);
+  --breath-muted-strong: rgba(24, 24, 27, 0.55);
 }
 
 :root[data-theme='green'] {
@@ -97,4 +139,22 @@
   --accent-strong: #0b7d46;
   --accent-text: #0a6b3c;
   --on-accent: #ffffff;
+
+  /* Kept inside the green family so the phases stay on-theme */
+  --breath-fg: #133322;
+  --breath-fg-rgb: 19, 51, 34;
+  --breath-on-fg: #f4faf6;
+  --breath-idle:   linear-gradient(135deg, #e3efe6 0%, #d5e7da 100%);
+  --breath-inhale: linear-gradient(150deg, #cbe9da 0%, #b2ddc8 100%);
+  --breath-hold:   linear-gradient(150deg, #dcecca 0%, #c9e2b4 100%);
+  --breath-exhale: linear-gradient(150deg, #f6e5bf 0%, #f0d8a6 100%);
+  --breath-hold2:  linear-gradient(150deg, #c9e6e1 0%, #b0dcd4 100%);
+  --wimhof-bg: linear-gradient(135deg, #dcece4 0%, #cee5db 50%, #c1ddd4 100%);
+  --wimhof-on-accent: #0f2027;
+  --breath-sheen: rgba(255, 255, 255, 0.5);
+  --breath-sheen-soft: rgba(255, 255, 255, 0.12);
+  --breath-sheen-edge: rgba(255, 255, 255, 0.6);
+  --breath-sheen-glow: rgba(255, 255, 255, 0.3);
+  --breath-muted: rgba(19, 51, 34, 0.45);
+  --breath-muted-strong: rgba(19, 51, 34, 0.55);
 }

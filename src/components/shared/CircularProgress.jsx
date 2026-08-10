@@ -45,7 +45,7 @@ function CircularProgress({
       <svg viewBox={`0 0 ${size} ${size}`} className="circular-progress-svg">
         {/* Outer ring track */}
         <circle cx={center} cy={center} r={outerRadius} fill="none"
-          stroke="rgba(255,255,255,0.07)" strokeWidth={outerStroke} />
+          stroke="var(--track)" strokeWidth={outerStroke} />
         {/* Outer ring fill */}
         <circle
           ref={outerRef}
@@ -60,7 +60,7 @@ function CircularProgress({
         />
         {/* Inner ring track */}
         <circle cx={center} cy={center} r={innerRadius} fill="none"
-          stroke="rgba(255,255,255,0.07)" strokeWidth={innerStroke} />
+          stroke="var(--track)" strokeWidth={innerStroke} />
         {/* Inner ring fill */}
         <circle
           ref={innerRef}

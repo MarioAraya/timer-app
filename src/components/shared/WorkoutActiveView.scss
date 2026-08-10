@@ -25,12 +25,12 @@
   100% { filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), 0.4)); }
 }
 
-$bg-dark: #0a0a0a;
-$bg-card: rgba(255, 255, 255, 0.05);
-$bg-card-border: rgba(255, 255, 255, 0.08);
-$text-primary: #ffffff;
-$text-secondary: rgba(255, 255, 255, 0.4);
-$text-muted: rgba(255, 255, 255, 0.6);
+$bg-dark: var(--bg-active);
+$bg-card: var(--surface-2);
+$bg-card-border: var(--border-1);
+$text-primary: var(--text-1);
+$text-secondary: var(--text-3);
+$text-muted: var(--text-2);
 
 // Material Symbols filled variant
 .material-symbols-outlined.filled,
@@ -415,7 +415,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
 
     .progress-bar {
       height: 5px;
-      background: $bg-card;
+      background: var(--track);
       border-radius: 3px;
       overflow: hidden;
 
@@ -461,7 +461,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
         text-transform: uppercase;
         letter-spacing: -0.02em;
         margin: 0;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 2px 10px rgba(var(--shadow-rgb), 0.5);
 
         .highlight {
           color: rgb(var(--accent-rgb));
@@ -496,7 +496,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
           top: -32px;
           left: 50%;
           transform: translateX(-50%);
-          background: rgba(0, 0, 0, 0.85);
+          background: rgba(var(--shadow-rgb), 0.85);
           color: #fff;
           padding: 4px 10px;
           border-radius: 6px;
@@ -521,7 +521,7 @@ $text-muted: rgba(255, 255, 255, 0.6);
           color: $text-muted;
 
           &:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(var(--fg-rgb), 0.1);
             color: $text-primary;
           }
 

@@ -20,12 +20,12 @@
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
-$bg-dark:      #18181b;
-$bg-card:      rgba(255, 255, 255, 0.05);
-$bg-border:    rgba(255, 255, 255, 0.1);
-$text-primary: #ffffff;
-$text-muted:   rgba(255, 255, 255, 0.6);
-$text-dim:     rgba(255, 255, 255, 0.4);
+$bg-dark:      var(--bg-active);
+$bg-card:      var(--surface-2);
+$bg-border:    var(--border-1);
+$text-primary: var(--text-1);
+$text-muted:   var(--text-2);
+$text-dim:     var(--text-3);
 
 .material-symbols-outlined.filled {
   font-variation-settings: 'FILL' 1;
@@ -339,7 +339,7 @@ $text-dim:     rgba(255, 255, 255, 0.4);
 
   .progress-bar {
     height: 5px;
-    background: $bg-card;
+    background: var(--track);
     border-radius: 3px;
     overflow: hidden;
 
@@ -371,7 +371,7 @@ $text-dim:     rgba(255, 255, 255, 0.4);
       font-size: clamp(16px, 3vw, 22px);
       font-weight: 700;
       margin: 0;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      text-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.4);
     }
 
     .subtitle-text {
@@ -406,7 +406,7 @@ $text-dim:     rgba(255, 255, 255, 0.4);
         color: $text-muted;
 
         &:hover {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(var(--fg-rgb), 0.1);
           color: $text-primary;
         }
 
@@ -518,7 +518,7 @@ $text-dim:     rgba(255, 255, 255, 0.4);
     justify-content: center;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(var(--fg-rgb), 0.1);
       color: $text-primary;
     }
 
@@ -552,7 +552,7 @@ $text-dim:     rgba(255, 255, 255, 0.4);
       height: 4px;
       -webkit-appearance: none;
       appearance: none;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(var(--fg-rgb), 0.15);
       border-radius: 2px;
       outline: none;
       cursor: pointer;

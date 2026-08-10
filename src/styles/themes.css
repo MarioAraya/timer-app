@@ -11,6 +11,8 @@
 
   --bg-base: #18181b;
   --bg-elevated: #1f1f23;
+  /* Immersive full-screen timer views sit deeper than the app chrome */
+  --bg-active: #0a0a0a;
   --bg-overlay: rgba(0, 0, 0, 0.7);
 
   --fg-rgb: 255, 255, 255;
@@ -25,6 +27,8 @@
 
   --border-1: rgba(255, 255, 255, 0.08);
   --border-2: rgba(255, 255, 255, 0.16);
+  /* Unfilled portion of progress rings/bars */
+  --track: rgba(255, 255, 255, 0.07);
 
   --shadow-rgb: 0, 0, 0;
 
@@ -40,13 +44,14 @@
 
   --bg-base: #f4f4f5;
   --bg-elevated: #ffffff;
+  --bg-active: #fafafa;
   --bg-overlay: rgba(24, 24, 27, 0.45);
 
   --fg-rgb: 24, 24, 27;
   --fg: #18181b;
   --text-1: #18181b;
-  --text-2: rgba(24, 24, 27, 0.72);
-  --text-3: rgba(24, 24, 27, 0.52);
+  --text-2: rgba(24, 24, 27, 0.78);
+  --text-3: rgba(24, 24, 27, 0.62);
 
   --surface-1: #ffffff;
   --surface-2: #ebebee;
@@ -54,6 +59,7 @@
 
   --border-1: rgba(24, 24, 27, 0.12);
   --border-2: rgba(24, 24, 27, 0.22);
+  --track: rgba(24, 24, 27, 0.13);
 
   --shadow-rgb: 82, 82, 91;
 
@@ -68,13 +74,14 @@
 
   --bg-base: #eaf3ec;
   --bg-elevated: #f8fcf9;
+  --bg-active: #f4faf6;
   --bg-overlay: rgba(19, 51, 34, 0.45);
 
   --fg-rgb: 19, 51, 34;
   --fg: #133322;
   --text-1: #133322;
-  --text-2: rgba(19, 51, 34, 0.74);
-  --text-3: rgba(19, 51, 34, 0.54);
+  --text-2: rgba(19, 51, 34, 0.8);
+  --text-3: rgba(19, 51, 34, 0.64);
 
   --surface-1: #f8fcf9;
   --surface-2: #dfeee3;
@@ -82,6 +89,7 @@
 
   --border-1: rgba(19, 51, 34, 0.14);
   --border-2: rgba(19, 51, 34, 0.24);
+  --track: rgba(19, 51, 34, 0.14);
 
   --shadow-rgb: 30, 82, 54;
 

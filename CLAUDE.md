@@ -146,8 +146,11 @@ Two token channels, and the distinction matters:
 - `--fg-rgb` / `--shadow-rgb` go **inside** `rgba()`, so pre-existing alphas keep working when the theme inverts (`rgba(var(--fg-rgb), 0.1)`).
 - `--surface-1/2/3`, `--border-1/2`, `--text-1/2/3` are explicit per theme, because a 3% overlay that reads as "elevated" on dark reads as nothing on light.
 - `--accent-text` is the accent darkened for small text on light backgrounds; `--on-accent` is text sitting **on** an accent fill.
+- `--bg-active` is the immersive full-screen timer background (deeper than `--bg-base`); `--track` is the unfilled part of progress rings and bars.
 
-**Only the chrome is themed** (home, carousel, setup views, modals, auth). Active workout views (`WorkoutActiveView.scss`, `BreathingTimer.scss`, `PomodoroTimer.scss`) stay dark in all themes — their backgrounds are phase gradients with white text, so tokenizing them makes text illegible. Aclararlas requiere rediseñar los gradientes de fase.
+Phase colors (`--accent-rgb`, `--rest-rgb`, `--primary-rgb` in `WorkoutActiveView.scss`) are **identity, not theme** — they stay the same in all three themes. Same for `--btn-text`, which sits on an accent fill.
+
+Themed: home, carousel, setup views, modals, auth, and the active HIIT/Tabata/Pomodoro views. **Not yet themed:** `BreathingTimer.scss` and `WimHofTimer.scss` still hardcode their dark palette.
 
 ### State Persistence (`src/utils/localStorage.js`)
 

@@ -47,7 +47,7 @@ El slice más importante: valida el supuesto de riesgo #1 (WKWebView throttlea a
 
 | # | Tarea |
 |---|---|
-| 2.1 | `scripts/fetch-audio.mjs` — baja los 9 lofi + 2 Wim Hof de Supabase a `assets-audio/` |
+| 2.1 | `scripts/fetch-audio.mjs` — baja las **13** pistas de Supabase a `assets-audio/` (2 workout + 9 lofi + 2 Wim Hof; los MP3 de workout también salen de Supabase hoy, ver SPEC §5.2) |
 | 2.2 | `scripts/link-audio.mjs` — copia `assets-audio/` → `public/audio/` (corre en `beforeBuildCommand`) |
 | 2.3 | `src/config/audioSource.js` — `audioUrl(filename)` (SPEC §5.2) |
 | 2.4 | `audioUtils.js` + `wimHofAudio.js` construyen URLs con `audioUrl()`. **Único cambio permitido en esos archivos** |

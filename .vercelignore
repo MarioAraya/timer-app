@@ -1,0 +1,7 @@
+# Audio bundleado solo para la app desktop (Tauri) — no debe subir a Vercel.
+# La web sigue sirviendo audio desde Supabase.
+assets-audio/
+public/audio/
+
+# Shell nativo de macOS
+src-tauri/

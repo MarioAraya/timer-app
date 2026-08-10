@@ -28,6 +28,13 @@ vertical-carousel/
 
 # Large audio files (use external hosting or Git LFS)
 public/*.mp3
+# Desktop (Tauri): audio bajado de Supabase para bundlear offline
+assets-audio/
+public/audio/
+
+# Tauri build artifacts
+src-tauri/target/
+src-tauri/gen/
 dist/
 .vercel
 test-results/

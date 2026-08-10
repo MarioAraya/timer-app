@@ -135,7 +135,7 @@ export function audioUrl(filename) {
 
 `audioUtils.js` y `wimHofAudio.js` pasan a construir sus URLs con `audioUrl()`. Ningún otro archivo del frontend sabe que existe Tauri.
 
-Los MP3 que **ya** están en `public/` (`hiit_next-level_40-20_x12.mp3`, `tabata_rocky_20-10_x4.mp3`) no cambian: ya son locales y ya se bundlean.
+**Alcance real: 13 archivos, no 11.** Todo el audio sale hoy de Supabase, incluidos los MP3 de workout — `audioUtils.js:18` y `:27` apuntan a `${SUPABASE_AUDIO}/hiit_next-level_40-20_x12.mp3` y `.../tabata_rocky_20-10_x4.mp3`. Las copias que hay en `public/` son locales, no están trackeadas (`.gitignore` tiene `public/*.mp3`, ver `public/AUDIO_FILES.md`) y **el código nunca las referencia**. Esto simplifica el slice 2: un único `audioUrl()` cubre las 13 (2 workout + 9 lofi + 2 Wim Hof) de forma uniforme, sin casos especiales.
 
 ### 5.3 Contrato IPC frontend ↔ Rust
 

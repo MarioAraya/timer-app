@@ -46,3 +46,9 @@ e2e/screenshots
 
 # Supabase CLI local link cache
 supabase/.temp
+
+# TV webOS sub-project
+tv-webos/node_modules/
+tv-webos/dist/
+tv-webos/build/
+tv-webos/public/audio/

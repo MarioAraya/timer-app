@@ -1,0 +1,24 @@
+.home {
+  width: 1920px; height: 1080px; box-sizing: border-box;
+  padding: 54px 96px;
+  background: $bg;
+}
+.home-title { font-size: 64px; color: $text-dim; letter-spacing: 8px; height: 90px; }
+.home-cards { display: flex; margin-top: 60px; height: 600px; align-items: center; }
+.card {
+  width: 820px; height: 560px; box-sizing: border-box;
+  background: $surface; border-left: 16px solid #fff;
+  padding: 48px 56px; margin-right: 56px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  transition: transform 150ms;
+  &:last-child { margin-right: 0; }
+}
+.card-name { font-size: 180px; line-height: 1; }
+.card-summary { font-size: 48px; color: $text-dim; }
+.card-duration { font-size: 96px; }
+.card.is-focused {
+  transform: scale(1.05);
+  .card-summary { color: $on-phase; }
+  color: $on-phase;
+}
+.home-hint { position: absolute; bottom: 54px; left: 96px; font-size: 36px; color: $text-dim; }

@@ -1,0 +1,17 @@
+@import 'tokens';
+@import 'home';
+@import 'active';
+@import 'done';
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: $bg;
+  color: $text;
+  font-family: $font;
+  font-weight: 700;
+}
+#app { width: 1920px; height: 1080px; position: relative; }

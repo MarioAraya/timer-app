@@ -4,6 +4,6 @@ import preact from '@preact/preset-vite'
 export default defineConfig({
   plugins: [preact()],
   test: {
-    exclude: ['**/node_modules/**', '**/dist/**', 'e2e/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', 'e2e/**', 'tv-webos/**'],
   },
 })

@@ -1782,6 +1782,22 @@ spike en §16: el agente detecta la tabla y sigue desde P0.4.
 _(Lo llenan las tareas W6, W8, P0.3, P0.4, P4.1 y P4.3. Formato libre, una entrada
 por tarea con fecha. Las líneas `PENDIENTE 👤 <ID>` se borran al completarse.)_
 
+### W6 — 2026-11-13 (PR 1, Wim Hof EN)
+
+- `npm test`: 5 archivos, 25 tests, código 0 (incluye wimhof, homeNav y activities).
+- `npm run build`: código 0, `check-compat ok`.
+- `npm run tv:package`: `build/com.timerapp.tv_0.2.0_all.ipk` = 30,286,668 bytes (28.9 MiB).
+- `npm run tv:install`: **falló, TV sin respuesta** (`ares-install ERR! [Tips]: Connection timed out. Please check the device IP address or the port number`; `nc -z 192.168.0.8 9922` → closed). No se reconfiguró el dispositivo (§14.3).
+- Verificado en Chrome de escritorio por `file://` (Playwright): Home 2×2 con foco por ←/→/↑/↓, Wim Hof suena, reloj `0:02`, seek +30 s → `0:33`, OK pausa, Back en dos pasos vuelve a Home, saltar al final lleva a Done (`WIM HOF · 4 rondas · 18:00`) y OK repite. Sin errores de consola.
+
+**PENDIENTE 👤 W8** — con el TV encendido y Developer Mode activo (si cambió la IP o la passphrase: Key Server ON, `npx ares-novacom --device tv --getkey` y `npx ares-setup-device --modify tv -i "privateKey=tv_webos" -i "passphrase=<pass>"`):
+1. `cd tv-webos && npm run tv:install` y anotar cuánto tarda la instalación del `.ipk` de ~29 MiB.
+2. Home muestra 3 tarjetas; el D-pad recorre HIIT → TABATA → WIM HOF (↓ desde HIIT va a WIM HOF).
+3. Wim Hof: suena al entrar; reloj avanza 1/s; ◀ ▶ saltan 30 s (¿el seek en el MP3 de 18 min tarda o cae impreciso?); OK pausa y reanuda; Back en dos pasos; ver 3 min como mínimo y, si se puede, el final y OK repite.
+4. HIIT y Tabata siguen completando Home → Active → Done → Home.
+5. Con el botón azul, anotar `gap ms min/max` durante Wim Hof.
+Resultados aquí. Es puerta de **merge**, no de apertura del PR.
+
 Plantilla para P0.3:
 
 | Prueba | ID | ¿Se ve? | ¿Se oye ≥ 2 min? | ¿OK pausa/reanuda? | ¿El control sigue respondiendo? | Error / texto del player | Log |

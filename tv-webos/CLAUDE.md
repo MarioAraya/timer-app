@@ -6,6 +6,7 @@ App LG webOS 2017-18 (Chromium 38, `file://`). Spec y tareas: `PLAN.md`. Instala
 - NO modificar `../src`. Se importa con rutas relativas (`../../src/...`): solo `hiitConfig`, `tabataConfig`, `ticksEngine`.
 - NO importar `audioUtils.js`, `WorkoutAudioPlayer.js`, `localStorage.js`, ni `src/components`.
 - Rutas de assets relativas (`audio/x.mp3`), nunca `/x.mp3`.
+- Nada de `<script>` externos. YouTube solo en `<iframe>` creado por `src/music/youtubeSource.js` (URLs en `ytProtocol.js`). La pantalla de Pomodoro no conoce la fuente de música.
 
 ## JS prohibido (Chromium 38)
 - `audio.play().then` / `await audio.play()` → `var p = audio.play(); if (p && p.catch) p.catch(fn)`

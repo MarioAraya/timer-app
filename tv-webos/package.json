@@ -1,6 +1,6 @@
 {
   "name": "timer-tv-webos",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "vitest run",
     "build": "npm run audio:copy && vite build && node scripts/postbuild.mjs && node scripts/check-compat.mjs",
     "tv:package": "ares-package dist --no-minify -o build",
-    "tv:install": "npm run build && npm run tv:package && ares-install --device tv build/com.timerapp.tv_0.1.0_all.ipk && ares-launch --device tv com.timerapp.tv",
+    "tv:install": "npm run build && npm run tv:package && ares-install --device tv build/com.timerapp.tv_0.2.0_all.ipk && ares-launch --device tv com.timerapp.tv",
     "tv:inspect": "ares-inspect --device tv --app com.timerapp.tv --open"
   },
   "dependencies": {

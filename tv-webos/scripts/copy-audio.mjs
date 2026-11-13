@@ -3,7 +3,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-const FILES = ['hiit_next-level_40-20_x12.mp3', 'tabata_rocky_20-10_x4.mp3']
+const FILES = ['hiit_next-level_40-20_x12.mp3', 'tabata_rocky_20-10_x4.mp3', 'win_hof_4rounds.mp3']
 const dest = join(root, 'public', 'audio')
 mkdirSync(dest, { recursive: true })
 

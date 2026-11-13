@@ -1,0 +1,22 @@
+.wimhof {
+  position: relative; width: 1920px; height: 1080px; overflow: hidden;
+  background: $wimhof-bg; color: $text;
+}
+.wimhof-top {
+  position: absolute; top: 54px; left: 96px; right: 96px; height: 120px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.wimhof-title { font-size: 96px; color: $wimhof; }
+.wimhof-tag { font-size: 72px; color: $text-dim; }
+.wimhof-center {
+  position: absolute; top: 174px; left: 0; width: 1920px; height: 620px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.big-clock { font-size: 400px; line-height: 1; white-space: nowrap; }
+.colon { display: inline-block; width: 0.25em; text-align: center; }
+.wimhof-of { font-size: 64px; color: $text-dim; }
+.wimhof-bottom { position: absolute; left: 96px; right: 96px; bottom: 54px; }
+.wimhof-seek { color: $text-dim; }
+.wimhof .progress-track { background: rgba(255, 255, 255, 0.15); }
+.wimhof .progress-fill { background: $wimhof; }
+.wimhof-note { font-size: 32px; color: $text-dim; margin-top: 20px; }

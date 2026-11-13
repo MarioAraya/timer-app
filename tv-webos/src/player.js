@@ -58,6 +58,7 @@ export function createPlayer(track, hooks) {
       return raw
     },
     getRaw: function () { return audio.currentTime },
+    getDuration: function () { return audio.duration },
     isPlaying: function () { return wantPlay },
     destroy: function () {
       wantPlay = false
